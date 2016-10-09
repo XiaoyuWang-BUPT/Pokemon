@@ -1,4 +1,4 @@
-#ifndef POKEMON_H
+﻿#ifndef POKEMON_H
 #define POKEMON_H
 
 #include <iostream>
@@ -27,7 +27,7 @@ enum Kind{/*TODO 具体的小精灵的细类--如小火龙 皮卡丘 水箭龟 �
 enum State {HEALTHY, DROWNED, BURNED, POISONED, FROZEN};
 enum Character {AGGRESIVE, DEFENSIVE, TANK, QUICK};
 enum evoLevel {EL1 = 6, EL2 = 13};
-int ExpGrade[17] = {0, 0, 50, 120, 210, 320, 500, 720,
+const int ExpGrade[17] = {0, 0, 50, 120, 210, 320, 500, 720,
                    1000, 1320, 1800, 2400, 3160, 3900,
                    4900, 6200};
 const bool ALIVE = true, DEAD = false;
@@ -61,7 +61,7 @@ public:
     Pokemon(){
         this->_nature_ = FIRE;
         this->_kind_ = CHARMANDER;
-        this->_name_ = "小火龙";
+        this->_name_ = "Charmander";
         this->_character_ = AGGRESIVE;
         this->_level_ = 1;
         this->_experiencePoint_ = 0;
