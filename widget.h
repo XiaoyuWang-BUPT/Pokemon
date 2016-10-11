@@ -1,8 +1,13 @@
-#ifndef WIDGET_H
+﻿#ifndef WIDGET_H
 #define WIDGET_H
 
 #include <QWidget>
+#include <QObject>
+#include <QButtonGroup>
+#include <QString>
+#include <QKeyEvent>
 //#include "pokemon.h"
+//#include "pokemonfactory.h"
 
 namespace Ui {
 class Widget;

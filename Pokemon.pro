@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         widget.cpp \
-    pokemon.cpp
+    pokemon.cpp \
+    pokemonfactory.cpp
 
 HEADERS  += widget.h \
-    pokemon.h
+    pokemon.h \
+    pokemonfactory.h
 
 FORMS    += widget.ui

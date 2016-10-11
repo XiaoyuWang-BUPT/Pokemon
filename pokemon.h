@@ -5,25 +5,40 @@
 #include <stdlib.h>
 #include <time.h>
 #include <set>
-#include "widget.h"
 
 using namespace std;
 
 enum Nature {FIRE, WATER, BUSH, ELECTRICITY};
 enum Kind{/*TODO 具体的小精灵的细类--如小火龙 皮卡丘 水箭龟 等*/
             CHARMANDER, CHARMELEON, CHARIZARD, //小火龙 火恐龙 喷火龙
-            SQUIRTLE, WARTORTLE, BLASTOISE, //杰尼龟 卡咪龟 水箭龟
-            BULBASAUR, IVYSAUR, VENUSAUR, //秒蛙种子 秒蛙草 妙蛙花
-            PICHU, PIKACHU, RAICHU, //皮丘 皮卡丘 雷丘
             TORCHIC, COMBUSKEN, BLAZIKEN, //火稚鸡 力壮鸡 火焰鸡
-            MUDKIP, MARSHTOMP, SWAMPERT, //水跃鱼 沼跃鱼 巨沼怪
-            TREECKO, GROVYLE, SCEPTILE, //木守宫 森林蜥蜴 蜥蜴王
-            SHINX, LUXIO, LUXRAY, //小猫怪 勒克猫 伦琴猫
             CHIMCHAR, MONFERNO, INFERNAPE, //小火焰猴 猛火猴 烈焰猴
+            SQUIRTLE, WARTORTLE, BLASTOISE, //杰尼龟 卡咪龟 水箭龟
+            MUDKIP, MARSHTOMP, SWAMPERT, //水跃鱼 沼跃鱼 巨沼怪
             PIPLUP, PRINPLUP, EMPOLEON, //波加曼 波皇子 帝王拿波
+            BULBASAUR, IVYSAUR, VENUSAUR, //秒蛙种子 秒蛙草 妙蛙花
+            TREECKO, GROVYLE, SCEPTILE, //木守宫 森林蜥蜴 蜥蜴王
             TURTWIG, GROTLE, TORTERRA, //草苗龟 树林龟 土台龟
+            PICHU, PIKACHU, RAICHU, //皮丘 皮卡丘 雷丘
+            SHINX, LUXIO, LUXRAY, //小猫怪 勒克猫 伦琴猫
             MARREP, FLAAFFY, AMPHAROS //咩利羊 绵绵 电龙
             };
+const string kindOfString[] = {"Charamander", "Charmeleon", "Charizard",
+                         "Torchic", "Combusken", "Blaziken",
+                         "Chimchar", "Monferno", "Infernape",
+                        "Squirtle", "Watortle", "Blastoise",
+                         "Mudkip", "Marshtomp", "Swampert",
+                         "Piplup", "Prinplup", "Empoleon",
+                        "Bulbasaur", "Ivysaur", "Venusaur",
+                         "Treecko", "Grovyle", "Sceptile",
+                         "Turtwig", "Grotle", "Torterra",
+                        "Pichu", "Pikachu", "Raichu",
+                         "Shinx", "Luxio", "Luxray",
+                         "Marrep", "Flaaffy", "Ampharos"};
+//在对局时使用下列数组对应获得 Kind 中的枚举类型 例如(Kind1) == CHARMELEON
+const int EmbryoPokemon[] = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33}; //对战难度--简单 创建初级口袋妖怪
+const int IntermediatePokemon[] = {1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34}; //对战难度--普通 创建中级口袋妖怪
+const int LastPokemon[]= {2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35}; //对战难度--困难 创建高级口袋妖怪
 enum State {HEALTHY, DROWNED, BURNED, POISONED, FROZEN};
 enum Character {AGGRESIVE, DEFENSIVE, TANK, QUICK};
 enum evoLevel {EL1 = 6, EL2 = 13};
@@ -41,7 +56,7 @@ class Pokemon
 private:
     Nature _nature_; //火 水 草 冰 四种属性 FIRE> BUSH; FIRE> ELECTRICITY; WATER> FIRE; BUSH> WATER; ELECTRICITY> FIRE
     Kind _kind_; //小精灵的细类 小火龙 水箭龟 皮卡丘 等
-    string _name_; //获得新的小精灵时命名 不命名则默认为 小火龙 水箭龟 皮卡丘
+    //string _name_; //获得新的小精灵时命名 不命名则默认为 小火龙 水箭龟 皮卡丘
     Character _character_; //攻击型 防御型 肉盾型 敏捷型 四种性格
     int _level_; //小精灵等级
     int _experiencePoint_; //经验值 累计达到经验槽设定数值升级
@@ -58,26 +73,7 @@ private:
     int _sickPoint_; //烧伤 冻伤 中毒 麻痹 每次的伤害
     bool _alive_; //存活 死亡
 public:
-    Pokemon(){
-        this->_nature_ = FIRE;
-        this->_kind_ = CHARMANDER;
-        this->_name_ = "Charmander";
-        this->_character_ = AGGRESIVE;
-        this->_level_ = 1;
-        this->_experiencePoint_ = 0;
-        this->_attackPoint_ = 15;
-        this->_defencePoint_ = 7;
-        this->_totalHP_ = 60;
-        this->_currentHP_ = this->_totalHP_;
-        this->_intervalIncrease_ = 4;
-        this->_criticalPoint_ = 5;
-        this->_counter_.insert(BUSH);
-        this->_counter_.insert(ELECTRICITY);
-        this->_state_ = HEALTHY;
-        this->_sickCounter_ = 0;
-        this->_sickPoint_ = 0;
-        this->_alive_ = ALIVE;
-    }
+    Pokemon(){}
 
     ~Pokemon(){}
 
@@ -89,9 +85,9 @@ public:
         this->_kind_ = kind;
     }
 
-    void setName(string name) {
-        this->_name_ = name;
-    }
+//    void setName(string name) {
+//        this->_name_ = name;
+//    }
 
     void setCharacter(Character character) {
         this->_character_ = character;
@@ -158,9 +154,9 @@ public:
         return this->_kind_;
     }
 
-    string getName() {
-        return this->_name_;
-    }
+//    string getName() {
+//        return this->_name_;
+//    }
 
     Character getCharacter() {
         return this->_character_;
@@ -229,8 +225,6 @@ public:
 
     virtual void EnSick(Pokemon *sickPokemon){}
 
-    int randFunction();
-
     bool EnSickPossible();
 
     bool CriticalStrike();
@@ -249,7 +243,8 @@ public:
 class Fire : public Pokemon
 {
 public:
-    Fire() {}
+    //Fire(Kind kind);// 御三家构造函数
+    Fire(Kind kind, int level); //对战时随机生成的精灵构造函数 野生精灵构造函数
     ~Fire() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
@@ -259,31 +254,34 @@ public:
 class Water : public Pokemon
 {
 public:
-    Water() {}
+    //Water(Kind kind);
+    Water(Kind kind, int level); //对战时随机生成的精灵构造函数 野生精灵构造函数
     ~Water() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
-    virtual void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
+    void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
 };
 
 class Bush : public Pokemon
 {
 public:
-    Bush() {}
+    //Bush(Kind kind);
+    Bush(Kind kind, int level); //对战时随机生成的精灵构造函数 野生精灵构造函数
     ~Bush() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
-    virtual void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
+    void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
 };
 
 class Electricity : public Pokemon
 {
 public:
-    Electricity() {}
+    //Electricity(Kind kind);
+    Electricity(Kind kind, int level); //对战时随机生成的精灵构造函数 野生精灵构造函数
     ~Electricity() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
-    virtual void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
+    void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
 };
 
 #endif // POKEMON_H

@@ -1,0 +1,18 @@
+ Nature _nature_; //火 水 草 冰 四种属性 FIRE> BUSH; FIRE> ELECTRICITY; WATER> FIRE; BUSH> WATER; ELECTRICITY> FIRE
+    Kind _kind_; //小精灵的细类 小火龙 水箭龟 皮卡丘 等
+    string _name_; //获得新的小精灵时命名 不命名则默认为 小火龙 水箭龟 皮卡丘
+    Character _character_; //攻击型 防御型 肉盾型 敏捷型 四种性格
+    int _level_; //小精灵等级
+    int _experiencePoint_; //经验值 累计达到经验槽设定数值升级
+    int _attackPoint_; //攻击力
+    int _defencePoint_; //防御力
+    int _totalHP_; //总生命值
+    int _currentHP_; //当前生命值
+    int _intervalIncrease_; //攻击间隔增长
+    //TODO while循环中两小精灵累加_intervalIncrease_，直至同一阈值（如50），率先到达者先攻击，调用攻击者的攻击函数及动画
+    int _criticalPoint_; //暴击指数
+    set<Nature> _counter_; //克制的属性
+    State _state_; //当前所处的健康状态 健康 烧伤 冻伤 中毒 麻痹
+    int _sickCounter_; //不健康计数器 用于记录烧伤 冻伤 中毒 麻痹 的回合数
+    int _sickPoint_; //烧伤 冻伤 中毒 麻痹 每次的伤害
+    bool _alive_; //存活 死亡
