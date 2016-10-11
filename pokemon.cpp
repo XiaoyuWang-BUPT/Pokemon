@@ -18,9 +18,12 @@ unsigned int Random(int max) {
 /* 攻击函数
  * 暴击双倍伤害 依小概率造成烧伤，冻伤，中毒和麻痹效果 火属性不能对火属性造成烧伤 其他属性类比*/
 void Pokemon::Attack(Pokemon *dePokemon) {
-    int attackDamage = this->getAttackPoint() - dePokemon->getDefencePoint();
+    int attackDamage = 0;
     if (this->CriticalStrike()) {
-        attackDamage *= 2;
+        attackDamage = (2* this->getAttackPoint())- dePokemon->getDefencePoint();
+    }
+    else {
+        attackDamage = this->getAttackPoint()- dePokemon->getDefencePoint();
     }
     if (attackDamage < 0) {
         attackDamage = 0;
@@ -28,6 +31,19 @@ void Pokemon::Attack(Pokemon *dePokemon) {
     //cout << "dePokemon HP before attack:" << dePokemon->getCurrentHP();
     dePokemon->setCurrentHP(dePokemon->getCurrentHP()- attackDamage);
     //cout << "  attackDamage:" << attackDamage << "  dePokemon CurrentHP" << dePokemon->getCurrentHP() << endl;
+}
+
+void Pokemon::SpecialAttackDamage(Pokemon *dePokemon) {
+    int specialDamage = this->getAttackPoint() - dePokemon->getDefencePoint();
+    if (this->getCounterSet().count(dePokemon->getNature())) {
+        specialDamage *= 3;
+    }
+    else if (dePokemon->getCounterSet().count(this->getNature())){
+        specialDamage = (int)0.25* specialDamage;
+    }
+    if (specialDamage < 0)
+        specialDamage = 0;
+    dePokemon->setCurrentHP(dePokemon->getCurrentHP() - specialDamage);
 }
 
 int randFunction() {
@@ -38,8 +54,13 @@ int randFunction() {
 
 bool Pokemon::EnSickPossible() {
     int randNum = randFunction();
-    if (randNum <= 19)
+    if (randNum <= 19) {
+        cout << "EnSick True" << endl;
+        cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
         return true;
+    }
+    cout << "EnSick False" << endl;
+    cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
     return false;
 }
 
@@ -47,9 +68,11 @@ bool Pokemon::CriticalStrike() {
     int randNum = randFunction();
     if (randNum <= this->getCriticalPoint()) {
         cout << "critical true" << endl;
+        cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
         return true;
     }
     cout << "critical false" << endl;
+    cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
     return false;
 }
 
@@ -128,28 +151,6 @@ bool isInStandard(Kind kind, int standard[]) {
     return false;
 }
 
-//Fire::Fire(Kind kind) {
-//    this->setNature(FIRE);
-//    this->setKind(kind);
-//    this->setName("UNKNOWN");
-//    this->setCharacter((Character)GiftGenFunc(0, 3));
-//    this->setLevel(1);
-//    this->setExperiencePoint(0);
-//    this->setAttackPoint(GiftGenFunc(20, 30));
-//    this->setDefencePoint(GiftGenFunc(10, 20));
-//    this->setTotalHP(GiftGenFunc(50, 60));
-//    this->setCurrentHP(this->getTotalHP());
-//    this->setIntervalIncrease(GiftGenFunc(2, 4));
-//    this->setCriticalPoint(10);
-//    set<Nature> counterNature;
-//    counterNature.insert(BUSH);
-//    this->setCounter(counterNature);
-//    this->setState(HEALTHY);
-//    this->setSickPoint(0);
-//    this->setSickPoint(0);
-//    this->setAlive(ALIVE);
-//}
-
 Fire::Fire(Kind kind, int level) {
     this->setNature(FIRE);
     this->setKind(kind);
@@ -168,7 +169,7 @@ Fire::Fire(Kind kind, int level) {
     this->setCounter(counterNature);
     this->setState(HEALTHY);
     this->setSickPoint(0);
-    this->setSickPoint(0);
+    this->setSickCounter(0);
     this->setAlive(ALIVE);
     while (this->getLevel() < level) {
         //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Defence Point:" << this->getDefencePoint() << "  TotalHP:" << this->getTotalHP() << endl;
@@ -179,16 +180,7 @@ Fire::Fire(Kind kind, int level) {
 }
 
 void Fire::SpecialAttack(Pokemon *dePokemon) {
-    if (this->getCounterSet().count(dePokemon->getNature())) {
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - 3* (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-    else if (dePokemon->getCounterSet().count(this->getNature())){
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - (int)0.25* (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-    else {
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-
+    this->SpecialAttackDamage(dePokemon);
     if (EnSickPossible()) {
         this->EnSick(dePokemon);
     }
@@ -196,31 +188,9 @@ void Fire::SpecialAttack(Pokemon *dePokemon) {
 
 void Fire::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setState(BURNED);
-    sickPokemon->setSickPoint((int) 0.2* this->getAttackPoint());
+    sickPokemon->setSickPoint((int)(0.25* this->getAttackPoint()));
     sickPokemon->setSickCounter(3);
 }
-
-//Water::Water(Kind kind) {
-//    this->setNature(WATER);
-//    this->setKind(kind);
-//    this->setName("UNKNOWN");
-//    this->setCharacter((Character)GiftGenFunc(0, 3));
-//    this->setLevel(1);
-//    this->setExperiencePoint(0);
-//    this->setAttackPoint(GiftGenFunc(20, 30));
-//    this->setDefencePoint(GiftGenFunc(10, 20));
-//    this->setTotalHP(GiftGenFunc(50, 60));
-//    this->setCurrentHP(this->getTotalHP());
-//    this->setIntervalIncrease(GiftGenFunc(2, 4));
-//    this->setCriticalPoint(10);
-//    set<Nature> counterNature;
-//    counterNature.insert(FIRE);
-//    this->setCounter(counterNature);
-//    this->setState(HEALTHY);
-//    this->setSickPoint(0);
-//    this->setSickPoint(0);
-//    this->setAlive(ALIVE);
-//}
 
 Water::Water(Kind kind, int level) {
     this->setNature(WATER);
@@ -240,7 +210,7 @@ Water::Water(Kind kind, int level) {
     this->setCounter(counterNature);
     this->setState(HEALTHY);
     this->setSickPoint(0);
-    this->setSickPoint(0);
+    this->setSickCounter(0);
     this->setAlive(ALIVE);
     while (this->getLevel() < level) {
         this->Upgrade();
@@ -249,16 +219,7 @@ Water::Water(Kind kind, int level) {
 }
 
 void Water::SpecialAttack(Pokemon *dePokemon) {
-    if (this->getCounterSet().count(dePokemon->getNature())) {
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - 3* (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-    else if (dePokemon->getCounterSet().count(this->getNature())){
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - (int)0.25* (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-    else {
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-
+    this->SpecialAttackDamage(dePokemon);
     if (EnSickPossible()) {
         this->EnSick(dePokemon);
     }
@@ -269,29 +230,6 @@ void Water::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setSickPoint((int) 0.2* this->getAttackPoint());
     sickPokemon->setSickCounter(3);
 }
-
-//Bush::Bush(Kind kind) {
-//    this->setNature(BUSH);
-//    this->setKind(kind);
-//    this->setName("UNKNOWN");
-//    this->setCharacter((Character)GiftGenFunc(0, 3));
-//    this->setLevel(1);
-//    this->setExperiencePoint(0);
-//    this->setAttackPoint(GiftGenFunc(20, 30));
-//    this->setDefencePoint(GiftGenFunc(10, 20));
-//    this->setTotalHP(GiftGenFunc(50, 60));
-//    this->setCurrentHP(this->getTotalHP());
-//    this->setIntervalIncrease(GiftGenFunc(2, 4));
-//    this->setCriticalPoint(10);
-//    set<Nature> counterNature;
-//    counterNature.insert(WATER);
-//    counterNature.insert(ELECTRICITY);
-//    this->setCounter(counterNature);
-//    this->setState(HEALTHY);
-//    this->setSickPoint(0);
-//    this->setSickPoint(0);
-//    this->setAlive(ALIVE);
-//}
 
 Bush::Bush(Kind kind, int level) {
     this->setNature(BUSH);
@@ -312,7 +250,7 @@ Bush::Bush(Kind kind, int level) {
     this->setCounter(counterNature);
     this->setState(HEALTHY);
     this->setSickPoint(0);
-    this->setSickPoint(0);
+    this->setSickCounter(0);
     this->setAlive(ALIVE);
     while (this->getLevel() < level) {
         this->Upgrade();
@@ -321,16 +259,7 @@ Bush::Bush(Kind kind, int level) {
 }
 
 void Bush::SpecialAttack(Pokemon *dePokemon) {
-    if (this->getCounterSet().count(dePokemon->getNature())) {
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - 3* (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-    else if (dePokemon->getCounterSet().count(this->getNature())){
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - (int)0.25* (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-    else {
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-
+    this->SpecialAttackDamage(dePokemon);
     if (EnSickPossible()) {
         this->EnSick(dePokemon);
     }
@@ -341,28 +270,6 @@ void Bush::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setSickPoint((int) 0.2* this->getAttackPoint());
     sickPokemon->setSickCounter(3);
 }
-
-//Electricity::Electricity(Kind kind) {
-//    this->setNature(ELECTRICITY);
-//    this->setKind(kind);
-//    this->setName("UNKNOWN");
-//    this->setCharacter((Character)GiftGenFunc(0, 3));
-//    this->setLevel(1);
-//    this->setExperiencePoint(0);
-//    this->setAttackPoint(GiftGenFunc(20, 30));
-//    this->setDefencePoint(GiftGenFunc(10, 20));
-//    this->setTotalHP(GiftGenFunc(50, 60));
-//    this->setCurrentHP(this->getTotalHP());
-//    this->setIntervalIncrease(GiftGenFunc(2, 4));
-//    this->setCriticalPoint(10);
-//    set<Nature> counterNature;
-//    counterNature.insert(WATER);
-//    this->setCounter(counterNature);
-//    this->setState(HEALTHY);
-//    this->setSickPoint(0);
-//    this->setSickPoint(0);
-//    this->setAlive(ALIVE);
-//}
 
 Electricity::Electricity(Kind kind, int level) {
     this->setNature(ELECTRICITY);
@@ -382,7 +289,7 @@ Electricity::Electricity(Kind kind, int level) {
     this->setCounter(counterNature);
     this->setState(HEALTHY);
     this->setSickPoint(0);
-    this->setSickPoint(0);
+    this->setSickCounter(0);
     this->setAlive(ALIVE);
     while (this->getLevel() < level) {
         //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Attack Point:" << this->getAttackPoint() << endl;
@@ -393,16 +300,7 @@ Electricity::Electricity(Kind kind, int level) {
 }
 
 void Electricity::SpecialAttack(Pokemon *dePokemon) {
-    if (this->getCounterSet().count(dePokemon->getNature())) {
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - 3* (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-    else if (dePokemon->getCounterSet().count(this->getNature())){
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - (int)0.25* (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-    else {
-        dePokemon->setCurrentHP(dePokemon->getCurrentHP() - (this->getAttackPoint() - dePokemon->getDefencePoint()));
-    }
-
+    this->SpecialAttackDamage(dePokemon);
     if (EnSickPossible()) {
         this->EnSick(dePokemon);
     }

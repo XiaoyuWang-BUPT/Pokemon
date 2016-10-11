@@ -9,6 +9,7 @@
 using namespace std;
 
 enum Nature {FIRE, WATER, BUSH, ELECTRICITY};
+const string natureOfString[] = {"Fire", "Water", "Bush", "Electricity"};
 enum Kind{/*TODO 具体的小精灵的细类--如小火龙 皮卡丘 水箭龟 等*/
             CHARMANDER, CHARMELEON, CHARIZARD, //小火龙 火恐龙 喷火龙
             TORCHIC, COMBUSKEN, BLAZIKEN, //火稚鸡 力壮鸡 火焰鸡
@@ -40,12 +41,15 @@ const int EmbryoPokemon[] = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33}; //对�
 const int IntermediatePokemon[] = {1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34}; //对战难度--普通 创建中级口袋妖怪
 const int LastPokemon[]= {2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35}; //对战难度--困难 创建高级口袋妖怪
 enum State {HEALTHY, DROWNED, BURNED, POISONED, FROZEN};
+const string stateOfString[] = {"Healthy", "Drowned", "Burned", "Poisoned", "Frozen"};
 enum Character {AGGRESIVE, DEFENSIVE, TANK, QUICK};
+const string characterOfString[] = {"Aggresive", "Denfensive", "Tank", "Quick"};
 enum evoLevel {EL1 = 6, EL2 = 13};
 const int ExpGrade[17] = {0, 0, 50, 120, 210, 320, 500, 720,
                    1000, 1320, 1800, 2400, 3160, 3900,
                    4900, 6200};
 const bool ALIVE = true, DEAD = false;
+const string aliveOfString[] = {"Dead", "Alive"};
 const int UpGradeAttrIncStrong = 10;
 const int UpGradeAttrIncNormal = 7;
 const int UpGradeAttrIncWeak = 4;
@@ -223,7 +227,9 @@ public:
 
     virtual void SpecialAttack(Pokemon *dePokemon){}//TODO 子类继承覆盖 根据属性进行附带属性效果的特殊攻击 特殊攻击可以借助属性克制增加伤害 有概率致病
 
-    virtual void EnSick(Pokemon *sickPokemon){}
+    void SpecialAttackDamage(Pokemon *dePokemon);// 特殊攻击当即造成伤害
+
+    virtual void EnSick(Pokemon *sickPokemon){}// 特殊攻击致病
 
     bool EnSickPossible();
 

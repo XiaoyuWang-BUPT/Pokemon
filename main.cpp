@@ -4,21 +4,52 @@
 #include "pokemon.h"
 #include "pokemonfactory.h"
 
+void PrintPokeData(Pokemon *pokemon) {
+    cout << "Kind:" << kindOfString[pokemon->getKind()] <<  "  Alive:" << aliveOfString[pokemon->getAlive()] <<
+            "  Nature:" << natureOfString[pokemon->getNature()] << "  Character:" << characterOfString[pokemon->getCharacter()] <<
+            "  Level:" << pokemon->getLevel() << "  experiencePoint:"  << pokemon->getExperiencePoint() <<
+            "  Attack Point:" << pokemon->getAttackPoint() << "  Defence Point:" << pokemon->getDefencePoint() <<
+            "  HP(C/T):" << pokemon->getCurrentHP() << "/" << pokemon->getTotalHP() <<
+            "  intervalIncrease:" << pokemon->getIntervalIncrease() << "  Critical Point:" << pokemon->getCriticalPoint() <<
+            "  State:" << pokemon->getState() <<
+            "  Sick Point:" << pokemon->getSickPoint() << "  Sick Counter:" << pokemon->getSickCounter();
+
+    int counterSetSize = pokemon->getCounterSet().size();
+    cout << "  Counter Set:";
+    set<Nature>::iterator it = pokemon->getCounterSet().begin();
+    for (int i = 0; i< counterSetSize; i++) {
+        cout << natureOfString[*it];
+        if (i < counterSetSize- 1)
+            cout << "-";
+        it++;
+    }
+    cout << endl;
+    cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
+}
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     Widget w;
-    w.show();
+    //w.show();//调试先不显示窗口 第三阶段显示窗口
 
     PokemonFactory *pokemonFactory = new PokemonFactory();
-    Pokemon *charamander = pokemonFactory->CreatePokemon(CHARMANDER, 3);
-    Pokemon *pikachu = pokemonFactory->CreatePokemon(PIKACHU, 4);
-    cout << "Kind:" << kindOfString[pikachu->getKind()] << " Level:" << pikachu->getLevel() << "  Attack Point:" << pikachu->getAttackPoint() << "  Defence Point:" << pikachu->getDefencePoint() << "  TotalHP:" << pikachu->getTotalHP() << endl;
-    cout << "Kind:" << kindOfString[charamander->getKind()] << " Level:" << charamander->getLevel() << "  Attack Point:" << charamander->getAttackPoint() << "  Defence Point:" << charamander->getDefencePoint() << "  TotalHP:" << charamander->getTotalHP() << endl;
+    Pokemon *charamander = pokemonFactory->CreatePokemon(CHARMANDER, 5);
+    Pokemon *pikachu = pokemonFactory->CreatePokemon(PIKACHU, 15);
+
+    PrintPokeData(charamander);
+    PrintPokeData(pikachu);
     pikachu->Attack(charamander);
-    cout << charamander->getCurrentHP() << "/" << charamander->getTotalHP() << endl;
+    charamander->DeadJudge();
+    PrintPokeData(charamander);
+
     charamander->SpecialAttack(pikachu);
-    cout << pikachu->getCurrentHP() << "/" << pikachu->getTotalHP() << endl;
+    charamander->DeadJudge();
+    PrintPokeData(pikachu);
+
+    delete pikachu;
+    delete charamander;
+    delete pokemonFactory;
 
     return a.exec();
 }
