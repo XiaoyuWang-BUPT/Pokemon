@@ -241,9 +241,7 @@ public:
 
     void Upgrade();
 
-    virtual void Evolution(int evoLevel){
-        //rTODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
-    }
+    void Evolution(int evoLevel); //换图标 换Kind
 };
 
 class Fire : public Pokemon
@@ -254,7 +252,6 @@ public:
     ~Fire() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
-    virtual void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
 };
 
 class Water : public Pokemon
@@ -265,7 +262,6 @@ public:
     ~Water() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
-    void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
 };
 
 class Bush : public Pokemon
@@ -276,7 +272,6 @@ public:
     ~Bush() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
-    void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
 };
 
 class Electricity : public Pokemon
@@ -287,7 +282,6 @@ public:
     ~Electricity() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
-    void Evolution(int evoLevel){}//TODO  子类继承覆盖  换图标 如果时默认命名则更新名字（小火龙-> 火恐龙-> 喷火龙）
 };
 
 #endif // POKEMON_H

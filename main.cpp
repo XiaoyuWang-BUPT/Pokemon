@@ -11,7 +11,7 @@ void PrintPokeData(Pokemon *pokemon) {
             "  Attack Point:" << pokemon->getAttackPoint() << "  Defence Point:" << pokemon->getDefencePoint() <<
             "  HP(C/T):" << pokemon->getCurrentHP() << "/" << pokemon->getTotalHP() <<
             "  intervalIncrease:" << pokemon->getIntervalIncrease() << "  Critical Point:" << pokemon->getCriticalPoint() <<
-            "  State:" << pokemon->getState() <<
+            "  State:" << stateOfString[pokemon->getState()] <<
             "  Sick Point:" << pokemon->getSickPoint() << "  Sick Counter:" << pokemon->getSickCounter();
 
     int counterSetSize = pokemon->getCounterSet().size();
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     //w.show();//调试先不显示窗口 第三阶段显示窗口
 
     PokemonFactory *pokemonFactory = new PokemonFactory();
-    Pokemon *charamander = pokemonFactory->CreatePokemon(CHARMANDER, 5);
+    Pokemon *charamander = pokemonFactory->CreatePokemon(CHARMANDER, 6);
     Pokemon *pikachu = pokemonFactory->CreatePokemon(PIKACHU, 15);
 
     PrintPokeData(charamander);

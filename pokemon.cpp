@@ -93,9 +93,18 @@ void Pokemon::DeadJudge()
     }
 }
 
+bool isInStandard(Kind kind, const int standard[]) {
+    for (int i = 0; i < 36; i++) {
+        if (kind == standard[i])
+            return true;
+    }
+    return false;
+}
+
 void Pokemon::Upgrade()
 {
     this->setLevel(this->getLevel()+ 1);
+    cout << "Kind: " << kindOfString[this->getKind()] << "  Level:" << this->getLevel() << "  Kind:" << kindOfString[this->getKind()] << endl;
     switch (this->getCharacter()) {
     case AGGRESIVE:
         this->setAttackPoint(this->getAttackPoint() + UpGradeAttrIncStrong);
@@ -126,31 +135,40 @@ void Pokemon::Upgrade()
     };
     this->setCriticalPoint(this->getCriticalPoint() + (this->getLevel()% 3== 0? 5: 0));
     if (this->getLevel() == EL1) {
-        this->setAttackPoint((int) this->getAttackPoint()* 1.2);
-        this->setDefencePoint((int) this->getDefencePoint()* 1.2);
-        this->setTotalHP((int) this->getTotalHP()* 1.5);
         this->Evolution(EL1);
     }
-    if (this->getLevel() == EL2) {
-        this->setAttackPoint((int) this->getAttackPoint()* 1.5);
-        this->setDefencePoint((int) this->getDefencePoint()* 1.5);
-        this->setTotalHP((int) this->getTotalHP()* 1.8);
+    if (this->getLevel() == EL2 && !(isInStandard(this->getKind(), LastPokemon))) {
         this->Evolution(EL2);
     }
+}
+
+//换图标 换Kind
+void Pokemon::Evolution(int evoLevel) {
+    //cout << kindOfString[this->getKind()];
+    this->setKind((Kind)(this->getKind()+ 1));
+    switch (evoLevel) {
+        case EL1:
+            this->setAttackPoint((int) this->getAttackPoint()* 1.2);
+            this->setDefencePoint((int) this->getDefencePoint()* 1.2);
+            this->setTotalHP((int) this->getTotalHP()* 1.5);
+            break;
+        case EL2:
+            this->setAttackPoint((int) this->getAttackPoint()* 1.5);
+            this->setDefencePoint((int) this->getDefencePoint()* 1.5);
+            this->setTotalHP((int) this->getTotalHP()* 1.8);
+            break;
+        default:
+            cout << "Errro In Evolution Function: illegal evolution level" << endl;
+            break;
+    };
+    //cout<< " is evoluting to " << kindOfString[this->getKind()] << endl;
 }
 
 int GiftGenFunc(int MIN, int MAX) {
     return MIN + Random(MAX - MIN);
 }
 
-bool isInStandard(Kind kind, int standard[]) {
-    for (int i = 0; i < 36; i++) {
-        if (kind == standard[i])
-            return true;
-    }
-    return false;
-}
-
+//御三家构造时经验值为零 模拟对战 或者 野外抓捕时为随机经验值 在相应的类函数解决
 Fire::Fire(Kind kind, int level) {
     this->setNature(FIRE);
     this->setKind(kind);
@@ -172,7 +190,7 @@ Fire::Fire(Kind kind, int level) {
     this->setSickCounter(0);
     this->setAlive(ALIVE);
     while (this->getLevel() < level) {
-        //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Defence Point:" << this->getDefencePoint() << "  TotalHP:" << this->getTotalHP() << endl;
+        //cout << "Kind: " << kindOfString[this->getKind()] << "  Level:" << this->getLevel() << endl;
         this->Upgrade();
     }
     this->setCurrentHP(this->getTotalHP());
