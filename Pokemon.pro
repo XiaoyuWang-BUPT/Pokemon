@@ -12,13 +12,15 @@ TARGET = Pokemon
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        widget.cpp \
-    pokemon.cpp \
-    pokemonfactory.cpp
+SOURCES += src/main.cpp\
+        src/widget.cpp \
+    src/pokemon.cpp \
+    src/pokemonfactory.cpp
 
-HEADERS  += widget.h \
-    pokemon.h \
-    pokemonfactory.h
+HEADERS  += src/widget.h \
+    src/pokemon.h \
+    src/pokemonfactory.h \
+    src/catchunittest.h \
+    lib/catch.hpp
 
 FORMS    += widget.ui
