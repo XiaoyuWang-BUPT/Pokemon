@@ -19,29 +19,29 @@ bool isKindAgreeLevel(Kind kind, int level) {
     return false;
 }
 
-Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level) {
+Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name) {
     Pokemon *pokemonCreated;
     if (kind >= CHARMANDER && kind <= INFERNAPE) {
         if (isKindAgreeLevel(kind, level))
-            pokemonCreated = new Fire(kind, level);
+            pokemonCreated = new Fire(kind, level, name);
         else
             cout << "Kind does NOT meet level" << endl;
     }
     else if (kind >= SQUIRTLE && kind <= EMPOLEON) {
         if (isKindAgreeLevel(kind, level))
-            pokemonCreated = new Water(kind, level);
+            pokemonCreated = new Water(kind, level, name);
         else
             cout << "Kind does NOT meet level" << endl;
     }
     else if (kind >= BULBASAUR && kind <= TORTERRA) {
         if (isKindAgreeLevel(kind, level))
-            pokemonCreated = new Bush(kind, level);
+            pokemonCreated = new Bush(kind, level, name);
         else
             cout << "Kind does NOT meet level" << endl;
     }
     else if (kind >= PICHU && kind <= AMPHAROS) {
         if (isKindAgreeLevel(kind, level))
-            pokemonCreated = new Electricity(kind, level);
+            pokemonCreated = new Electricity(kind, level, name);
         else
             cout << "Kind does NOT meet level" << endl;
     }

@@ -24,9 +24,9 @@ bool isKindCorrespondLevel(Kind kind, int level) {
 TEST_CASE("Pokemon Unit Test") {
     PokemonFactory *pokemonFactory4Test = new PokemonFactory();
 
-    Pokemon *charmander4Test = pokemonFactory4Test->CreatePokemon(CHARMANDER, 4);
-    Pokemon *charmeleon4Test = pokemonFactory4Test->CreatePokemon(CHARMELEON, 10);
-    Pokemon *charizard4Test = pokemonFactory4Test->CreatePokemon(CHARIZARD, 14);
+    Pokemon *charmander4Test = pokemonFactory4Test->CreatePokemon(CHARMANDER, 4, "charmander4Test");
+    Pokemon *charmeleon4Test = pokemonFactory4Test->CreatePokemon(CHARMELEON, 10, "charmeleon4Test");
+    Pokemon *charizard4Test = pokemonFactory4Test->CreatePokemon(CHARIZARD, 14, "charizard4Test");
 
     SECTION("PokemonFactory Create Excuted--Right kind && Right level(Hard to judge others)") {
         REQUIRE( charmander4Test->getKind() == CHARMANDER );

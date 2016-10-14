@@ -1,5 +1,4 @@
-﻿#include "widget.h"
-#include <QApplication>
+﻿#include <QCoreApplication>
 
 #include "pokemon.h"
 #include "pokemonfactory.h"
@@ -7,17 +6,17 @@
 #include "catchunittest.h"
 
 void PrintPokeData(Pokemon *pokemon) {
-    cout << "Kind:" << kindOfString[pokemon->getKind()] <<  "\tAlive:" << aliveOfString[pokemon->getAlive()] <<
+    cout << "Kind:" << kindOfString[pokemon->getKind()] <<  "\tName:" << pokemon->getName() << "\tAlive:" << aliveOfString[pokemon->getAlive()] <<
             "\tNature:" << natureOfString[pokemon->getNature()] << "\tCharacter:" << characterOfString[pokemon->getCharacter()] <<
-            "\tLevel:" << pokemon->getLevel() << "\texperiencePoint:"  << pokemon->getExperiencePoint() <<
-            "\tAttack Point:" << pokemon->getAttackPoint() << "\tDefence Point:" << pokemon->getDefencePoint() <<
-            "\tHP(C/T):" << pokemon->getCurrentHP() << "/" << pokemon->getTotalHP() <<
-            "\tintervalIncrease:" << pokemon->getIntervalIncrease() << "\tCritical Point:" << pokemon->getCriticalPoint() <<
+            "\nLevel:" << pokemon->getLevel() << "\tExperiencePoint:"  << pokemon->getExperiencePoint() <<
+            "\tAttackPoint:" << pokemon->getAttackPoint() << "\tDefencePoint:" << pokemon->getDefencePoint() <<
+            "\nHP(C/T):" << pokemon->getCurrentHP() << "/" << pokemon->getTotalHP() <<
+            "\tIntervalIncrease:" << pokemon->getIntervalIncrease() << "\tCriticalPoint:" << pokemon->getCriticalPoint() <<
             "\tState:" << stateOfString[pokemon->getState()] <<
-            "\tSick Point:" << pokemon->getSickPoint() << "\tSick Counter:" << pokemon->getSickCounter();
+            "\nSickPoint:" << pokemon->getSickPoint() << "\tSickCounter:" << pokemon->getSickCounter();
 
     int counterSetSize = pokemon->getCounterSet().size();
-    cout << "\tCounter Set:";
+    cout << "\tCounterSet:";
     set<Nature>::iterator it = pokemon->getCounterSet().begin();
     for (int i = 0; i< counterSetSize; i++) {
         cout << natureOfString[*it];
@@ -31,13 +30,16 @@ void PrintPokeData(Pokemon *pokemon) {
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    Widget w;
-//    w.show();//调试先不显示窗口 第三阶段显示窗口
+    QCoreApplication a(argc, argv);
 
     PokemonFactory *pokemonFactory = new PokemonFactory();
-    Pokemon *charamander = pokemonFactory->CreatePokemon(CHARMELEON, 6);
-    Pokemon *pikachu = pokemonFactory->CreatePokemon(RAICHU, 15);
+    cout << "Please name your pokemon: ";
+    string name;
+    cin >> name;
+    Pokemon *charamander = pokemonFactory->CreatePokemon(CHARMELEON, 6, name);
+    cout << "Please name your pokemon: ";
+    cin >> name;
+    Pokemon *pikachu = pokemonFactory->CreatePokemon(RAICHU, 15, name);
 
     PrintPokeData(charamander);
     PrintPokeData(pikachu);

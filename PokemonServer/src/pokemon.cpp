@@ -84,11 +84,11 @@ bool Pokemon::EnSickPossible() {
 bool Pokemon::CriticalStrike() {
     int randNum = randFunction();
     if (randNum <= this->getCriticalPoint()) {
-        cout << "critical true" << endl;
+        cout << "Critical True" << endl;
         cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
         return true;
     }
-    cout << "critical false" << endl;
+    cout << "Critical False" << endl;
     cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
     return false;
 }
@@ -177,15 +177,21 @@ void Pokemon::Evolution(int evoLevel) {
     //cout<< " is evoluting to " << kindOfString[this->getKind()] << endl;
 }
 
+//bool Pokemon::equals(Pokemon *anotherPM) {
+//    if (this->getName() == anotherPM->getName())
+//        return true;
+//    return false;
+//}
+
 int GiftGenFunc(int MIN, int MAX) {
     return MIN + Random(MAX - MIN);
 }
 
 //御三家构造时经验值为零 模拟对战 或者 野外抓捕时为随机经验值 在相应的类函数解决
-Fire::Fire(Kind kind, int level) {
+Fire::Fire(Kind kind, int level, string name) {
     this->setNature(FIRE);
     this->setKind(kind);
-    //this->setName("UNKNOWN");
+    this->setName(name);
     this->setCharacter((Character)GiftGenFunc(0, 3));
     this->setLevel(1);
     this->setExperiencePoint(0);
@@ -223,10 +229,10 @@ void Fire::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setSickCounter(3);
 }
 
-Water::Water(Kind kind, int level) {
+Water::Water(Kind kind, int level, string name) {
     this->setNature(WATER);
     this->setKind(kind);
-    //this->setName("UNKNOWN");
+    this->setName(name);
     this->setCharacter((Character)GiftGenFunc(0, 3));
     this->setLevel(1);
     this->setExperiencePoint(0);
@@ -262,10 +268,10 @@ void Water::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setSickCounter(3);
 }
 
-Bush::Bush(Kind kind, int level) {
+Bush::Bush(Kind kind, int level, string name) {
     this->setNature(BUSH);
     this->setKind(kind);
-    //this->setName("UNKNOWN");
+    this->setName(name);
     this->setCharacter((Character)GiftGenFunc(0, 3));
     this->setLevel(1);
     this->setExperiencePoint(0);
@@ -302,10 +308,10 @@ void Bush::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setSickCounter(3);
 }
 
-Electricity::Electricity(Kind kind, int level) {
+Electricity::Electricity(Kind kind, int level, string name) {
     this->setNature(ELECTRICITY);
     this->setKind(kind);
-    //this->setName("UNKNOWN");
+    this->setName(name);
     this->setCharacter((Character)GiftGenFunc(0, 3));
     this->setLevel(1);
     this->setExperiencePoint(0);

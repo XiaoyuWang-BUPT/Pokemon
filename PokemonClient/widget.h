@@ -2,12 +2,9 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <QObject>
-#include <QButtonGroup>
-#include <QString>
-#include <QKeyEvent>
-//#include "pokemon.h"
-//#include "pokemonfactory.h"
+#include <QMessageBox>
+
+#include "dialog.h"
 
 namespace Ui {
 class Widget;
@@ -23,6 +20,9 @@ public:
 
 private:
     Ui::Widget *ui;
+    Dialog dialog;
+private slots:
+    void onDialogClicked();
 };
 
 #endif // WIDGET_H
