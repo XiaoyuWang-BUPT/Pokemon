@@ -14,7 +14,6 @@
 
   * 单元测试
 
-    ​
 
 ### v0.1.1 (2016/10/10)
 
@@ -48,13 +47,16 @@
 ### v0.1.4 (2016/10/13)
 
 * 确定C/S框架 原源程序在Server端运行 将QWidget程序改为QConsole程序
-
 * 存在自定义小精灵名字的方法
-
-  ​
+* TODO
+  * server端数据库
+  * server client 间 socket通信
 
 ### v0.1.5 (2016/10/14)
 
 * 创建Player类
 * Client端窗口切换
 * 使用SQLite3维护数据库
+* TODO
+  * 学习ORMLite动态创建数据库
+  * server client间 socket通信
