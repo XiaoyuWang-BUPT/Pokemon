@@ -57,3 +57,4 @@
 
 * 创建Player类
 * Client端窗口切换
+* 使用SQLite3维护数据库

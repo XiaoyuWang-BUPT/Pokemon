@@ -53,10 +53,10 @@ void Pokemon::Attack(Pokemon *dePokemon) {
 void Pokemon::SpecialAttackDamage(Pokemon *dePokemon) {
     int specialDamage = this->getAttackPoint() - dePokemon->getDefencePoint();
     if (this->getCounterSet().count(dePokemon->getNature())) {
-        specialDamage *= 3;
+        specialDamage *= (int)2* specialDamage;
     }
     else if (dePokemon->getCounterSet().count(this->getNature())){
-        specialDamage = (int)0.25* specialDamage;
+        specialDamage = (int)0.5* specialDamage;
     }
     if (specialDamage < 0)
         specialDamage = 0;

@@ -4,16 +4,17 @@
 #include "pokemonfactory.h"
 
 #include "catchunittest.h"
+#include "./lib/sqlite3.h"
 
 void PrintPokeData(Pokemon *pokemon) {
     cout << "Kind:" << kindOfString[pokemon->getKind()] <<  "\tName:" << pokemon->getName() << "\tAlive:" << aliveOfString[pokemon->getAlive()] <<
-            "\tNature:" << natureOfString[pokemon->getNature()] << "\tCharacter:" << characterOfString[pokemon->getCharacter()] <<
-            "\nLevel:" << pokemon->getLevel() << "\tExperiencePoint:"  << pokemon->getExperiencePoint() <<
-            "\tAttackPoint:" << pokemon->getAttackPoint() << "\tDefencePoint:" << pokemon->getDefencePoint() <<
-            "\nHP(C/T):" << pokemon->getCurrentHP() << "/" << pokemon->getTotalHP() <<
+            "\tNature:" << natureOfString[pokemon->getNature()] << "\nCharacter:" << characterOfString[pokemon->getCharacter()] <<
+            "\tLevel:" << pokemon->getLevel() << "\tExperiencePoint:"  << pokemon->getExperiencePoint() <<
+            "\tAttackPoint:" << pokemon->getAttackPoint() << "\nDefencePoint:" << pokemon->getDefencePoint() <<
+            "\tHP(C/T):" << pokemon->getCurrentHP() << "/" << pokemon->getTotalHP() <<
             "\tIntervalIncrease:" << pokemon->getIntervalIncrease() << "\tCriticalPoint:" << pokemon->getCriticalPoint() <<
-            "\tState:" << stateOfString[pokemon->getState()] <<
-            "\nSickPoint:" << pokemon->getSickPoint() << "\tSickCounter:" << pokemon->getSickCounter();
+            "\nState:" << stateOfString[pokemon->getState()] <<
+            "\tSickPoint:" << pokemon->getSickPoint() << "\tSickCounter:" << pokemon->getSickCounter();
 
     int counterSetSize = pokemon->getCounterSet().size();
     cout << "\tCounterSet:";
@@ -56,6 +57,21 @@ int main(int argc, char *argv[])
     delete pokemonFactory;
 
     int result = Catch::Session().run( argc, argv );
+
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open("test.db", &db);
+
+    if( rc ){
+       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+       exit(0);
+    }
+    else{
+       fprintf(stderr, "Opened database successfully\n");
+    }
+    sqlite3_close(db);
 
     return a.exec();
 }

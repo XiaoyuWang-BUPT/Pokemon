@@ -1,5 +1,6 @@
 ﻿#include "widget.h"
 #include <QApplication>
+#include <QDebug>
 
 #include "dialog.h"
 
