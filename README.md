@@ -60,3 +60,15 @@
 * TODO
   * 学习ORMLite动态创建数据库
   * server client间 socket通信
+
+### v0.1.6 (2016/10/21)
+
+* 完成PoorORMLite 添加`PoorORMLite.h`到*server* 
+
+* TODO
+
+  *   创建与`Class Player`对应的`Struct Player`存储`Player` 信息 `Primary Key`为`name`
+
+  *   创建与`Class Pokemon`对应的`Struct Pokemon`存储`Pokemon`信息 `Primary Key`为`name` 并存储`owner`作为`condition: Where`
+
+      ​

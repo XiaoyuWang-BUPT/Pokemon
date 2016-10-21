@@ -22,4 +22,5 @@ HEADERS += src/catchunittest.h \
     lib/catch.hpp \
     src/player.h \
     lib/sqlite3.h \
-    src/playerfactory.h
+    src/playerfactory.h \
+    lib/poorormlite.h
