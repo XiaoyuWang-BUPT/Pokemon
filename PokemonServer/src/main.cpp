@@ -3,6 +3,9 @@
 #include "pokemon.h"
 #include "pokemonfactory.h"
 
+#include "player.h"
+#include "playerfactory.h"
+
 #include "catchunittest.h"
 #include "./lib/sqlite3.h"
 
@@ -29,10 +32,26 @@ void PrintPokeData(Pokemon *pokemon) {
     cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
 }
 
+void PrintPlayer(Player *player)
+{
+    cout << "Name: " << player->getName() << "\tPassword: (" << player->getPassword() << ") "
+         << "\tPokemon Number: " << player->getPMNumber() << "\nRank: " << player->getRank()
+         << "\tStart Time: " << player->getBeginDT().toString("yyyy/MM/dd hh:mm").toStdString()
+         << "\tGame Time: " << player->getGameTime().substr(0, player->getGameTime().length() - 2) << "Hour "
+         << player->getGameTime().substr(player->getGameTime().length() - 2, player->getGameTime().length()) << "Minute" << endl
+         << "Pokemon Captured: ";
+    for (Pokemon* gp : player->getGotPokemon())
+    {
+        cout << kindOfString[gp->getKind()] << "-" << gp->getName() << " ";
+    }
+    cout << endl;
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    //One apparent visual test
     PokemonFactory *pokemonFactory = new PokemonFactory();
     cout << "Please name your pokemon: ";
     string name;
@@ -41,6 +60,12 @@ int main(int argc, char *argv[])
     cout << "Please name your pokemon: ";
     cin >> name;
     Pokemon *pikachu = pokemonFactory->CreatePokemon(RAICHU, 15, name);
+
+    struct PokemonInfo pokemonInfo = {
+        0, 1, "RainING's Pokemon", 0, 7, 900, 120, 38,
+        678, 467, 34, 25, 2, 1, 2, true
+    };
+    Pokemon *RPokemon = pokemonFactory->CreatePokemon(pokemonInfo);
 
     PrintPokeData(charamander);
     PrintPokeData(pikachu);
@@ -52,26 +77,31 @@ int main(int argc, char *argv[])
     charamander->DeadJudge();
     PrintPokeData(pikachu);
 
-    delete pikachu;
-    delete charamander;
+    PrintPokeData(RPokemon);
+
     delete pokemonFactory;
 
+    /* Unit Test */
     int result = Catch::Session().run( argc, argv );
 
-    sqlite3 *db;
-    char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open("test.db", &db);
-
-    if( rc ){
-       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-       exit(0);
-    }
-    else{
-       fprintf(stderr, "Opened database successfully\n");
-    }
-    sqlite3_close(db);
+    /* A apparent visual test for Player */
+    PlayerFactory *playerFactory = new PlayerFactory();
+    struct PlayerInfo playerInfo = {
+        "Lee",
+        "2014232",
+        0,
+        9999,
+        "201611171230", //201611171230 2016-11-17 12:30
+        "122300" //1223hours 00minutes
+    };
+    Player *biuxxx = playerFactory->CreatePlayer(playerInfo);
+    biuxxx->addPokemon(pikachu);
+    biuxxx->addPokemon(charamander);
+    PrintPlayer(biuxxx);
+    delete pikachu;
+    delete charamander;
+    delete biuxxx;
+    delete playerFactory;
 
     return a.exec();
 }

@@ -1,0 +1,4 @@
+*.stash
+*.o
+*.Debug
+build-PokemonServer-Qt5_7_0-Debug/Makefile.Release

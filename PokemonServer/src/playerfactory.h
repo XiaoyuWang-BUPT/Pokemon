@@ -10,7 +10,8 @@ class PlayerFactory
 public:
     PlayerFactory(){}
     ~PlayerFactory(){}
-    Player *CreatePlayer(PlayerKind playerKind, string name, string password);
+    //Player *CreatePlayer(PlayerKind playerKind, string name, string password);
+    Player *CreatePlayer(struct PlayerInfo playerInfo);
 };
 
 #endif // PLAYERFACTORY_H

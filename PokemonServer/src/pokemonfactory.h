@@ -9,6 +9,7 @@ public:
     PokemonFactory(){}
     ~PokemonFactory(){}
     Pokemon *CreatePokemon(Kind kind, int level, string name);
+    Pokemon *CreatePokemon(struct PokemonInfo pokemonInfo);
 };
 
 #endif // POKEMONFACTORY_H

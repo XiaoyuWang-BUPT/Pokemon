@@ -23,25 +23,76 @@ Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name) {
     Pokemon *pokemonCreated;
     if (kind >= CHARMANDER && kind <= INFERNAPE) {
         if (isKindAgreeLevel(kind, level))
+        {
             pokemonCreated = new Fire(kind, level, name);
+        }
         else
             cout << "Kind does NOT meet level" << endl;
     }
     else if (kind >= SQUIRTLE && kind <= EMPOLEON) {
         if (isKindAgreeLevel(kind, level))
+        {
             pokemonCreated = new Water(kind, level, name);
+        }
         else
             cout << "Kind does NOT meet level" << endl;
     }
     else if (kind >= BULBASAUR && kind <= TORTERRA) {
         if (isKindAgreeLevel(kind, level))
+        {
             pokemonCreated = new Bush(kind, level, name);
+        }
         else
             cout << "Kind does NOT meet level" << endl;
     }
     else if (kind >= PICHU && kind <= AMPHAROS) {
         if (isKindAgreeLevel(kind, level))
+        {
             pokemonCreated = new Electricity(kind, level, name);
+        }
+        else
+            cout << "Kind does NOT meet level" << endl;
+    }
+    else {
+        cout << "Can not find kind: \"" << kind << "\" in enum Kind" << endl;
+    }
+    return pokemonCreated;
+}
+
+Pokemon *PokemonFactory::CreatePokemon(PokemonInfo pokemonInfo)
+{
+    Pokemon *pokemonCreated;
+    Kind kind = (Kind)pokemonInfo.kind;
+    int level = pokemonInfo.level;
+     if (kind >= CHARMANDER && kind <= INFERNAPE) {
+        if (isKindAgreeLevel(kind, level))
+        {
+            pokemonCreated = new Fire(pokemonInfo);
+        }
+        else
+            cout << "Kind does NOT meet level" << endl;
+    }
+    else if (kind >= SQUIRTLE && kind <= EMPOLEON) {
+        if (isKindAgreeLevel(kind, level))
+        {
+            pokemonCreated = new Water(pokemonInfo);
+        }
+        else
+            cout << "Kind does NOT meet level" << endl;
+    }
+    else if (kind >= BULBASAUR && kind <= TORTERRA) {
+        if (isKindAgreeLevel(kind, level))
+        {
+            pokemonCreated = new Bush(pokemonInfo);
+        }
+        else
+            cout << "Kind does NOT meet level" << endl;
+    }
+    else if (kind >= PICHU && kind <= AMPHAROS) {
+        if (isKindAgreeLevel(kind, level))
+        {
+            pokemonCreated = new Electricity(pokemonInfo);
+        }
         else
             cout << "Kind does NOT meet level" << endl;
     }

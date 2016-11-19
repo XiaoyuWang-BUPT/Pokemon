@@ -1,4 +1,5 @@
 ﻿#include "player.h"
+#include <string>
 
 Player::Player() {
     this->_name_ = "NULL";
@@ -6,18 +7,42 @@ Player::Player() {
     this->_pokemonNumber_ = 0;
     this->_rank_ = 9999; //TODO 初始化为总人数最后一名
     this->_beginDateTime_ = QDateTime::currentDateTime();
-    this->_gameTime_ = QTime(0, 0, 0, 0);
+    this->_gameTime_ = "0000";
     this->_pokemonGot_.clear();
 }
 
-Player::Player(string name, string password) {
-    this->_name_ = name;
-    this->_password_ = password;
-    this->_pokemonNumber_ = 0;
-    this->_rank_ = 9999; //TODO 初始化为总人数最后一名
-    this->_beginDateTime_ = QDateTime::currentDateTime();
-    this->_gameTime_ = QTime(0, 0, 0, 0);
-    this->_pokemonGot_.clear();
+Player::Player(PlayerInfo playerInfo) {
+    this->_name_ = playerInfo.name;
+    this->_password_ = playerInfo.password;
+    this->_pokemonNumber_ = playerInfo.pokemonNumber;
+    this->_rank_ = playerInfo.rank;
+
+    //set Begin Time
+    string beginYear = playerInfo.beginDateTime.substr(0, 4);
+    string beginMonth = playerInfo.beginDateTime.substr(4, 2);
+    string beginDay = playerInfo.beginDateTime.substr(6, 2);
+    string beginHour = playerInfo.beginDateTime.substr(8, 2);
+    string beginMin = playerInfo.beginDateTime.substr(10,2);
+    QDate beginDate;
+    beginDate.setDate(stoi(beginYear), stoi(beginMonth),
+                      stoi(beginDay));
+    QTime beginTime;
+    beginTime.setHMS(stoi(beginHour),
+                     stoi(beginMin), 0);
+    this->_beginDateTime_.setDate(beginDate);
+    this->_beginDateTime_.setTime(beginTime);
+
+    //set Game Time
+    string reverseGameTime(playerInfo.gameTime.rbegin(),
+                           playerInfo.gameTime.rend());
+    string gameMin = reverseGameTime.substr(0, 2);
+    gameMin = string(gameMin.rbegin(), gameMin.rend());
+    reverseGameTime.erase(0, 2);
+    string gameHour = string(reverseGameTime.rbegin(),
+                      reverseGameTime.rend());
+    this->_gameTime_ = gameHour + gameMin;
+
+    this->_pokemonGot_.clear(); //pokemon would be added in
 }
 
 string Player::getName() {
@@ -40,11 +65,11 @@ QDateTime Player::getBeginDT() {
     return this->_beginDateTime_;
 }
 
-QTime Player::getGameTime() {
+string Player::getGameTime() {
     return this->_gameTime_;
 }
 
-set<Pokemon> Player::getGotPokemon() {
+set<Pokemon*> Player::getGotPokemon() {
     return this->_pokemonGot_;
 }
 
@@ -77,9 +102,9 @@ void Player::setGameTime(QDateTime startDateTime) {
     int hoursDuration = minsDuration/ 60;
     minsDuration -= hoursDuration* 60;
     hoursDuration += daysDuration* 24;
-    this->_gameTime_ = QTime(hoursDuration, minsDuration, secsDuration, 0);
+    this->_gameTime_ = to_string(hoursDuration) + to_string(minsDuration);
 }
 
-void Player::addPokemon(Pokemon PMtoGet) {
+void Player::addPokemon(Pokemon *PMtoGet) {
     this->_pokemonGot_.insert(PMtoGet);
 }

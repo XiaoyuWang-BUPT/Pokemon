@@ -68,7 +68,17 @@
 * TODO
 
   *   创建与`Class Player`对应的`Struct Player`存储`Player` 信息 `Primary Key`为`name`
-
   *   创建与`Class Pokemon`对应的`Struct Pokemon`存储`Pokemon`信息 `Primary Key`为`name` 并存储`owner`作为`condition: Where`
 
-      ​
+### v0.1.7(2016/11/19)
+
+* 对`Player`测试创建新玩家对象并输出信息
+* 数据库小精灵实例化 传`struct PokemonInfo` 
+* 捕捉精灵 对战精灵实例化 传`kind level name`
+* 玩家实例化 传`struct PlayerInfo`新玩家新信息 老玩家从数据库获取
+* TODO
+
+  * 将`Player` 和 `Pokemon` 与数据库链接测试
+  * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
+  * 添加`session.h` `session.cpp`测试会话
+

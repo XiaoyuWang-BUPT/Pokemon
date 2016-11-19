@@ -110,6 +110,10 @@ void Pokemon::DeadJudge()
     }
 }
 
+/* Upgrade does not manage experience-increase after battle
+ * Gain experience and judge whether it upgrades or not and decide
+ * call Upgrade() or not
+ */
 void Pokemon::Upgrade()
 {
     //等级不能超过15级 战斗模块中战斗后获得经验函数判断是否15级进入Upgrade函数后可取消以下判定
@@ -212,8 +216,32 @@ Fire::Fire(Kind kind, int level, string name) {
         //cout << "Kind: " << kindOfString[this->getKind()] << "  Level:" << this->getLevel() << endl;
         this->Upgrade();
     }
+    this->setExperiencePoint(ExpGrade[this->getLevel()]);
     this->setCurrentHP(this->getTotalHP());
     //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Defence Point:" << this->getDefencePoint() << "  TotalHP:" << this->getTotalHP() << endl;
+}
+
+Fire::Fire(PokemonInfo pokemonInfo)
+{
+    this->setNature(FIRE);
+    this->setKind((Kind)pokemonInfo.kind);
+    this->setName(pokemonInfo.name);
+    this->setCharacter((Character)pokemonInfo.character);
+    this->setLevel(pokemonInfo.level);
+    this->setExperiencePoint(pokemonInfo.experiencePoint);
+    this->setAttackPoint(pokemonInfo.attackPoint);
+    this->setDefencePoint(pokemonInfo.defencePoint);
+    this->setTotalHP(pokemonInfo.totalHP);
+    this->setCurrentHP(pokemonInfo.currentHP);
+    this->setIntervalIncrease(pokemonInfo.intervalIncrease);
+    this->setCriticalPoint(pokemonInfo.criticalPoint);
+    set<Nature> counterNature;
+    counterNature.insert(BUSH);
+    this->setCounter(counterNature);
+    this->setState((State)pokemonInfo.state);
+    this->setSickPoint(pokemonInfo.sickPoint);
+    this->setSickCounter(pokemonInfo.sickCounter);
+    this->setAlive(pokemonInfo.alive);
 }
 
 void Fire::SpecialAttack(Pokemon *dePokemon) {
@@ -252,7 +280,31 @@ Water::Water(Kind kind, int level, string name) {
     while (this->getLevel() < level) {
         this->Upgrade();
     }
+    this->setExperiencePoint(ExpGrade[this->getLevel()]);
     this->setCurrentHP(this->getTotalHP());
+}
+
+Water::Water(PokemonInfo pokemonInfo)
+{
+    this->setNature(WATER);
+    this->setKind((Kind)pokemonInfo.kind);
+    this->setName(pokemonInfo.name);
+    this->setCharacter((Character)pokemonInfo.character);
+    this->setLevel(pokemonInfo.level);
+    this->setExperiencePoint(pokemonInfo.experiencePoint);
+    this->setAttackPoint(pokemonInfo.attackPoint);
+    this->setDefencePoint(pokemonInfo.defencePoint);
+    this->setTotalHP(pokemonInfo.totalHP);
+    this->setCurrentHP(pokemonInfo.currentHP);
+    this->setIntervalIncrease(pokemonInfo.intervalIncrease);
+    this->setCriticalPoint(pokemonInfo.criticalPoint);
+    set<Nature> counterNature;
+    counterNature.insert(FIRE);
+    this->setCounter(counterNature);
+    this->setState((State)pokemonInfo.state);
+    this->setSickPoint(pokemonInfo.sickPoint);
+    this->setSickCounter(pokemonInfo.sickCounter);
+    this->setAlive(pokemonInfo.alive);
 }
 
 void Water::SpecialAttack(Pokemon *dePokemon) {
@@ -292,7 +344,32 @@ Bush::Bush(Kind kind, int level, string name) {
     while (this->getLevel() < level) {
         this->Upgrade();
     }
+    this->setExperiencePoint(ExpGrade[this->getLevel()]);
     this->setCurrentHP(this->getTotalHP());
+}
+
+Bush::Bush(PokemonInfo pokemonInfo)
+{
+    this->setNature(BUSH);
+    this->setKind((Kind)pokemonInfo.kind);
+    this->setName(pokemonInfo.name);
+    this->setCharacter((Character)pokemonInfo.character);
+    this->setLevel(pokemonInfo.level);
+    this->setExperiencePoint(pokemonInfo.experiencePoint);
+    this->setAttackPoint(pokemonInfo.attackPoint);
+    this->setDefencePoint(pokemonInfo.defencePoint);
+    this->setTotalHP(pokemonInfo.totalHP);
+    this->setCurrentHP(pokemonInfo.currentHP);
+    this->setIntervalIncrease(pokemonInfo.intervalIncrease);
+    this->setCriticalPoint(pokemonInfo.criticalPoint);
+    set<Nature> counterNature;
+    counterNature.insert(WATER);
+    counterNature.insert(ELECTRICITY);
+    this->setCounter(counterNature);
+    this->setState((State)pokemonInfo.state);
+    this->setSickPoint(pokemonInfo.sickPoint);
+    this->setSickCounter(pokemonInfo.sickCounter);
+    this->setAlive(pokemonInfo.alive);
 }
 
 void Bush::SpecialAttack(Pokemon *dePokemon) {
@@ -332,8 +409,32 @@ Electricity::Electricity(Kind kind, int level, string name) {
         //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Attack Point:" << this->getAttackPoint() << endl;
         this->Upgrade();
     }
+    this->setExperiencePoint(ExpGrade[this->getLevel()]);
     this->setCurrentHP(this->getTotalHP());
     //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Attack Point:" << this->getAttackPoint() << endl;
+}
+
+Electricity::Electricity(PokemonInfo pokemonInfo)
+{
+    this->setNature(ELECTRICITY);
+    this->setKind((Kind)pokemonInfo.kind);
+    this->setName(pokemonInfo.name);
+    this->setCharacter((Character)pokemonInfo.character);
+    this->setLevel(pokemonInfo.level);
+    this->setExperiencePoint(pokemonInfo.experiencePoint);
+    this->setAttackPoint(pokemonInfo.attackPoint);
+    this->setDefencePoint(pokemonInfo.defencePoint);
+    this->setTotalHP(pokemonInfo.totalHP);
+    this->setCurrentHP(pokemonInfo.currentHP);
+    this->setIntervalIncrease(pokemonInfo.intervalIncrease);
+    this->setCriticalPoint(pokemonInfo.criticalPoint);
+    set<Nature> counterNature;
+    counterNature.insert(WATER);
+    this->setCounter(counterNature);
+    this->setState((State)pokemonInfo.state);
+    this->setSickPoint(pokemonInfo.sickPoint);
+    this->setSickCounter(pokemonInfo.sickCounter);
+    this->setAlive(pokemonInfo.alive);
 }
 
 void Electricity::SpecialAttack(Pokemon *dePokemon) {

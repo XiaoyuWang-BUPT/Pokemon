@@ -4,6 +4,16 @@
 #include "pokemon.h"
 #include <QDateTime>
 
+struct PlayerInfo
+{
+    string name;
+    string password;
+    int pokemonNumber;
+    int rank;
+    string beginDateTime; //201611171230 2016-11-17 12:30
+    string gameTime; //12003 120hours 3minutes
+};
+
 class Player
 {
 private:
@@ -12,19 +22,19 @@ private:
     int _pokemonNumber_;
     int _rank_;
     QDateTime _beginDateTime_;
-    QTime _gameTime_;
-    set<Pokemon> _pokemonGot_;
+    string _gameTime_;
+    set<Pokemon*> _pokemonGot_;
 public:
-    Player(); //老玩家回归构造函数 具体成员变量的赋值后set
-    Player(string name, string password); //新注册用户构造函数
+    Player();
+    Player(struct PlayerInfo playerInfo); //new player get new info, old player fetch from db
     ~Player() {}
     string getName();
     string getPassword();
     int getPMNumber();
     int getRank();
     QDateTime getBeginDT();
-    QTime getGameTime();
-    set<Pokemon> getGotPokemon();
+    string getGameTime();
+    set<Pokemon*> getGotPokemon();
 
     void setName(string name);
     void setPassword(string password);
@@ -32,7 +42,7 @@ public:
     void setRank(int rank);
     void setBeginDateTime(QDateTime beginDateTime);
     void setGameTime(QDateTime startDateTime);
-    void addPokemon(Pokemon PMtoGet);
+    void addPokemon(Pokemon *PMtoGet);
 };
 
 #endif // PLAYER_H

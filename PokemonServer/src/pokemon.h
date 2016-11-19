@@ -10,7 +10,7 @@ using namespace std;
 
 enum Nature {FIRE, WATER, BUSH, ELECTRICITY};
 const string natureOfString[] = {"Fire", "Water", "Bush", "Electricity"};
-enum Kind{/*TODO 具体的小精灵的细类--如小火龙 皮卡丘 水箭龟 等*/
+enum Kind{
             CHARMANDER, CHARMELEON, CHARIZARD, //小火龙 火恐龙 喷火龙
             TORCHIC, COMBUSKEN, BLAZIKEN, //火稚鸡 力壮鸡 火焰鸡
             CHIMCHAR, MONFERNO, INFERNAPE, //小火焰猴 猛火猴 烈焰猴
@@ -54,6 +54,35 @@ const int UpGradeAttrIncStrong = 10;
 const int UpGradeAttrIncNormal = 7;
 const int UpGradeAttrIncWeak = 4;
 const int UpGradeCriticalInc = 5;
+
+/* Pokemon information stored in database
+ * How to create an object with this information:
+   step1.Choose construct function depending on nature
+   step2.Create an object
+ * attention:
+   1.'nature' 'kind' 'character' 'state' correspond Enumeration in Pokemon.h
+      transfer them to Enumeration using array xxxOfString when instantiating
+   2.counterSet info is not recorded in db but construct function knows*/
+struct PokemonInfo
+{
+    int nature; //火 水 草 冰 四种属性 FIRE> BUSH; FIRE> ELECTRICITY; WATER> FIRE; BUSH> WATER; ELECTRICITY> FIRE
+    int kind; //小精灵的细类 小火龙 水箭龟 皮卡丘 等
+    string name; //获得新的小精灵时命名 不命名则默认为 小火龙 水箭龟 皮卡丘
+    int character; //攻击型 防御型 肉盾型 敏捷型 四种性格
+    int level;
+    int experiencePoint;
+    int attackPoint;
+    int defencePoint;
+    int totalHP;
+    int currentHP;
+    int intervalIncrease;
+    int criticalPoint;
+    //set<Nature> counter;
+    int state;
+    int sickCounter;
+    int sickPoint;
+    bool alive;
+};
 
 class Pokemon
 {
@@ -225,11 +254,11 @@ public:
 
     void Attack(Pokemon *dePokemon); //普通攻击可以暴击
 
-    virtual void SpecialAttack(Pokemon *dePokemon){}//TODO 子类继承覆盖 根据属性进行附带属性效果的特殊攻击 特殊攻击可以借助属性克制增加伤害 有概率致病
+    virtual void SpecialAttack(Pokemon *dePokemon){} //TODO 子类继承覆盖 根据属性进行附带属性效果的特殊攻击 特殊攻击可以借助属性克制增加伤害 有概率致病
 
-    void SpecialAttackDamage(Pokemon *dePokemon);// 特殊攻击当即造成伤害
+    void SpecialAttackDamage(Pokemon *dePokemon); // 特殊攻击当即造成伤害
 
-    virtual void EnSick(Pokemon *sickPokemon){}// 特殊攻击致病
+    virtual void EnSick(Pokemon *sickPokemon){} // 特殊攻击致病
 
     bool EnSickPossible();
 
@@ -253,6 +282,7 @@ class Fire : public Pokemon
 public:
     //Fire(Kind kind);// 御三家构造函数
     Fire(Kind kind, int level, string name); //对战时随机生成的精灵构造函数 野生精灵构造函数
+    Fire(struct PokemonInfo pokemonInfo);
     ~Fire() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
@@ -263,6 +293,7 @@ class Water : public Pokemon
 public:
     //Water(Kind kind);
     Water(Kind kind, int level, string name); //对战时随机生成的精灵构造函数 野生精灵构造函数
+    Water(struct PokemonInfo pokemonInfo);
     ~Water() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
@@ -273,6 +304,7 @@ class Bush : public Pokemon
 public:
     //Bush(Kind kind);
     Bush(Kind kind, int level, string name); //对战时随机生成的精灵构造函数 野生精灵构造函数
+    Bush(struct PokemonInfo pokemonInfo);
     ~Bush() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
@@ -283,6 +315,7 @@ class Electricity : public Pokemon
 public:
     //Electricity(Kind kind);
     Electricity(Kind kind, int level, string name); //对战时随机生成的精灵构造函数 野生精灵构造函数
+    Electricity(struct PokemonInfo pokemonInfo);
     ~Electricity() {}
     void EnSick(Pokemon *sickPokemon);
     void SpecialAttack(Pokemon *dePokemon);
