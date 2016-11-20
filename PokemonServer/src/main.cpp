@@ -9,6 +9,9 @@
 #include "catchunittest.h"
 #include "./lib/sqlite3.h"
 
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
+
 void PrintPokeData(Pokemon *pokemon) {
     cout << "Kind:" << kindOfString[pokemon->getKind()] <<  "\tName:" << pokemon->getName() << "\tAlive:" << aliveOfString[pokemon->getAlive()] <<
             "\tNature:" << natureOfString[pokemon->getNature()] << "\nCharacter:" << characterOfString[pokemon->getCharacter()] <<
@@ -94,13 +97,25 @@ int main(int argc, char *argv[])
         "201611171230", //201611171230 2016-11-17 12:30
         "122300" //1223hours 00minutes
     };
-    Player *biuxxx = playerFactory->CreatePlayer(playerInfo);
-    biuxxx->addPokemon(pikachu);
-    biuxxx->addPokemon(charamander);
-    PrintPlayer(biuxxx);
+
+    Poor_ORM::ORMapper<PlayerInfo> mapper ("playerinfo.db");
+    mapper.CreateTable();
+    mapper.Insert(playerInfo);
+    PlayerInfo qHelper;
+    auto query = mapper.Query(qHelper)
+            .ToVector();
+    for (auto c : query)
+        cout << "PlayerInfo from DB:" << c.name << " " << c.password <<
+                " " << c.pokemonNumber << " " << c.rank <<
+                " " << c.beginDateTime << " " << c.gameTime << endl << endl;
+
+    Player *p = playerFactory->CreatePlayer(playerInfo);
+    p->addPokemon(pikachu);
+    p->addPokemon(charamander);
+    PrintPlayer(p);
     delete pikachu;
     delete charamander;
-    delete biuxxx;
+    delete p;
     delete playerFactory;
 
     return a.exec();

@@ -15,23 +15,6 @@ unsigned int Random(int max) {
         return (unsigned int)((double)number / ((double)UINT_MAX + 1) * double(max)) + 1;
 }
 
-//判断Kind是否在口袋妖怪形态分级数组
-bool isInStandard(Kind kind, const int standard[]) {
-    for (int i = 0; i < 12; i++) {
-        if (kind == standard[i])
-            return true;
-    }
-    return false;
-}
-//用于判断create时等级和形态是否对应
-bool isKindMeetLevel(Kind kind, int level) {
-    if ((level < 6 && isInStandard(kind, EmbryoPokemon))||
-            (level >= 6 && level < 13 && isInStandard(kind, IntermediatePokemon))||
-            (level >= 13 && isInStandard(kind, LastPokemon)))
-        return true;
-    return false;
-}
-
 /* 攻击函数
  * 暴击双倍伤害 依小概率造成烧伤，冻伤，中毒和麻痹效果 火属性不能对火属性造成烧伤 其他属性类比*/
 void Pokemon::Attack(Pokemon *dePokemon) {
@@ -151,10 +134,10 @@ void Pokemon::Upgrade()
         cout << "只包含 攻击 防御 肉盾 敏捷 四种性格 如有改动请修改case语句" << endl;
     };
     this->setCriticalPoint(this->getCriticalPoint() + (this->getLevel()% 3== 0? 5: 0));
-    if (this->getLevel() == EL1 && !(isInStandard(this->getKind(), IntermediatePokemon)) && !(isInStandard(this->getKind(), LastPokemon))) {
+    if (this->getLevel() == EL1 && !(Helper::Helper::isInStandard(this->getKind(), IntermediatePokemon)) && !(Helper::isInStandard(this->getKind(), LastPokemon))) {
         this->Evolution(EL1);
     }
-    if (this->getLevel() == EL2 && !(isInStandard(this->getKind(), LastPokemon))) {
+    if (this->getLevel() == EL2 && !(Helper::Helper::isInStandard(this->getKind(), LastPokemon))) {
         this->Evolution(EL2);
     }
 }

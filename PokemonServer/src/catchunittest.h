@@ -4,22 +4,7 @@
 #define CATCH_CONFIG_RUNNER  // This tells Catch to provide a main() - only do this in one cpp file
 #include "./lib/catch.hpp"
 #include "pokemonfactory.h"
-
-bool isInArray(Kind kind, const int standard[]) {
-    for (int i = 0; i < 36; i++) {
-        if (kind == standard[i])
-            return true;
-    }
-    return false;
-}
-
-bool isKindCorrespondLevel(Kind kind, int level) {
-    if ((level < 6 && isInArray(kind, EmbryoPokemon))||
-            (level >= 6 && level < 13 && isInArray(kind, IntermediatePokemon))||
-            (level >= 13 && isInArray(kind, LastPokemon)))
-        return true;
-    return false;
-}
+#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
 
 TEST_CASE("Pokemon Unit Test") {
     PokemonFactory *pokemonFactory4Test = new PokemonFactory();
@@ -37,9 +22,9 @@ TEST_CASE("Pokemon Unit Test") {
         REQUIRE( charizard4Test->getLevel() == 14 );
     }
     SECTION("PokemonFactory Create Excuted--Kind meet level") {
-        REQUIRE( isKindCorrespondLevel(charmander4Test->getKind(), charmander4Test->getLevel()) == true);
-        REQUIRE( isKindCorrespondLevel(charmeleon4Test->getKind(), charmeleon4Test->getLevel()) == true);
-        REQUIRE( isKindCorrespondLevel(charizard4Test->getKind(), charizard4Test->getLevel()) == true);
+        REQUIRE( Helper::isKindMeetLevel(charmander4Test->getKind(), charmander4Test->getLevel()) == true);
+        REQUIRE( Helper::isKindMeetLevel(charmeleon4Test->getKind(), charmeleon4Test->getLevel()) == true);
+        REQUIRE( Helper::isKindMeetLevel(charizard4Test->getKind(), charizard4Test->getLevel()) == true);
     }
     SECTION("Attack Excuted--HP decrease(critical is unpredictable)") {
         charmeleon4Test->Attack(charmander4Test);

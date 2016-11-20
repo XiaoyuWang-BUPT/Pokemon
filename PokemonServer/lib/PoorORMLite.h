@@ -1,10 +1,18 @@
-﻿#include <sstream>
+﻿#ifndef POOR_ORMLITE_H
+#define POOR_ORMLITE_H
+#pragma once
+
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+#include <iostream>
+#include <sstream>
 #include <functional>
 #include <vector>
 #include <cctype>
 #include <tuple>
 
 #include "sqlite3.h"
+#include "helper.h"
 
 #define ORMAP(_MY_CLASS_, ...)				\
 private:                                                \
@@ -39,8 +47,8 @@ namespace Poor_ORM_Impl
 					std::string("Can Not open database: ") + sqlite3_errmsg(db)
 				);
 			}
-			else
-				std::cout << "Open database succedd" << std::endl;
+//			else
+//				std::cout << "Open database succedd" << std::endl;
 		}
 
 		~SQLConnector()
@@ -72,8 +80,8 @@ namespace Poor_ORM_Impl
 				sqlite3_free(zErrMsg);
 				return false;
 			}
-			else
-				std::cout << "Execute Succedd" << std::endl;
+//			else
+//				std::cout << "Execute Succedd" << std::endl;
 			return true;
 		}
 	private:
@@ -84,17 +92,17 @@ namespace Poor_ORM_Impl
 		}
 	};
 
-	std::string SplitStr(std::string &inputStr)
-	{
-		size_t pos = 0;
-		if ((pos = inputStr.find(',', 0)) != std::string::npos)
-		{
-			auto ret = inputStr.substr(0, pos);
-			inputStr.erase(0, pos + 1);
-			return std::move(ret);
-		}
-		return inputStr;
-	}
+//        std::string SplitStr(std::string &inputStr)
+//        {
+//                size_t pos = 0;
+//                if ((pos = inputStr.find(',', 0)) != std::string::npos)
+//                {
+//                        auto ret = inputStr.substr(0, pos);
+//                        inputStr.erase(0, pos + 1);
+//                        return std::move(ret);
+//                }
+//                return inputStr;
+//        }
 
 	//Visitor Creating Table
 	class CreateVisitor
@@ -209,9 +217,9 @@ namespace Poor_ORM_Impl
 		void _Visit(const std::string &property)
 		{
 			if ((const void*) &property == _typePointer)
-				fieldFound = true;
+                            fieldFound = true;
 			else if (!fieldFound)
-				index++;
+                            index++;
 		}
 	};
 
@@ -238,18 +246,18 @@ namespace Poor_ORM_Impl
 		void _Visit(int &property)
 		{
 			property = std::stoi(
-				Poor_ORM_Impl::SplitStr(_serializedValues)
+                                Helper::SplitStr(_serializedValues)
 			);
 		}
 		void _Visit(double &property)
 		{
 			property = std::stod(
-				Poor_ORM_Impl::SplitStr(_serializedValues)
+                                Helper::SplitStr(_serializedValues)
 			);
 		}
 		void _Visit(std::string &property)
 		{
-			property = Poor_ORM_Impl::SplitStr(_serializedValues);
+                        property = Helper::SplitStr(_serializedValues);
 		}
 	};
 }
@@ -340,12 +348,12 @@ namespace Poor_ORM
 			
 			size_t indexField = 0;
 			auto strTypes = std::move(visitor.serializedTypes); // "integer,double,string,"
-			auto strType = Poor_ORM_Impl::SplitStr(strTypes);	// "integer"/ "double"/ "sting"
+                        auto strType = Helper::SplitStr(strTypes);	// "integer"/ "double"/ "sting"
 			auto partSqlCmd = _fieldNamesVec[indexField++] + " " + // "id int primary key not null,"
 				std::move(strType) + " primary key not null,";
 			while (!strTypes.empty())
 			{
-				strType = Poor_ORM_Impl::SplitStr(strTypes);
+                                strType = Helper::SplitStr(strTypes);
 				partSqlCmd += _fieldNamesVec[indexField++] + " " +  //"id int primary key not null,
 					std::move(strType) + " not null,";				// score real not null,
 			}
@@ -374,8 +382,9 @@ namespace Poor_ORM
 			strValue.pop_back();
 			sqlCmd = "insert into " + _tblName + " (" +
 				strTypes + ") select " + strValue +
-				"where not exists ( select * from " + _tblName + " where " + Poor_ORM_Impl::SplitStr(strTypes) +"=" 
-				+ Poor_ORM_Impl::SplitStr(strValue) +");";
+                                "where not exists ( select * from " + _tblName + " where " + Helper::getPrime(strTypes) +"="
+                                + Helper::getPrime(strValue) +");";
+                        //std::cout << sqlCmd << std::endl;
 			return connector.Execute(sqlCmd);
 		}
 		bool Update(const C &value)
@@ -390,13 +399,13 @@ namespace Poor_ORM
 			std::string partSqlCmd = "";
 
 			std::string PrKey = _fieldNamesVec[indexField++]; //Get Primary Key :"ID"
-			auto PrKeyValue = Poor_ORM_Impl::SplitStr(strValue); //Get Primary Key Value :"value under ID";
+                        auto PrKeyValue = Helper::SplitStr(strValue); //Get Primary Key Value :"value under ID";
 			auto strCon = std::move(PrKey) + "=" + std::move(PrKeyValue);
 
 			while (!strValue.empty())
 			{
 				partSqlCmd += _fieldNamesVec[indexField++] + "=" +
-					Poor_ORM_Impl::SplitStr(strValue) + ",";
+                                        Helper::SplitStr(strValue) + ",";
 			}
 			partSqlCmd.pop_back();
 			
@@ -412,7 +421,7 @@ namespace Poor_ORM
 
 			auto PrKey = _fieldNamesVec[0];
 			auto strValue = std::move(visitor.serializedValues);
-			auto PrKeyValue = Poor_ORM_Impl::SplitStr(strValue);
+                        auto PrKeyValue = Helper::SplitStr(strValue);
 			std::move(strValue);
 
 			auto sqlCmd = "delete from " + _tblName + " where " +
@@ -420,7 +429,7 @@ namespace Poor_ORM
 			return connector.Execute(sqlCmd);
 		}
 
-		static std::string getTblName()
+                /*static*/ std::string getTblName()
 		{
 			return _tblName;
 		}
@@ -527,7 +536,7 @@ namespace Poor_ORM
 		template <typename Out>
 		bool _Select(Out &out, const std::string &sqlStr = "")
 		{
-			std::cout << sqlStr << std::endl;
+//			std::cout << sqlStr << std::endl;
 			Poor_ORM_Impl::SQLConnector connector(_dbName);
 			return connector.Execute(sqlStr,
 				[&](int argc, char **argv, char **)
@@ -546,3 +555,4 @@ namespace Poor_ORM
 		}
 	};
 }
+#endif //!POOR_ORMLITE_H

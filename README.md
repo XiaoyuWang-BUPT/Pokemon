@@ -82,3 +82,13 @@
   * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
   * 添加`session.h` `session.cpp`测试会话
 
+
+### v0.1.8(2016/11/20)
+
+* `Player`与数据库测试连接
+* `PoorORMLite`修复bug(`insert`语句不正确)
+* 新增`Helper.h`用于消除未知的头文件包含问题
+* TODO 
+  * 将`Pokemon` 与数据库链接测试
+  * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
+  * 添加`session.h` `session.cpp`测试会话
