@@ -7,3 +7,4 @@ build-PokemonServer-Qt5_7_0-Debug/debug/PokemonServer.exe
 *.user
 build-PokemonServer-Qt5_7_0-Debug/Makefile
 *.exe
+README.md

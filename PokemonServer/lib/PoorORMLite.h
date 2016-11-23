@@ -32,8 +32,8 @@ constexpr static const char *fieldNames = #__VA_ARGS__;	\
 
 namespace Poor_ORM_Impl
 {
-	class SQLConnector
-	{
+    class SQLConnector
+    {
 	public:
 		SQLConnector(std::string &dbName)
 		{
@@ -72,7 +72,7 @@ namespace Poor_ORM_Impl
 			};
 
 			rc = sqlite3_exec(db, sqlCmd.c_str(), callbackWrapper, &callback, &zErrMsg);
-			if (rc != SQLITE_OK)
+            if (rc != SQLITE_OK)
 			{
 				throw std::runtime_error(
 					std::string("SQL Error(Execute): ") + zErrMsg
@@ -91,18 +91,6 @@ namespace Poor_ORM_Impl
 			return;
 		}
 	};
-
-//        std::string SplitStr(std::string &inputStr)
-//        {
-//                size_t pos = 0;
-//                if ((pos = inputStr.find(',', 0)) != std::string::npos)
-//                {
-//                        auto ret = inputStr.substr(0, pos);
-//                        inputStr.erase(0, pos + 1);
-//                        return std::move(ret);
-//                }
-//                return inputStr;
-//        }
 
 	//Visitor Creating Table
 	class CreateVisitor
@@ -360,7 +348,6 @@ namespace Poor_ORM
 			partSqlCmd.pop_back();
 			sqlCmd = "create table if not exists " + _tblName + "(" +
 				partSqlCmd + ");";
-
 			return connector.Execute(sqlCmd);
 		}
 		bool DropTable()
@@ -382,9 +369,8 @@ namespace Poor_ORM
 			strValue.pop_back();
 			sqlCmd = "insert into " + _tblName + " (" +
 				strTypes + ") select " + strValue +
-                                "where not exists ( select * from " + _tblName + " where " + Helper::getPrime(strTypes) +"="
+                                " where not exists ( select * from " + _tblName + " where " + Helper::getPrime(strTypes) +"="
                                 + Helper::getPrime(strValue) +");";
-                        //std::cout << sqlCmd << std::endl;
 			return connector.Execute(sqlCmd);
 		}
 		bool Update(const C &value)

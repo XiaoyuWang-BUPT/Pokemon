@@ -92,3 +92,17 @@
   * 将`Pokemon` 与数据库链接测试
   * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
   * 添加`session.h` `session.cpp`测试会话
+
+### v0.1.9(2016/11/21)
+
+* `Pokemon`与数据库测试连接
+* `PoorORMLite`修复bug(`insert`语句*sqlCmd*中*where*前无空格 导致数字无法得到识别 但字符串可以识别)
+  * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
+  * 添加`session.h` `session.cpp`测试会话
+
+### v0.2.0(2016/11/23)
+
+* `PokemonServer`初步完成`Sign In登录` `Sign On注册`界面及跳转
+* TODO
+  * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
+  * 添加`session.h` `session.cpp`测试会话

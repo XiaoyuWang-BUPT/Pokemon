@@ -54,7 +54,9 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    //One apparent visual test
+    /* Unit Test */
+    int result = Catch::Session().run( argc, argv );
+
     PokemonFactory *pokemonFactory = new PokemonFactory();
     cout << "Please name your pokemon: ";
     string name;
@@ -63,60 +65,81 @@ int main(int argc, char *argv[])
     cout << "Please name your pokemon: ";
     cin >> name;
     Pokemon *pikachu = pokemonFactory->CreatePokemon(RAICHU, 15, name);
+    /* An apparent visual test
+     * including Attack specialAttack database display */
+    {
+        PrintPokeData(charamander);
+        PrintPokeData(pikachu);
+        pikachu->Attack(charamander);
+        charamander->DeadJudge();
+        PrintPokeData(charamander);
+        charamander->SpecialAttack(pikachu);
+        charamander->DeadJudge();
+        PrintPokeData(pikachu);
+        struct PokemonInfo pokemonInfo = {
+            "RainING Pokemon",0, 1, 0, 7, 900, 120,
+            38, 678, 467, 34, 25, 2, 1, 2, 1 };
+        Pokemon *RPokemon = pokemonFactory->CreatePokemon(pokemonInfo);
+        PrintPokeData(RPokemon);
 
-    struct PokemonInfo pokemonInfo = {
-        0, 1, "RainING's Pokemon", 0, 7, 900, 120, 38,
-        678, 467, 34, 25, 2, 1, 2, true
-    };
-    Pokemon *RPokemon = pokemonFactory->CreatePokemon(pokemonInfo);
+        Poor_ORM::ORMapper<PokemonInfo> pokemonMapper ("pokemoninfo.db");
+        pokemonMapper.CreateTable();
+        pokemonMapper.Insert(pokemonInfo);
 
-    PrintPokeData(charamander);
-    PrintPokeData(pikachu);
-    pikachu->Attack(charamander);
-    charamander->DeadJudge();
-    PrintPokeData(charamander);
+        pokemonInfo = {
+            "Father Pokemon",0, 1, 0, 7, 1200, 120,
+            38, 678, 467, 34, 25, 2, 0, 0, 1 };
+        pokemonMapper.Insert(pokemonInfo);
 
-    charamander->SpecialAttack(pikachu);
-    charamander->DeadJudge();
-    PrintPokeData(pikachu);
+        PokemonInfo pHelper;
+        auto pokemonQuery = pokemonMapper.Query(pHelper)
+                .ToVector();
+        for (auto c : pokemonQuery)
+            cout << "PokemonInfo from DB:" << natureOfString[c.nature] <<
+                    " " << kindOfString[c.kind] << " " << c.name <<
+                    " " << characterOfString[c.character] << " " << c.level <<
+                    " " << c.experiencePoint << " " << c.attackPoint <<
+                    " " << c.defencePoint << " " << c.totalHP <<
+                    " " << c.currentHP << " " << c.intervalIncrease <<
+                    " " << c.criticalPoint << " " << stateOfString[c.state] <<
+                    " " << c.sickCounter << " " << c.sickPoint <<
+                    " " << aliveOfString[c.alive] << endl;
+        delete RPokemon;
+    }
 
-    PrintPokeData(RPokemon);
+    /* An apparent visual test for Player */
+    {
+        PlayerFactory *playerFactory = new PlayerFactory();
+        struct PlayerInfo playerInfo = {
+            "Lee",
+            "2014232",
+            0,
+            9999,
+            "201611171230", //201611171230 2016-11-17 12:30
+            "122300" //1223hours 00minutes
+        };
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        playerMapper.CreateTable();
+        playerMapper.Insert(playerInfo);
+        PlayerInfo qHelper;
+        auto query = playerMapper.Query(qHelper)
+                .ToVector();
+        for (auto c : query)
+            cout << "PlayerInfo from DB:" << c.name << " " << c.password <<
+                    " " << c.pokemonNumber << " " << c.rank <<
+                    " " << c.beginDateTime << " " << c.gameTime << endl << endl;
 
-    delete pokemonFactory;
+        Player *p = playerFactory->CreatePlayer(playerInfo);
+        p->addPokemon(pikachu);
+        p->addPokemon(charamander);
+        PrintPlayer(p);
+        delete p;
+        delete playerFactory;
+    }
 
-    /* Unit Test */
-    int result = Catch::Session().run( argc, argv );
-
-    /* A apparent visual test for Player */
-    PlayerFactory *playerFactory = new PlayerFactory();
-    struct PlayerInfo playerInfo = {
-        "Lee",
-        "2014232",
-        0,
-        9999,
-        "201611171230", //201611171230 2016-11-17 12:30
-        "122300" //1223hours 00minutes
-    };
-
-    Poor_ORM::ORMapper<PlayerInfo> mapper ("playerinfo.db");
-    mapper.CreateTable();
-    mapper.Insert(playerInfo);
-    PlayerInfo qHelper;
-    auto query = mapper.Query(qHelper)
-            .ToVector();
-    for (auto c : query)
-        cout << "PlayerInfo from DB:" << c.name << " " << c.password <<
-                " " << c.pokemonNumber << " " << c.rank <<
-                " " << c.beginDateTime << " " << c.gameTime << endl << endl;
-
-    Player *p = playerFactory->CreatePlayer(playerInfo);
-    p->addPokemon(pikachu);
-    p->addPokemon(charamander);
-    PrintPlayer(p);
     delete pikachu;
     delete charamander;
-    delete p;
-    delete playerFactory;
+    delete pokemonFactory;
 
     return a.exec();
 }

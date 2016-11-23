@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui\
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,12 +12,17 @@ TARGET = PokemonClient
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        widget.cpp \
-    dialog.cpp
+SOURCES += src/main.cpp \
+    src/signin.cpp \
+    src/mainpage.cpp \
+    src/signon.cpp
 
-HEADERS  += widget.h \
-    dialog.h
+HEADERS  += \
+    src/signin.h \
+    src/mainpage.h \
+    src/signon.h
 
-FORMS    += widget.ui \
-    dialog.ui
+FORMS    += \
+    signin.ui \
+    mainpage.ui \
+    signon.ui
