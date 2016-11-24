@@ -25,12 +25,14 @@ private:
     bool userExist(std::string username);
 private slots:    
     void receiveSwitch();
+    void onTopSignInClicked();
     void userLineEditClicked(int, int);
     void pwLineEditClicked(int, int);
     void pwEnsureLineEditClicked(int, int);
     void signOnButtonClicked();
 signals:
     void switchToSignIn();
+    void switchToMainPage();
 };
 
 #endif // SIGNON_H

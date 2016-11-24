@@ -26,6 +26,7 @@ private:
     bool userAvailabel(std::string name);
 private slots:
     void onSignInClicked();
+    void onTopSignOnClicked();
     void receiveSwitch();
 signals:
     void switchToSignOn();

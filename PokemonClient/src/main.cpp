@@ -10,11 +10,13 @@ int main(int argc, char *argv[])
     SignIn signin;
     SignOn signon;
     MainPage mainpage;
+    signin.setGeometry(400, 200, 400, 300);
     signin.show();
 
     QObject::connect(&signin, SIGNAL(switchToSignOn()), &signon, SLOT(receiveSwitch()));
     QObject::connect(&signin, SIGNAL(switchToMainPage()), &mainpage, SLOT(receiveSwitch()));
     QObject::connect(&signon, SIGNAL(switchToSignIn()), &signin, SLOT(receiveSwitch()));
+    QObject::connect(&signon, SIGNAL(switchToMainPage()), &mainpage, SLOT(receiveSwitch()));
 
     return a.exec();
 }

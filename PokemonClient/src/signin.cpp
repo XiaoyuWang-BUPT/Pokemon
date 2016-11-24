@@ -11,6 +11,7 @@ SignIn::SignIn(QWidget *parent) :
     this->setGeometry(400, 200, 400, 300);
     this->setWindowTitle("Sign In");
     QObject::connect(this->ui->signInButton, SIGNAL(clicked(bool)), this, SLOT(onSignInClicked()));
+    QObject::connect(this->ui->topButtonSignOn, SIGNAL(clicked(bool)), this, SLOT(onTopSignOnClicked()));
 }
 
 SignIn::~SignIn()
@@ -24,13 +25,16 @@ void SignIn::receiveSwitch()
     this->ui->pwLineEdit->clear();
     this->setGeometry(400, 200, 400, 300);
     this->show();
-    QMessageBox::information(this, "Info", "User Exists Please Sign In");
 }
 
-void SignIn::onSignInClicked() {
-    std::cout << this->ui->userLineEdit->text().toStdString() << std::endl;
-    std::cout << this->ui->pwLineEdit->text().toStdString() << std::endl;
+void SignIn::onTopSignOnClicked()
+{
+    this->hide();
+    emit switchToSignOn();
+}
 
+void SignIn::onSignInClicked()
+{
     if (this->ui->userLineEdit->text().isEmpty())
         QMessageBox::information(this, "Error", QString::fromStdString("Username can't be empty"));
     else
@@ -48,8 +52,7 @@ void SignIn::onSignInClicked() {
             }
             else
             {
-                this->hide();
-                emit switchToSignOn();
+                QMessageBox::information(this, "Info", "User exists please sign on");
             }
         }
     }
@@ -58,5 +61,5 @@ void SignIn::onSignInClicked() {
 bool SignIn::userAvailabel(std::__cxx11::string name)
 {
     //session
-    return true;
+    return false;
 }

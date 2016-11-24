@@ -8,6 +8,7 @@ SignOn::SignOn(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Sign On");
 
+    QObject::connect(this->ui->topButtonSignIn, SIGNAL(clicked(bool)), this, SLOT(onTopSignInClicked()));
     QObject::connect(this->ui->userLineEdit, SIGNAL(cursorPositionChanged(int,int)), this, SLOT(userLineEditClicked(int,int)));
     QObject::connect(this->ui->pwLineEdit1, SIGNAL(cursorPositionChanged(int,int)), this, SLOT(pwLineEditClicked(int,int)));
     QObject::connect(this->ui->pwLineEidt2, SIGNAL(cursorPositionChanged(int,int)), this, SLOT(pwEnsureLineEditClicked(int,int)));
@@ -31,7 +32,12 @@ void SignOn::receiveSwitch()
     isUNNotCLK = true;
     isPWNotCLK = true;
     isEPWNotCLK = true;
-    QMessageBox::information(this, "Info", "User not in record Please Sign On");
+}
+
+void SignOn::onTopSignInClicked()
+{
+    this->hide();
+    emit switchToSignIn();
 }
 
 void SignOn::userLineEditClicked(int, int)
@@ -94,12 +100,13 @@ void SignOn::signOnButtonClicked()
         //check from session
         if (userExist(this->ui->userLineEdit->text().toStdString()))
         {
-            this->hide();
-            emit switchToSignIn();
+            QMessageBox::information(this, "Info", "User exists please sign in");
         }
         else
         {
             //sign on
+            this->hide();
+            emit switchToMainPage();
         }
     }
 }
