@@ -1,5 +1,8 @@
 ﻿#include <QCoreApplication>
 
+#include "socketServer.h"
+#include <thread>
+
 #include "pokemon.h"
 #include "pokemonfactory.h"
 
@@ -7,7 +10,15 @@
 #include "playerfactory.h"
 
 #include "catchunittest.h"
-#include "./lib/sqlite3.h"
+#include "lib/json.hpp"
+
+using json = nlohmann::json;
+
+std::thread threads[MAXSIZE_POOL];
+
+std::string usernameHelper = "";
+std::string passwordHelper = "";
+std::string sendStrHelper = "";
 
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
@@ -21,15 +32,10 @@ void PrintPokeData(Pokemon *pokemon) {
             "\tIntervalIncrease:" << pokemon->getIntervalIncrease() << "\tCriticalPoint:" << pokemon->getCriticalPoint() <<
             "\nState:" << stateOfString[pokemon->getState()] <<
             "\tSickPoint:" << pokemon->getSickPoint() << "\tSickCounter:" << pokemon->getSickCounter();
-
-    int counterSetSize = pokemon->getCounterSet().size();
-    cout << "\tCounterSet:";
-    set<Nature>::iterator it = pokemon->getCounterSet().begin();
-    for (int i = 0; i< counterSetSize; i++) {
-        cout << natureOfString[*it];
-        if (i < counterSetSize- 1)
-            cout << "-";
-        it++;
+    cout << "\tCounterVec:";
+    for (auto c : pokemon->getCounterVec())
+    {
+        cout << natureOfString[c] << " ";
     }
     cout << endl;
     cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
@@ -49,6 +55,8 @@ void PrintPlayer(Player *player)
     }
     cout << endl;
 }
+
+DWORD WINAPI HelperThreadFunc();
 
 int main(int argc, char *argv[])
 {
@@ -141,5 +149,82 @@ int main(int argc, char *argv[])
     delete charamander;
     delete pokemonFactory;
 
+    memset(cSock, INVALID_SOCKET, sizeof(cSock));
+    SocketServer *socketServer = new SocketServer();
+    socketServer->Prepare();
+
+    std::thread helperThread = std::thread (HelperThreadFunc);
+    helperThread.detach();
+
+    while (true)
+    {
+        if (socketServer->existingClientCount < MAXSIZE_POOL)
+            std::cout << "Waiting Client to connect" << std::endl;
+        SOCKET tmpSock = accept(socketServer->ListenSocket, NULL, NULL);
+        if (socketServer->existingClientCount < MAXSIZE_POOL)
+        {
+            int j = send(tmpSock, Permision.c_str(), Permision.length(), NULL);
+            for (int i = 0; i < MAXSIZE_POOL; i++)
+            {
+                if (cSock[i] == INVALID_SOCKET)
+                {
+                    cSock[i] = std::move(tmpSock);
+                    threads[i] =
+                        std::thread(ProcessClientRequests, i, &cSock[i], socketServer);
+                    threads[i].detach(); //A thread returns and release resources BY ITSELF
+                    socketServer->existingClientCount++;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            send(tmpSock, Deny.c_str(), Deny.length(), NULL);
+        }
+    }
+    while (true);
+    socketServer->ShutDown();
+    delete socketServer;
+
     return a.exec();
+}
+
+DWORD WINAPI HelperThreadFunc()
+{
+    Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+    //playerMapper.CreateTable();
+    PlayerInfo qHelper;
+    auto query = playerMapper.Query(qHelper)
+            .ToVector();
+    while (true)
+    {
+        json j;
+        if (usernameHelper != "" && passwordHelper != "")
+        {
+            for (auto c : query)
+            {
+                if (c.name == usernameHelper)
+                {
+                    j["symbol"] = "signin";
+                    j["useravailable"] = "true";
+                    if (c.password == passwordHelper)
+                    {
+                        j["passwordcorrect"] = "true";
+                    }
+                    else
+                    {
+                        j["passwordcorrect"] = "false";
+                    }
+                }
+                else
+                {
+                    j["useravailable"] = "false";
+                    j["passwordcorrect"] = "unknown";
+                }
+                j["end"] = "end";
+                sendStrHelper = j.dump();
+                break;
+            }
+        }
+    }
 }

@@ -111,7 +111,7 @@ void SignOn::signOnButtonClicked()
     }
 }
 
-bool SignOn::userExist(std::__cxx11::string username)
+bool SignOn::userExist(std::string username)
 {
     //session
     return true;

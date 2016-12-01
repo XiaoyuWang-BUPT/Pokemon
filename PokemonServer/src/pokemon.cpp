@@ -35,10 +35,20 @@ void Pokemon::Attack(Pokemon *dePokemon) {
 
 void Pokemon::SpecialAttackDamage(Pokemon *dePokemon) {
     int specialDamage = this->getAttackPoint() - dePokemon->getDefencePoint();
-    if (this->getCounterSet().count(dePokemon->getNature())) {
+    bool counter = false;
+    for (auto c : this->getCounterVec())
+        if (c == dePokemon->getNature())
+            counter = true;
+
+    bool beCounter = false;
+    for (auto c : dePokemon->getCounterVec())
+        if (c == this->getNature())
+            beCounter = true;
+
+    if (counter) {
         specialDamage *= (int)2* specialDamage;
     }
-    else if (dePokemon->getCounterSet().count(this->getNature())){
+    else if (beCounter){
         specialDamage = (int)0.5* specialDamage;
     }
     if (specialDamage < 0)
@@ -188,8 +198,8 @@ Fire::Fire(Kind kind, int level, string name) {
     this->setCurrentHP(this->getTotalHP());
     this->setIntervalIncrease(GiftGenFunc(2, 4));
     this->setCriticalPoint(10);
-    set<Nature> counterNature;
-    counterNature.insert(BUSH);
+    vector<Nature> counterNature;
+    counterNature.push_back(BUSH);
     this->setCounter(counterNature);
     this->setState(HEALTHY);
     this->setSickPoint(0);
@@ -218,8 +228,8 @@ Fire::Fire(PokemonInfo pokemonInfo)
     this->setCurrentHP(pokemonInfo.currentHP);
     this->setIntervalIncrease(pokemonInfo.intervalIncrease);
     this->setCriticalPoint(pokemonInfo.criticalPoint);
-    set<Nature> counterNature;
-    counterNature.insert(BUSH);
+    vector<Nature> counterNature;
+    counterNature.push_back(BUSH);
     this->setCounter(counterNature);
     this->setState((State)pokemonInfo.state);
     this->setSickPoint(pokemonInfo.sickPoint);
@@ -253,8 +263,8 @@ Water::Water(Kind kind, int level, string name) {
     this->setCurrentHP(this->getTotalHP());
     this->setIntervalIncrease(GiftGenFunc(2, 4));
     this->setCriticalPoint(10);
-    set<Nature> counterNature;
-    counterNature.insert(FIRE);
+    vector<Nature> counterNature;
+    counterNature.push_back(FIRE);
     this->setCounter(counterNature);
     this->setState(HEALTHY);
     this->setSickPoint(0);
@@ -281,8 +291,8 @@ Water::Water(PokemonInfo pokemonInfo)
     this->setCurrentHP(pokemonInfo.currentHP);
     this->setIntervalIncrease(pokemonInfo.intervalIncrease);
     this->setCriticalPoint(pokemonInfo.criticalPoint);
-    set<Nature> counterNature;
-    counterNature.insert(FIRE);
+    vector<Nature> counterNature;
+    counterNature.push_back(FIRE);
     this->setCounter(counterNature);
     this->setState((State)pokemonInfo.state);
     this->setSickPoint(pokemonInfo.sickPoint);
@@ -316,9 +326,9 @@ Bush::Bush(Kind kind, int level, string name) {
     this->setCurrentHP(this->getTotalHP());
     this->setIntervalIncrease(GiftGenFunc(2, 4));
     this->setCriticalPoint(10);
-    set<Nature> counterNature;
-    counterNature.insert(WATER);
-    counterNature.insert(ELECTRICITY);
+    vector<Nature> counterNature;
+    counterNature.push_back(WATER);
+    counterNature.push_back(ELECTRICITY);
     this->setCounter(counterNature);
     this->setState(HEALTHY);
     this->setSickPoint(0);
@@ -345,9 +355,9 @@ Bush::Bush(PokemonInfo pokemonInfo)
     this->setCurrentHP(pokemonInfo.currentHP);
     this->setIntervalIncrease(pokemonInfo.intervalIncrease);
     this->setCriticalPoint(pokemonInfo.criticalPoint);
-    set<Nature> counterNature;
-    counterNature.insert(WATER);
-    counterNature.insert(ELECTRICITY);
+    vector<Nature> counterNature;
+    counterNature.push_back(WATER);
+    counterNature.push_back(ELECTRICITY);
     this->setCounter(counterNature);
     this->setState((State)pokemonInfo.state);
     this->setSickPoint(pokemonInfo.sickPoint);
@@ -381,8 +391,8 @@ Electricity::Electricity(Kind kind, int level, string name) {
     this->setCurrentHP(this->getTotalHP());
     this->setIntervalIncrease(GiftGenFunc(2, 4));
     this->setCriticalPoint(10);
-    set<Nature> counterNature;
-    counterNature.insert(WATER);
+    vector<Nature> counterNature;
+    counterNature.push_back(WATER);
     this->setCounter(counterNature);
     this->setState(HEALTHY);
     this->setSickPoint(0);
@@ -411,8 +421,8 @@ Electricity::Electricity(PokemonInfo pokemonInfo)
     this->setCurrentHP(pokemonInfo.currentHP);
     this->setIntervalIncrease(pokemonInfo.intervalIncrease);
     this->setCriticalPoint(pokemonInfo.criticalPoint);
-    set<Nature> counterNature;
-    counterNature.insert(WATER);
+    vector<Nature> counterNature;
+    counterNature.push_back(WATER);
     this->setCounter(counterNature);
     this->setState((State)pokemonInfo.state);
     this->setSickPoint(pokemonInfo.sickPoint);

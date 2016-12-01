@@ -1,10 +1,10 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-10-13T14:48:18
+# Project created by QtCreator 2016-11-28T10:29:13
 #
 #-------------------------------------------------
 
-QT       += core gui\
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,9 +18,11 @@ SOURCES += src/main.cpp \
     src/signon.cpp
 
 HEADERS  += \
+    lib/json.hpp \
     src/signin.h \
     src/mainpage.h \
-    src/signon.h
+    src/signon.h \
+    src/socketClient.h
 
 FORMS    += \
     signin.ui \

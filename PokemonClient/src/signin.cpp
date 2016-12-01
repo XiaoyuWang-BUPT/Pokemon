@@ -43,7 +43,29 @@ void SignIn::onSignInClicked()
             QMessageBox::information(this, "Error", QString::fromStdString("Password can't be empty"));
         else
         {
-            if (userAvailabel(this->ui->userLineEdit->text().toStdString()))
+            //Session
+            json j;
+            j["symbol"] = "singin";
+            j["username"] = this->ui->userLineEdit->text().toStdString();
+            j["password"] = this->ui->pwLineEdit->text().toStdString();
+            j["end"] = "end";
+            std::string str = j.dump();
+
+            extern std::string sendStrHelper;
+            sendStrHelper = str;
+
+            extern std::string recvStrHelper;
+            while (recvStrHelper == "");
+            json recvJ = json::parse(recvStrHelper);
+            recvStrHelper == "";
+            std::string useravailable = recvJ["useravailable"];
+            std::string passwordcorrect = recvJ["passwordcorrect"];
+
+            if (useravailable == "false")
+            {
+                QMessageBox::information(this, "Info", "User exists please sign on");
+            }
+            else if (passwordcorrect == "true")
             {
                 this->ui->userLineEdit->clear();
                 this->ui->pwLineEdit->clear();
@@ -52,14 +74,13 @@ void SignIn::onSignInClicked()
             }
             else
             {
-                QMessageBox::information(this, "Info", "User exists please sign on");
+                QMessageBox::information(this, "Info", "Wrong password");
             }
         }
     }
 }
 
-bool SignIn::userAvailabel(std::__cxx11::string name)
+bool SignIn::userAvailabel()
 {
-    //session
     return false;
 }

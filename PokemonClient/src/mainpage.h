@@ -2,6 +2,9 @@
 #define MAINPAGE_H
 
 #include <QWidget>
+#include "lib/json.hpp"
+
+using json = nlohmann::json;
 
 namespace Ui {
 class MainPage;

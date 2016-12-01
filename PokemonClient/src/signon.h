@@ -5,6 +5,9 @@
 #include <QMouseEvent>
 #include <QMessageBox>
 #include <iostream>
+#include "lib/json.hpp"
+
+using json = nlohmann::json;
 
 namespace Ui {
 class SignOn;

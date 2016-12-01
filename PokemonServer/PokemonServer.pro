@@ -20,8 +20,10 @@ HEADERS += src/catchunittest.h \
     src/pokemon.h \
     src/pokemonfactory.h \
     lib/catch.hpp \
+    lib/json.hpp \
     src/player.h \
     lib/sqlite3.h \
     src/playerfactory.h \
     lib/poorormlite.h \
-    lib/helper.h
+    lib/helper.h \
+    src/socketServer.h

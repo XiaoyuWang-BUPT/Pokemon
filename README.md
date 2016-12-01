@@ -106,3 +106,14 @@
 * TODO
   * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
   * 添加`session.h` `session.cpp`测试会话
+
+### v0.2.1(2016/12/1)
+
+* `添加Socket Server` 和 `Socket Client`到项目
+* 可实现登录 操作即 `sign in` ，客户端发送用户名及密码，服务器在数据库查询后返回查询结果
+* 添加`json.hpp`实现信息传输的序列化和反序列化
+* TODO
+  * 在`Server/Client`创建*Helper Class*用于取代*extern*，通过传*Helper Object*实现面向对象地在多个`.cpp`中访问值
+  * 规范通信协议
+  * 完善*unit test*
+

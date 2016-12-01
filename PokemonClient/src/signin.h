@@ -9,6 +9,9 @@
 #include <string>
 #include "mainpage.h"
 #include "signon.h"
+#include "lib/json.hpp"
+
+using json = nlohmann::json;
 
 namespace Ui {
 class SignIn;
@@ -23,7 +26,8 @@ public:
     ~SignIn();
 private:
     Ui::SignIn *ui;
-    bool userAvailabel(std::string name);
+    bool userAvailabel();
+    std::string sendString;
 private slots:
     void onSignInClicked();
     void onTopSignOnClicked();

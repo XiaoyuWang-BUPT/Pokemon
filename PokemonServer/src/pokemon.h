@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
-#include <set>
+#include <vector>
 #include "lib/PoorORMLite.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -18,12 +18,12 @@ using namespace std;
  * attention:
    1.'nature' 'kind' 'character' 'state' correspond Enumeration in Pokemon.h
       transfer them to Enumeration using array xxxOfString when instantiating
-   2.counterSet info is not recorded in db but construct function knows*/
+   2.counterVec info is not recorded in db but construct function knows*/
 struct PokemonInfo
 {
     string name; //获得新的小精灵时命名 不命名则默认为 小火龙 水箭龟 皮卡丘
     int nature; //火 水 草 冰 四种属性 FIRE> BUSH; FIRE> ELECTRICITY; WATER> FIRE; BUSH> WATER; ELECTRICITY> FIRE
-    int kind; //小精灵的细类 小火龙 水箭龟 皮卡丘 等    
+    int kind; //小精灵的细类 小火龙 水箭龟 皮卡丘 等
     int character; //攻击型 防御型 肉盾型 敏捷型 四种性格
     int level;
     int experiencePoint;
@@ -59,7 +59,7 @@ private:
     int _intervalIncrease_; //攻击间隔增长
     //TODO while循环中两小精灵累加_intervalIncrease_，直至同一阈值（如50），率先到达者先攻击，调用攻击者的攻击函数及动画
     int _criticalPoint_; //暴击指数
-    set<Nature> _counter_; //克制的属性
+    vector<Nature> _counter_; //克制的属性
     State _state_; //当前所处的健康状态 健康 烧伤 冻伤 中毒 麻痹
     int _sickCounter_; //不健康计数器 用于记录烧伤 冻伤 中毒 麻痹 的回合数
     int _sickPoint_; //烧伤 冻伤 中毒 麻痹 每次的伤害
@@ -117,7 +117,7 @@ public:
         this->_criticalPoint_ = criticalPoint;
     }
 
-    void setCounter(set<Nature> counter) {
+    void setCounter(vector<Nature> counter) {
         this->_counter_ = counter;
     }
 
@@ -182,7 +182,7 @@ public:
         return this->_currentHP_;
     }
 
-    set<Nature> getCounterSet() {
+    vector<Nature> getCounterVec() {
         return this->_counter_;
     }
 

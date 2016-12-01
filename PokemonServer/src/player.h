@@ -3,6 +3,7 @@
 
 #include "pokemon.h"
 #include <QDateTime>
+#include <set>
 
 struct PlayerInfo
 {

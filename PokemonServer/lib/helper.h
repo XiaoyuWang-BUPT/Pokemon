@@ -1,7 +1,7 @@
 ﻿#ifndef HELPER_H
 #define HELPER_H
 
-enum Nature {FIRE, WATER, BUSH, ELECTRICITY};
+enum Nature { FIRE, WATER, BUSH, ELECTRICITY };
 const std::string natureOfString[] = {"Fire", "Water", "Bush", "Electricity"};
 enum Kind{
             CHARMANDER, CHARMELEON, CHARIZARD, //小火龙 火恐龙 喷火龙
