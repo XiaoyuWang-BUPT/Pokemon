@@ -26,4 +26,5 @@ HEADERS += src/catchunittest.h \
     src/playerfactory.h \
     lib/poorormlite.h \
     lib/helper.h \
-    src/socketServer.h
+    src/socketServer.h \
+    src/session.h

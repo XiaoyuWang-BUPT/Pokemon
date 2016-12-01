@@ -117,3 +117,26 @@
   * 规范通信协议
   * 完善*unit test*
 
+
+### v0.2.2(2016/12/2)
+
+* 创建*Helper* 消除*extern*
+
+* 消除了*while(true)*，降低了CPU占用率
+
+* `PokemonClient / main.cpp`关键改动
+
+  ```c++
+  // - socketClient->Cleanup()
+  // - delete socketClient;
+  // Instead,we call Cleanup() in ~socketClient() && we delete socketClient in ~SignIn()
+  ```
+
+* TODO
+  * 对方通信协议
+
+  * 完善*Unit test*
+
+  * `Client`端优化过程损失了**被呼叫**功能 (创建线程`recv`)
+
+    ​

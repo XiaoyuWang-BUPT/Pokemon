@@ -8,12 +8,8 @@
 #include <string>
 #include <vector>
 #include <memory.h>
-#include "lib/json.hpp"
-#include <thread>
 
 #pragma comment(lib, "ws2_32.lib")
-
-using json = nlohmann::json;
 
 #define DEFAULT_PORT "27015"
 #define DEFAULT_BUFLEN 128
@@ -143,75 +139,6 @@ void SocketServer::ShutDown()
 		WSACleanup();
 	}
 	system("pause");
-}
-
-DWORD WINAPI SendThreadFunc(int pid, LPVOID cParam, LPVOID sParam);
-
-DWORD WINAPI RecvThreadFunc(int pid, LPVOID cParam, LPVOID sParam)
-{
-    SOCKET* clientSocket = (SOCKET*)cParam;
-    SocketServer *socketServer = (SocketServer*)sParam;
-    char buff[DEFAULT_BUFLEN] = { NULL };
-    while (true) {
-        int result = recv(*clientSocket, buff, DEFAULT_BUFLEN, 0);
-        if (result > 0)
-        {
-            std::string strRecv = buff;
-            json j = json::parse(strRecv);
-            std::string username = j["username"];
-            std::string password = j["password"];
-            extern std::string usernameHelper;
-            usernameHelper = username;
-            extern std::string passwordHelper;
-            passwordHelper = password;
-            std::cout << "Thread " << pid << ": " << strRecv << std::endl;
-
-            std::thread sendThread = std::thread(SendThreadFunc, pid, clientSocket, socketServer);
-            sendThread.join();
-
-            //TODO 根据收到的字符串决定获取和发送，新创线程以免影响接收
-            for (auto& b : buff) { b = NULL; }
-            break;
-        }
-        else if (result == -1) //client window closed, release resources and return
-        {
-            std::cout << "Client "
-                      << pid
-                      << "'s window closed, connection terminated"
-                      << std::endl;
-            break;
-        }
-    }
-    return 0;
-}
-
-DWORD WINAPI SendThreadFunc(int pid, LPVOID cParam, LPVOID sParam)
-{
-    SOCKET* clientSocket = (SOCKET*)cParam;
-    SocketServer *socketServer = (SocketServer*)sParam;
-    extern std::string sendStrHelper;
-    while (sendStrHelper == "");
-    std::string strSend = sendStrHelper;
-    sendStrHelper = "";
-    std::cout << "strSend:" << strSend << std::endl;
-    send(*clientSocket, strSend.c_str(), strSend.length(), NULL);
-    return 0;
-}
-
-DWORD WINAPI ProcessClientRequests(int pid, LPVOID cParam, LPVOID sParam)
-{
-	SOCKET* clientSocket = (SOCKET*)cParam;
-	SocketServer *socketServer = (SocketServer*)sParam;    
-	std::cout << "Thread " << pid << std::endl;
-    std::thread recvThread;
-    recvThread = std::thread(RecvThreadFunc, pid, clientSocket, socketServer);
-    recvThread.join();
-    closesocket(*clientSocket);
-
-    socketServer->existingClientCount--;
-    cSock[pid] = INVALID_SOCKET;
-
-	return 0;
 }
 
 #endif //!SOCKET_SERVER_H

@@ -1,25 +1,22 @@
-﻿#include "mainpage.h"
-#include "signin.h"
-#include "signon.h"
-#include "socketClient.h"
-#include <thread>
+﻿#include "signin.h"
 #include <QApplication>
 #include <QDebug>
 
-std::string sendStrHelper = "";
-std::string recvStrHelper = "";
-
-DWORD WINAPI sessionFunc();
+//DWORD WINAPI sessionFunc(LPVOID hParam);
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);    
+    QApplication a(argc, argv);
+    //std::thread sessionThread;
+    //sessionThread = std::thread(sessionFunc, helper);
+    //sessionThread.detach();
 
-    std::thread sessionThread;
-    sessionThread = std::thread(sessionFunc);
-    sessionThread.detach();
+    Helper* helper = new Helper();
+    SocketClient *socketClient = new SocketClient();
+    socketClient->Prepare();
+    socketClient->Try();
 
-    SignIn *signin = new SignIn();
+    SignIn *signin = new SignIn(helper, socketClient);
     SignOn *signon = new SignOn();
     MainPage *mainpage = new MainPage();
     signin->setGeometry(400, 200, 400, 300);
@@ -32,21 +29,14 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
-DWORD WINAPI sessionFunc()
-{
-    while (true)
-    {
-        if (sendStrHelper != "")
-        {
-            SocketClient *socketClient = new SocketClient();
-            socketClient->Prepare();
-            socketClient->Try();
-            socketClient->sendStr = sendStrHelper;
-            socketClient->Run();
-            sendStrHelper = "";
-            socketClient->Cleanup();
-            delete socketClient;
-        }
-    }
-    return 0;
-}
+//DWORD WINAPI sessionFunc(LPVOID hParam)
+//{
+    //Helper* helper = (Helper*)hParam;
+    //SocketClient *socketClient = new SocketClient(helper);
+    //socketClient->Prepare();
+    //socketClient->Try();
+    //socketClient->Run();
+    //socketClient->Cleanup();
+    //delete socketClient;
+    //return 0;
+//}

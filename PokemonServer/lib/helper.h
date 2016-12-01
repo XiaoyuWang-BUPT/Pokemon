@@ -1,6 +1,8 @@
 ﻿#ifndef HELPER_H
 #define HELPER_H
 
+#include <string>
+
 enum Nature { FIRE, WATER, BUSH, ELECTRICITY };
 const std::string natureOfString[] = {"Fire", "Water", "Bush", "Electricity"};
 enum Kind{
@@ -50,9 +52,16 @@ const int UpGradeCriticalInc = 5;
 
 class Helper
 {
+private:
+    std::string recvStrHelper = "";
+    std::string sendStrHelper = "";
 public:
     Helper() {}
     ~Helper() {}
+    void setRecvStrHelper(std::string str) { recvStrHelper = str; }
+    void setSendStrHelper(std::string str) { sendStrHelper = str; }
+    std::string getRecvStrHelper() { return this->recvStrHelper; }
+    std::string getSendStrHelper() { return this->sendStrHelper; }
     static std::string SplitStr(std::string &inputStr)
     {
         size_t pos = 0;

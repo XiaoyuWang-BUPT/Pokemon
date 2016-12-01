@@ -1,24 +1,13 @@
 ﻿#include <QCoreApplication>
 
-#include "socketServer.h"
-#include <thread>
-
-#include "pokemon.h"
+#include "session.h"
 #include "pokemonfactory.h"
-
-#include "player.h"
 #include "playerfactory.h"
-
 #include "catchunittest.h"
-#include "lib/json.hpp"
 
 using json = nlohmann::json;
 
 std::thread threads[MAXSIZE_POOL];
-
-std::string usernameHelper = "";
-std::string passwordHelper = "";
-std::string sendStrHelper = "";
 
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
@@ -56,14 +45,12 @@ void PrintPlayer(Player *player)
     cout << endl;
 }
 
-DWORD WINAPI HelperThreadFunc();
-
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
     /* Unit Test */
-    int result = Catch::Session().run( argc, argv );
+    Catch::Session().run( argc, argv );
 
     PokemonFactory *pokemonFactory = new PokemonFactory();
     cout << "Please name your pokemon: ";
@@ -153,9 +140,6 @@ int main(int argc, char *argv[])
     SocketServer *socketServer = new SocketServer();
     socketServer->Prepare();
 
-    std::thread helperThread = std::thread (HelperThreadFunc);
-    helperThread.detach();
-
     while (true)
     {
         if (socketServer->existingClientCount < MAXSIZE_POOL)
@@ -163,6 +147,7 @@ int main(int argc, char *argv[])
         SOCKET tmpSock = accept(socketServer->ListenSocket, NULL, NULL);
         if (socketServer->existingClientCount < MAXSIZE_POOL)
         {
+            Helper *helper = new Helper();
             int j = send(tmpSock, Permision.c_str(), Permision.length(), NULL);
             for (int i = 0; i < MAXSIZE_POOL; i++)
             {
@@ -170,7 +155,7 @@ int main(int argc, char *argv[])
                 {
                     cSock[i] = std::move(tmpSock);
                     threads[i] =
-                        std::thread(ProcessClientRequests, i, &cSock[i], socketServer);
+                        std::thread(ProcessClientRequests, i, &cSock[i], socketServer, helper);
                     threads[i].detach(); //A thread returns and release resources BY ITSELF
                     socketServer->existingClientCount++;
                     break;
@@ -182,49 +167,8 @@ int main(int argc, char *argv[])
             send(tmpSock, Deny.c_str(), Deny.length(), NULL);
         }
     }
-    while (true);
     socketServer->ShutDown();
     delete socketServer;
 
     return a.exec();
-}
-
-DWORD WINAPI HelperThreadFunc()
-{
-    Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
-    //playerMapper.CreateTable();
-    PlayerInfo qHelper;
-    auto query = playerMapper.Query(qHelper)
-            .ToVector();
-    while (true)
-    {
-        json j;
-        if (usernameHelper != "" && passwordHelper != "")
-        {
-            for (auto c : query)
-            {
-                if (c.name == usernameHelper)
-                {
-                    j["symbol"] = "signin";
-                    j["useravailable"] = "true";
-                    if (c.password == passwordHelper)
-                    {
-                        j["passwordcorrect"] = "true";
-                    }
-                    else
-                    {
-                        j["passwordcorrect"] = "false";
-                    }
-                }
-                else
-                {
-                    j["useravailable"] = "false";
-                    j["passwordcorrect"] = "unknown";
-                }
-                j["end"] = "end";
-                sendStrHelper = j.dump();
-                break;
-            }
-        }
-    }
 }

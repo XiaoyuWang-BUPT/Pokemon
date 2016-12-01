@@ -15,14 +15,16 @@ TEMPLATE = app
 SOURCES += src/main.cpp \
     src/signin.cpp \
     src/mainpage.cpp \
-    src/signon.cpp
+    src/signon.cpp \
+    src/socketclient.cpp
 
 HEADERS  += \
     lib/json.hpp \
     src/signin.h \
     src/mainpage.h \
     src/signon.h \
-    src/socketClient.h
+    src/socketClient.h \
+    src/helper.h
 
 FORMS    += \
     signin.ui \
