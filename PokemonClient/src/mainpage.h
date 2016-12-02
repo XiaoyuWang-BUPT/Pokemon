@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include "lib/json.hpp"
+#include "helper.h"
+#include "socketClient.h"
 
 using json = nlohmann::json;
 
@@ -19,6 +21,7 @@ public:
     ~MainPage();
 private:
     Ui::MainPage *ui;
+    std::thread calledThread;
 private slots:
     void receiveSwitch();
 };

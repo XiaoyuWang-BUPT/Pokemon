@@ -174,11 +174,6 @@ void Pokemon::Evolution(int evoLevel) {
     //cout<< " is evoluting to " << kindOfString[this->getKind()] << endl;
 }
 
-//bool Pokemon::equals(Pokemon *anotherPM) {
-//    if (this->getName() == anotherPM->getName())
-//        return true;
-//    return false;
-//}
 
 int GiftGenFunc(int MIN, int MAX) {
     return MIN + Random(MAX - MIN);

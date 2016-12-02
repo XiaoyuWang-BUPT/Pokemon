@@ -2,14 +2,9 @@
 #include <QApplication>
 #include <QDebug>
 
-//DWORD WINAPI sessionFunc(LPVOID hParam);
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //std::thread sessionThread;
-    //sessionThread = std::thread(sessionFunc, helper);
-    //sessionThread.detach();
 
     Helper* helper = new Helper();
     SocketClient *socketClient = new SocketClient();
@@ -28,15 +23,3 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
-
-//DWORD WINAPI sessionFunc(LPVOID hParam)
-//{
-    //Helper* helper = (Helper*)hParam;
-    //SocketClient *socketClient = new SocketClient(helper);
-    //socketClient->Prepare();
-    //socketClient->Try();
-    //socketClient->Run();
-    //socketClient->Cleanup();
-    //delete socketClient;
-    //return 0;
-//}
