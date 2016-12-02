@@ -23,8 +23,7 @@ HEADERS  += \
     src/signin.h \
     src/mainpage.h \
     src/signon.h \
-    src/socketClient.h \
-    src/helper.h
+    src/socketClient.h
 
 FORMS    += \
     signin.ui \

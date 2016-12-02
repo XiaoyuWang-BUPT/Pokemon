@@ -14,9 +14,8 @@ SignIn::SignIn(QWidget *parent) :
     QObject::connect(this->ui->topButtonSignOn, SIGNAL(clicked(bool)), this, SLOT(onTopSignOnClicked()));
 }
 
-SignIn::SignIn(Helper* h, SocketClient* sc, QWidget *parent) :
+SignIn::SignIn(SocketClient* sc, QWidget *parent) :
     QWidget(parent),
-    helper(h),
     socketClient(sc),
     ui(new Ui::SignIn)
 {
@@ -29,7 +28,6 @@ SignIn::SignIn(Helper* h, SocketClient* sc, QWidget *parent) :
 
 SignIn::~SignIn()
 {
-    delete helper;
     delete socketClient;
     delete ui;
 }
@@ -48,8 +46,8 @@ void SignIn::onTopSignOnClicked()
     emit switchToSignOn();
 }
 
-DWORD WINAPI SendThreadFunc(LPVOID lParam, LPVOID hParam);
-DWORD WINAPI RecvThreadFunc(LPVOID lParam, LPVOID hParam);
+DWORD WINAPI SendThreadFunc(LPVOID lParam, LPVOID sParam);
+DWORD WINAPI RecvThreadFunc(LPVOID lParam, SignIn* signin);
 
 void SignIn::onSignInClicked()
 {
@@ -68,16 +66,14 @@ void SignIn::onSignInClicked()
             j["end"] = "end";
             std::string str = j.dump();
 
-            helper->setSendStrHelper(str);
-            std::thread sigininSendThread = std::thread(SendThreadFunc, socketClient, helper);
+            std::thread sigininSendThread = std::thread(SendThreadFunc, socketClient/*, helper*/, &str);
             sigininSendThread.join();
 
-            std::thread signinRecvThread = std::thread(RecvThreadFunc, socketClient, helper);
+            std::thread signinRecvThread = std::thread(RecvThreadFunc, socketClient/*, helper*/, this);
             signinRecvThread.join();
 
-            std::string recvStr = helper->getRecvStrHelper();
-            helper->setRecvStrHelper("");
-            json recvJ = json::parse(recvStr);
+            json recvJ = json::parse(recvString);
+            recvString = "";
             bool useravailable = recvJ["useravailable"];
             bool passwordcorrect = recvJ["passwordcorrect"];
 
@@ -100,17 +96,21 @@ void SignIn::onSignInClicked()
     }
 }
 
-DWORD WINAPI SendThreadFunc(LPVOID lParam, LPVOID hParam)
+bool SignIn::setRecvStr(QString s)
 {
-    Helper* helper = (Helper*)hParam;
+    this->recvString = s.toStdString();
+    return true;
+}
+
+DWORD WINAPI SendThreadFunc(LPVOID lParam, LPVOID sParam)
+{
+    std::string *sendStr = (std::string*)sParam;
     SocketClient *socketClient = (SocketClient*)lParam;
     int iResult;
     SOCKET ConnectSocket = socketClient->getConnectSocket();
-    std::string sendStr = helper->getSendStrHelper();
-    helper->setSendStrHelper("");
-    size_t len = sendStr.length();
+    size_t len = (*sendStr).length();
     char *sendbuf = new char[len];
-    strcpy(sendbuf, sendStr.data());
+    strcpy(sendbuf, (*sendStr).data());
     iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
     if (iResult == SOCKET_ERROR)
     {
@@ -122,16 +122,15 @@ DWORD WINAPI SendThreadFunc(LPVOID lParam, LPVOID hParam)
     return 0;
 }
 
-DWORD WINAPI RecvThreadFunc(LPVOID lParam, LPVOID hParam)
+DWORD WINAPI RecvThreadFunc(LPVOID lParam, SignIn* signin)
 {
-    Helper* helper = (Helper*)hParam;
     SocketClient* socketClient = (SocketClient*)lParam;
     SOCKET ConnectSocket = socketClient->getConnectSocket();
     socketClient->ClearRecvBuf();
     socketClient->iResult = recv(ConnectSocket, socketClient->recvbuf, socketClient->recvbuflen, 0);
     if (socketClient->iResult > 0)
     {
-        helper->setRecvStrHelper(socketClient->GetRecvStr());
+        QMetaObject::invokeMethod(signin, "setRecvStr", Qt::DirectConnection, Q_ARG(QString, QString::fromStdString(socketClient->GetRecvStr())));
     }
     else if (socketClient->iResult == 0)
     {

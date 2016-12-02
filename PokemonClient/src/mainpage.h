@@ -17,6 +17,8 @@ class MainPage : public QWidget
     Q_OBJECT
 
 public:
+    SocketClient* socketClient;
+    explicit MainPage(SocketClient* sc, QWidget *parent = 0);
     explicit MainPage(QWidget *parent = 0);
     ~MainPage();
 private:
@@ -24,6 +26,7 @@ private:
     std::thread calledThread;
 private slots:
     void receiveSwitch();
+    Q_INVOKABLE bool setChatBox(QString chatContent);
 };
 
 #endif // !MAINPAGE_H

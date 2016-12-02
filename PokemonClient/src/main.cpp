@@ -6,14 +6,13 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Helper* helper = new Helper();
     SocketClient *socketClient = new SocketClient();
     socketClient->Prepare();
     socketClient->Try();
 
-    SignIn *signin = new SignIn(helper, socketClient);
+    SignIn *signin = new SignIn(socketClient);
     SignOn *signon = new SignOn();
-    MainPage *mainpage = new MainPage();
+    MainPage *mainpage = new MainPage(socketClient);
     signin->setGeometry(400, 200, 400, 300);
     signin->show();
     QObject::connect(signin, SIGNAL(switchToSignOn()), signon, SLOT(receiveSwitch()));

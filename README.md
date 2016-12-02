@@ -142,3 +142,8 @@
 * 完善*Unit test*测试`pokemon`的属性
 * 调整玩家对战机制，玩家发起对战请求，服务器在其他请求对战的用户中选择建立对战
 * **被呼叫**功能:只在主页查看聊天信息。进入主界面时创建`CalledThread`线程用于`recv`，接受到后显示。玩家发送聊天信息，则同普通发送行为
+
+### v0.2.4(2016/12/3)
+
+* `client`端删除冗余的*Helper Class*
+* `CalledThread`加入`socketClient`用于`recv`由于目前尚未在`server`端实现`call`功能故`CalledThread`处于阻塞在`recv`阶段
