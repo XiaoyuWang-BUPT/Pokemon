@@ -148,6 +148,7 @@
 * `client`端删除冗余的*Helper Class*
 * `CalledThread`加入`socketClient`用于`recv`由于目前尚未在`server`端实现`call`功能故`CalledThread`处于阻塞在`recv`阶段
 
+### v0.2.5(2016/12/3)
 
 * 实现注册功能
 * 实现焦点高亮
