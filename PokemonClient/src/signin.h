@@ -34,7 +34,8 @@ private slots:
     void onSignInClicked();
     void onTopSignOnClicked();
     void receiveSwitch();
-    Q_INVOKABLE bool setRecvStr(QString s);
+    Q_INVOKABLE bool setRecvStrSignIn(QString s);
+    bool eventFilter(QObject *watched, QEvent *event);
 signals:
     void switchToSignOn();
     void switchToMainPage();

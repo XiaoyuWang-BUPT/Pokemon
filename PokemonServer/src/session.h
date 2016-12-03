@@ -8,6 +8,8 @@
 #include "player.h"
 #include "lib/json.hpp"
 #include <iostream>
+#include <QDateTime>
+#include <QString>
 
 using json = nlohmann::json;
 
@@ -44,6 +46,37 @@ std::string GetSendStr(Helper* helper)
                 }
                 break;
             }
+        }
+    }
+    if (symbol == "signon")
+    {
+        sendJ["symbol"] = "signon";
+        sendJ["signonsuccess"] = false;
+        sendJ["useravailable"] = false;
+        sendJ["end"] = "end";
+        std::string nameRecv = recvJ["username"];
+        std::string pwRecv = recvJ["password"];
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        PlayerInfo qHelper;
+        auto query = playerMapper.Query(qHelper)
+                .ToVector();
+        bool userNotLogged = true;
+        for (auto q : query)
+        {
+            if (q.name == nameRecv)
+            {
+                userNotLogged = false;
+                break;
+            }
+        }
+        if (userNotLogged)
+        {
+            sendJ["useravailable"] = true;
+            QDateTime qdt = QDateTime::currentDateTime();
+            std::string s = qdt.toString("yyyyMMddhhmm").toStdString();
+            std::cout << "QDateTime:" << s << std::endl;
+            struct PlayerInfo p = {nameRecv, pwRecv, 0, 0, s, "000"};
+            sendJ["signonsuccess"] = playerMapper.Insert(p);
         }
     }
     helper->setSendStrHelper(sendJ.dump());

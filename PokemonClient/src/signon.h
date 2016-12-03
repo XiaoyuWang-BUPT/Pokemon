@@ -1,6 +1,8 @@
 ﻿#ifndef SIGNON_H
 #define SIGNON_H
 
+#include "helper.h"
+#include "socketClient.h"
 #include <QWidget>
 #include <QMouseEvent>
 #include <QMessageBox>
@@ -18,21 +20,22 @@ class SignOn : public QWidget
     Q_OBJECT
 
 public:
+    SocketClient* socketClient;
     explicit SignOn(QWidget *parent = 0);
+    explicit SignOn(SocketClient* sc, QWidget *parent = 0);
     ~SignOn();
 private:
     Ui::SignOn *ui;
     bool isUNNotCLK = true; //username lineedit not clicked, first time change cursor
     bool isPWNotCLK = true; //password lineedit not clicked, first time change cursor
     bool isEPWNotCLK = true; //ensure password lineedit not clicked, first time change cursor
-    bool userExist(std::string username);
+    std::string recvString = "";
 private slots:    
-    void receiveSwitch();
     void onTopSignInClicked();
-    void userLineEditClicked(int, int);
-    void pwLineEditClicked(int, int);
-    void pwEnsureLineEditClicked(int, int);
     void signOnButtonClicked();
+    void receiveSwitch();
+    Q_INVOKABLE bool setRecvStrSignOn(QString s);
+    bool eventFilter(QObject *watched, QEvent *event);
 signals:
     void switchToSignIn();
     void switchToMainPage();

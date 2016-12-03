@@ -2,6 +2,8 @@
 #include <QMessageBox>
 #include <iostream>
 #include "signin.h"
+#include <QEvent>
+#include <QKeyEvent>
 
 SignIn::SignIn(QWidget *parent) :
     QWidget(parent),
@@ -12,18 +14,16 @@ SignIn::SignIn(QWidget *parent) :
     this->setWindowTitle("Sign In");
     QObject::connect(this->ui->signInButton, SIGNAL(clicked(bool)), this, SLOT(onSignInClicked()));
     QObject::connect(this->ui->topButtonSignOn, SIGNAL(clicked(bool)), this, SLOT(onTopSignOnClicked()));
+    this->ui->userLineEdit->installEventFilter(this);
+    this->ui->pwLineEdit->installEventFilter(this);
+    this->ui->signInButton->installEventFilter(this);
+    this->ui->topButtonSignOn->installEventFilter(this);
 }
 
 SignIn::SignIn(SocketClient* sc, QWidget *parent) :
-    QWidget(parent),
-    socketClient(sc),
-    ui(new Ui::SignIn)
+    SignIn(parent)
 {
-    ui->setupUi(this);
-    this->setGeometry(400, 200, 400, 300);
-    this->setWindowTitle("Sign In");
-    QObject::connect(this->ui->signInButton, SIGNAL(clicked(bool)), this, SLOT(onSignInClicked()));
-    QObject::connect(this->ui->topButtonSignOn, SIGNAL(clicked(bool)), this, SLOT(onTopSignOnClicked()));
+    socketClient = sc;
 }
 
 SignIn::~SignIn()
@@ -46,8 +46,58 @@ void SignIn::onTopSignOnClicked()
     emit switchToSignOn();
 }
 
-DWORD WINAPI SendThreadFunc(LPVOID lParam, LPVOID sParam);
-DWORD WINAPI RecvThreadFunc(LPVOID lParam, SignIn* signin);
+bool SignIn::eventFilter(QObject *watched, QEvent *event)
+{
+    QPalette focusinPalette = QPalette();
+    QPalette focusoutPalette = QPalette();
+    focusinPalette.setColor(QPalette::Base, QColor(221, 240, 237));
+    focusoutPalette.setColor(QPalette::Base, Qt::white);
+    if (watched == this->ui->userLineEdit)
+    {
+        if (event->type() == QEvent::FocusIn)
+        {
+            this->ui->userLineEdit->clear();
+            this->ui->userLineEdit->setPalette(focusinPalette);
+        }
+        else if (event->type() == QEvent::FocusOut)
+            this->ui->userLineEdit->setPalette(focusoutPalette);
+    }
+    if (watched == this->ui->pwLineEdit)
+    {
+        if (event->type() == QEvent::FocusIn)
+        {
+            this->ui->pwLineEdit->clear();
+            this->ui->pwLineEdit->setEchoMode(QLineEdit::Password);
+            this->ui->pwLineEdit->setPalette(focusinPalette);
+        }
+        else if (event->type() == QEvent::FocusOut)
+            this->ui->pwLineEdit->setPalette(focusoutPalette);
+    }
+    if (watched == this->ui->signInButton)
+    {
+        if (event->type() == QEvent::KeyPress)
+        {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*> (event);
+            if (keyEvent->key() == Qt::Key_Enter
+                    || keyEvent->key() == Qt::Key_Return)
+                emit this->ui->signInButton->clicked();
+        }
+    }
+    if (watched == this->ui->topButtonSignOn)
+    {
+        if (event->type() == QEvent::KeyPress)
+        {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*> (event);
+            if (keyEvent->key() == Qt::Key_Enter
+                    || keyEvent->key() == Qt::Key_Return)
+                emit this->ui->topButtonSignOn->clicked();
+        }
+    }
+    return QWidget::eventFilter(watched, event);
+}
+
+DWORD WINAPI SendThreadFuncSignIn(LPVOID lParam, LPVOID sParam);
+DWORD WINAPI RecvThreadFuncSignIn(LPVOID lParam, SignIn* signin);
 
 void SignIn::onSignInClicked()
 {
@@ -66,10 +116,10 @@ void SignIn::onSignInClicked()
             j["end"] = "end";
             std::string str = j.dump();
 
-            std::thread sigininSendThread = std::thread(SendThreadFunc, socketClient/*, helper*/, &str);
-            sigininSendThread.join();
+            std::thread signinSendThread = std::thread(SendThreadFuncSignIn, socketClient, &str);
+            signinSendThread.join();
 
-            std::thread signinRecvThread = std::thread(RecvThreadFunc, socketClient/*, helper*/, this);
+            std::thread signinRecvThread = std::thread(RecvThreadFuncSignIn, socketClient, this);
             signinRecvThread.join();
 
             json recvJ = json::parse(recvString);
@@ -96,13 +146,13 @@ void SignIn::onSignInClicked()
     }
 }
 
-bool SignIn::setRecvStr(QString s)
+bool SignIn::setRecvStrSignIn(QString s)
 {
     this->recvString = s.toStdString();
     return true;
 }
 
-DWORD WINAPI SendThreadFunc(LPVOID lParam, LPVOID sParam)
+DWORD WINAPI SendThreadFuncSignIn(LPVOID lParam, LPVOID sParam)
 {
     std::string *sendStr = (std::string*)sParam;
     SocketClient *socketClient = (SocketClient*)lParam;
@@ -122,7 +172,7 @@ DWORD WINAPI SendThreadFunc(LPVOID lParam, LPVOID sParam)
     return 0;
 }
 
-DWORD WINAPI RecvThreadFunc(LPVOID lParam, SignIn* signin)
+DWORD WINAPI RecvThreadFuncSignIn(LPVOID lParam, SignIn* signin)
 {
     SocketClient* socketClient = (SocketClient*)lParam;
     SOCKET ConnectSocket = socketClient->getConnectSocket();
@@ -130,7 +180,7 @@ DWORD WINAPI RecvThreadFunc(LPVOID lParam, SignIn* signin)
     socketClient->iResult = recv(ConnectSocket, socketClient->recvbuf, socketClient->recvbuflen, 0);
     if (socketClient->iResult > 0)
     {
-        QMetaObject::invokeMethod(signin, "setRecvStr", Qt::DirectConnection, Q_ARG(QString, QString::fromStdString(socketClient->GetRecvStr())));
+        QMetaObject::invokeMethod(signin, "setRecvStrSignIn", Qt::DirectConnection, Q_ARG(QString, QString::fromStdString(socketClient->GetRecvStr())));
     }
     else if (socketClient->iResult == 0)
     {

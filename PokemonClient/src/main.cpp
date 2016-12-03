@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     socketClient->Try();
 
     SignIn *signin = new SignIn(socketClient);
-    SignOn *signon = new SignOn();
+    SignOn *signon = new SignOn(socketClient);
     MainPage *mainpage = new MainPage(socketClient);
     signin->setGeometry(400, 200, 400, 300);
     signin->show();
