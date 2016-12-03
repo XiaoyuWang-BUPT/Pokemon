@@ -10,8 +10,24 @@ SignIn::SignIn(QWidget *parent) :
     ui(new Ui::SignIn)
 {
     ui->setupUi(this);
-    this->setGeometry(400, 200, 400, 300);
     this->setWindowTitle("Sign In");
+
+    setAutoFillBackground(true);
+    QPalette palette;
+    QPixmap pixmap(":/background.jpg");
+    palette.setBrush(QPalette::Window, QBrush(pixmap.scaled(width(), height())));
+    setPalette(palette);
+    palette.setBrush(QPalette::Base, QBrush(QColor::QColor(236, 221, 190)));
+    QMovie* movie = new QMovie(":/blastoise.gif");
+    this->ui->jenLabel->setMovie(movie);
+    movie->start();
+    movie = new QMovie(":/charizard.gif");
+    this->ui->charLabel->setMovie(movie);
+    movie->start();
+    movie = new QMovie(":/bulbasaur.gif");
+    this->ui->bulLabel->setMovie(movie);
+    movie->start();
+
     QObject::connect(this->ui->signInButton, SIGNAL(clicked(bool)), this, SLOT(onSignInClicked()));
     QObject::connect(this->ui->topButtonSignOn, SIGNAL(clicked(bool)), this, SLOT(onTopSignOnClicked()));
     this->ui->userLineEdit->installEventFilter(this);
@@ -36,7 +52,6 @@ void SignIn::receiveSwitch()
 {
     this->ui->userLineEdit->clear();
     this->ui->pwLineEdit->clear();
-    this->setGeometry(400, 200, 400, 300);
     this->show();
 }
 
@@ -141,6 +156,7 @@ void SignIn::onSignInClicked()
             else
             {
                 QMessageBox::information(this, "Info", "Wrong password");
+                this->ui->pwLineEdit->setFocus();
             }
         }
     }

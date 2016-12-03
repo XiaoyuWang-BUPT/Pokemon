@@ -29,3 +29,5 @@ FORMS    += \
     signin.ui \
     mainpage.ui \
     signon.ui
+
+RESOURCES   += resource.qrc

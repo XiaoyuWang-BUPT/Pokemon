@@ -2,6 +2,8 @@
 #define MAINPAGE_H
 
 #include <QWidget>
+#include <QMovie>
+#include <QImage>
 #include "lib/json.hpp"
 #include "helper.h"
 #include "socketClient.h"

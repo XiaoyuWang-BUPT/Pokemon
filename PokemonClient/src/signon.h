@@ -4,6 +4,8 @@
 #include "helper.h"
 #include "socketClient.h"
 #include <QWidget>
+#include <QPalette>
+#include <QMovie>
 #include <QMouseEvent>
 #include <QMessageBox>
 #include <iostream>

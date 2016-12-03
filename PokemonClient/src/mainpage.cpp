@@ -7,15 +7,15 @@ MainPage::MainPage(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("MainPage");
+    QMovie* movie = new QMovie(":/pikachu.gif");
+    this->ui->welcomeLabel->setMovie(movie);
+    movie->start();
 }
 
 MainPage::MainPage(SocketClient* sc, QWidget *parent) :
-    QWidget(parent),
-    socketClient(sc),
-    ui(new Ui::MainPage)
+    MainPage(parent)
 {
-    ui->setupUi(this);
-    this->setWindowTitle("MainPage");
+    socketClient = sc;
 }
 
 MainPage::~MainPage()
@@ -34,7 +34,7 @@ bool MainPage::setChatBox(QString chatContent)
 DWORD WINAPI CalledThreadFunc(SocketClient* socketClient, MainPage* mainpage)
 {
     ::Sleep(1000);
-    QMetaObject::invokeMethod(mainpage, "setStyleSheet", Q_ARG(QString, "background-color:blue"));
+    QMetaObject::invokeMethod(mainpage, "setStyleSheet", Q_ARG(QString, "background-color:rgb(238, 232, 171)"));
 
     SOCKET ConnectSocket = socketClient->getConnectSocket();
     socketClient->ClearRecvBuf();
@@ -56,7 +56,7 @@ DWORD WINAPI CalledThreadFunc(SocketClient* socketClient, MainPage* mainpage)
 
 void MainPage::receiveSwitch()
 {
-    this->setGeometry(100, 100, 640, 480);
+    //this->setGeometry(100, 100, 640, 480);
     this->show();
     calledThread = std::thread(CalledThreadFunc, socketClient, this);
     calledThread.detach();

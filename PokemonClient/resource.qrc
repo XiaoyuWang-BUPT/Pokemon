@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="pikachu.gif">resource/pikachu-4.gif</file>
+        <file alias="background.jpg">resource/background .jpg</file>
+        <file alias="blastoise.gif">resource/blastoise-2.gif</file>
+        <file alias="bulbasaur.gif">resource/bulbasaur-2.gif</file>
+        <file alias="charizard.gif">resource/charizard-4.gif</file>
+        <file alias="pikachu2.gif">resource/pikachu-5.gif</file>
+    </qresource>
+</RCC>

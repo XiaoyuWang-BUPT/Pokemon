@@ -1,6 +1,5 @@
 ﻿#include "signon.h"
 #include "ui_signon.h"
-#include <QPalette>
 
 SignOn::SignOn(QWidget *parent) :
     QWidget(parent),
@@ -8,6 +7,22 @@ SignOn::SignOn(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Sign On");
+
+    setAutoFillBackground(true);
+    QPalette palette;
+    QPixmap pixmap(":/background.jpg");
+    palette.setBrush(QPalette::Window, QBrush(pixmap.scaled(width(), height())));
+    setPalette(palette);
+    QMovie* movie = new QMovie(":/blastoise.gif");
+    this->ui->jenLabel->setMovie(movie);
+    movie->start();
+    movie = new QMovie(":/charizard.gif");
+    this->ui->charLabel->setMovie(movie);
+    movie->start();
+    movie = new QMovie(":/bulbasaur.gif");
+    this->ui->bulLabel->setMovie(movie);
+    movie->start();
+
     this->ui->topButtonSignIn->setFocus();
     QObject::connect(this->ui->topButtonSignIn, SIGNAL(clicked(bool)), this, SLOT(onTopSignInClicked()));
     QObject::connect(this->ui->signOnButton, SIGNAL(clicked(bool)), this, SLOT(signOnButtonClicked()));
@@ -32,7 +47,6 @@ SignOn::~SignOn()
 
 void SignOn::receiveSwitch()
 {
-    this->setGeometry(400, 200, 400, 300);
     this->show();
     this->ui->userLineEdit->setText(QString::fromStdString("input username"));
     this->ui->pwLineEdit1->setText(QString::fromStdString("input password"));

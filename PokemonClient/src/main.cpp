@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     SignIn *signin = new SignIn(socketClient);
     SignOn *signon = new SignOn(socketClient);
     MainPage *mainpage = new MainPage(socketClient);
-    signin->setGeometry(400, 200, 400, 300);
+    //signin->setGeometry(400, 200, 400, 300);
     signin->show();
     QObject::connect(signin, SIGNAL(switchToSignOn()), signon, SLOT(receiveSwitch()));
     QObject::connect(signin, SIGNAL(switchToMainPage()), mainpage, SLOT(receiveSwitch()));
