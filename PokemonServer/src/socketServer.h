@@ -1,4 +1,4 @@
-#ifndef SOCKET_SERVER_H
+﻿#ifndef SOCKET_SERVER_H
 #define SOCKET_SERVER_H
 
 #include <winsock2.h>
@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <memory.h>
+#include <algorithm>
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -16,6 +17,8 @@
 #define MAXSIZE_POOL 3
 
 SOCKET cSock[MAXSIZE_POOL] = { INVALID_SOCKET };
+std::pair<std::string, int> onlinePlayer[MAXSIZE_POOL] = {std::make_pair("", NULL)};
+const std::pair<std::string, int> nullPlayerPair = std::make_pair("", NULL);
 const std::string Permision = "permision";
 const std::string Deny = "Thread pool is full, please wait";
 

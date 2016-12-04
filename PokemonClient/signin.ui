@@ -95,14 +95,14 @@ border-radius:6px;</string>
          <item>
           <widget class="QLineEdit" name="userLineEdit">
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">font: 9pt &quot;Consolas&quot;;</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLineEdit" name="pwLineEdit">
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">font: 9pt &quot;Consolas&quot;;</string>
            </property>
            <property name="echoMode">
             <enum>QLineEdit::Password</enum>

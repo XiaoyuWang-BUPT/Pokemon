@@ -137,6 +137,7 @@ int main(int argc, char *argv[])
     delete pokemonFactory;
 
     memset(cSock, INVALID_SOCKET, sizeof(cSock));
+    for (auto& o : onlinePlayer) o = nullPlayerPair;
     SocketServer *socketServer = new SocketServer();
     socketServer->Prepare();
 

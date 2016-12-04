@@ -26,9 +26,12 @@ public:
 private:
     Ui::MainPage *ui;
     std::thread calledThread;
+    std::string recvString = "";
+    void ReloadOnlinePlayer(json& recvJ);
 private slots:
     void receiveSwitch();
-    Q_INVOKABLE bool setChatBox(QString chatContent);
+    void onReloadClicked();
+    Q_INVOKABLE bool getRecvStr(QString str);
 };
 
 #endif // !MAINPAGE_H

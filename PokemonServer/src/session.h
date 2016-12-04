@@ -8,12 +8,13 @@
 #include "player.h"
 #include "lib/json.hpp"
 #include <iostream>
+#include <sstream>
 #include <QDateTime>
 #include <QString>
 
 using json = nlohmann::json;
 
-std::string GetSendStr(Helper* helper)
+std::string GetSendStr(int pid, Helper* helper)
 {
     json recvJ = json::parse(helper->getRecvStrHelper());
     helper->setRecvStrHelper("");
@@ -39,6 +40,7 @@ std::string GetSendStr(Helper* helper)
                 if (q.password == pwRecv)
                 {
                     sendJ["passwordcorrect"] = true;
+                    onlinePlayer[pid] = std::make_pair(q.name, q.rank);
                 }
                 else
                 {
@@ -75,8 +77,28 @@ std::string GetSendStr(Helper* helper)
             QDateTime qdt = QDateTime::currentDateTime();
             std::string s = qdt.toString("yyyyMMddhhmm").toStdString();
             std::cout << "QDateTime:" << s << std::endl;
-            struct PlayerInfo p = {nameRecv, pwRecv, 0, 0, s, "000"};
+            struct PlayerInfo p = {nameRecv, pwRecv, 0, 9999, s, "000"};
             sendJ["signonsuccess"] = playerMapper.Insert(p);
+            onlinePlayer[pid] = std::make_pair(p.name, p.rank);
+        }
+    }
+    if (symbol == "onlinePlayer")
+    {
+        sendJ["symbol"] = "onlinePlayer";
+        sendJ["amount"] = 0;
+        sendJ["end"] = "end";
+        for (int i = 0; onlinePlayer[i] != nullPlayerPair; i++)
+        {
+            std::string tmpKeyStr = "";
+            std::stringstream stream;
+            std::string indexStr;
+            stream << (i + 1);
+            stream >> indexStr;
+            sendJ["amount"] = i + 1;
+            tmpKeyStr = "name" + indexStr;
+            sendJ[tmpKeyStr] = onlinePlayer[i].first;
+            tmpKeyStr = "rank" + indexStr;
+            sendJ[tmpKeyStr] = onlinePlayer[i].second;
         }
     }
     helper->setSendStrHelper(sendJ.dump());
@@ -89,7 +111,7 @@ DWORD WINAPI SendThreadFunc(int pid, LPVOID cParam, LPVOID sParam, LPVOID hParam
 {
     SOCKET* clientSocket = (SOCKET*)cParam;
     Helper* helper = (Helper*)hParam;
-    std::string strSend = GetSendStr(helper);
+    std::string strSend = GetSendStr(pid, helper);
     std::cout << "strSend to " << pid << ":" << strSend << std::endl;
     send(*clientSocket, strSend.c_str(), strSend.length(), NULL);
     return 0;
@@ -139,6 +161,7 @@ DWORD WINAPI ProcessClientRequests(int pid, LPVOID cParam, LPVOID sParam, LPVOID
 
     socketServer->existingClientCount--;
     cSock[pid] = INVALID_SOCKET;
+    onlinePlayer[pid] = std::make_pair("", NULL);
     delete helper;
 
     return 0;

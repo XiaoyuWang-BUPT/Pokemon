@@ -97,6 +97,9 @@ border-radius:6px;</string>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <widget class="QLineEdit" name="userLineEdit">
+           <property name="styleSheet">
+            <string notr="true">font: 9pt &quot;Consolas&quot;;</string>
+           </property>
            <property name="text">
             <string>input username</string>
            </property>
@@ -104,6 +107,9 @@ border-radius:6px;</string>
          </item>
          <item>
           <widget class="QLineEdit" name="pwLineEdit1">
+           <property name="styleSheet">
+            <string notr="true">font: 9pt &quot;Consolas&quot;;</string>
+           </property>
            <property name="text">
             <string>input password</string>
            </property>
@@ -114,6 +120,9 @@ border-radius:6px;</string>
          </item>
          <item>
           <widget class="QLineEdit" name="pwLineEidt2">
+           <property name="styleSheet">
+            <string notr="true">font: 9pt &quot;Consolas&quot;;</string>
+           </property>
            <property name="text">
             <string>ensure password</string>
            </property>
