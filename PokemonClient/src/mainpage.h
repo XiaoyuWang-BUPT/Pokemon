@@ -4,6 +4,12 @@
 #include <QWidget>
 #include <QMovie>
 #include <QImage>
+#include <QIcon>
+#include <QToolTip>
+#include <QTextCursor>
+#include <QPropertyAnimation>
+#include <QHelpEvent>
+#include "hunt.h"
 #include "lib/json.hpp"
 #include "helper.h"
 #include "socketClient.h"
@@ -27,11 +33,14 @@ private:
     Ui::MainPage *ui;
     std::thread calledThread;
     std::string recvString = "";
-    void ReloadOnlinePlayer(json& recvJ);
+    void LoadOnlinePlayer(json& recvJ);
 private slots:
     void receiveSwitch();
-    void onReloadClicked();
+    void onOnlinePlayerClicked();
     Q_INVOKABLE bool getRecvStr(QString str);
+    bool eventFilter(QObject *watched, QEvent *event);
+signals:
+    void switchToHunt();
 };
 
 #endif // !MAINPAGE_H

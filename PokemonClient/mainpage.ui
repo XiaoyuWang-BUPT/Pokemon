@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
+    <width>853</width>
     <height>480</height>
    </rect>
   </property>
@@ -29,70 +29,152 @@
     <string/>
    </property>
   </widget>
-  <widget class="QScrollArea" name="onlinePlayerScrollArea">
+  <widget class="QPushButton" name="pokeballButton">
    <property name="geometry">
     <rect>
-     <x>560</x>
-     <y>300</y>
-     <width>151</width>
-     <height>171</height>
+     <x>365</x>
+     <y>150</y>
+     <width>120</width>
+     <height>120</height>
     </rect>
    </property>
-   <property name="frameShape">
-    <enum>QFrame::Box</enum>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
-   <property name="frameShadow">
-    <enum>QFrame::Sunken</enum>
+   <property name="text">
+    <string/>
    </property>
-   <property name="horizontalScrollBarPolicy">
-    <enum>Qt::ScrollBarAlwaysOff</enum>
-   </property>
-   <property name="widgetResizable">
+   <property name="flat">
     <bool>true</bool>
    </property>
-   <widget class="QWidget" name="scrollAreaWidgetContents">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>147</width>
-      <height>167</height>
-     </rect>
-    </property>
-    <widget class="QWidget" name="">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>161</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Online Player</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="reloadButton">
-        <property name="text">
-         <string>Reload</string>
-        </property>
-        <property name="default">
-         <bool>false</bool>
-        </property>
-        <property name="flat">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
   </widget>
+  <widget class="QPushButton" name="myInfoButton">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>410</y>
+     <width>48</width>
+     <height>48</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="flat">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="onlinePlayerBtn">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>410</y>
+     <width>48</width>
+     <height>48</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="default">
+    <bool>false</bool>
+   </property>
+   <property name="flat">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="rankButton">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>410</y>
+     <width>48</width>
+     <height>48</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="flat">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="storageButton">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>410</y>
+     <width>48</width>
+     <height>48</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="flat">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="packageButton">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>410</y>
+     <width>48</width>
+     <height>48</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="flat">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QWidget" name="huntPicContainer" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>426</width>
+     <height>400</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QWidget" name="battlePicContainer" native="true">
+   <property name="geometry">
+    <rect>
+     <x>426</x>
+     <y>0</y>
+     <width>427</width>
+     <height>400</height>
+    </rect>
+   </property>
+  </widget>
+  <zorder>welcomeLabel</zorder>
+  <zorder>myInfoButton</zorder>
+  <zorder>onlinePlayerBtn</zorder>
+  <zorder>rankButton</zorder>
+  <zorder>storageButton</zorder>
+  <zorder>packageButton</zorder>
+  <zorder>huntPicContainer</zorder>
+  <zorder>battlePicContainer</zorder>
+  <zorder>pokeballButton</zorder>
  </widget>
  <resources/>
  <connections/>

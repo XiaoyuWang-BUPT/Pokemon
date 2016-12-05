@@ -1,10 +1,33 @@
 <RCC>
     <qresource prefix="/">
         <file alias="pikachu.gif">resource/pikachu-4.gif</file>
-        <file alias="background.jpg">resource/background .jpg</file>
         <file alias="blastoise.gif">resource/blastoise-2.gif</file>
         <file alias="bulbasaur.gif">resource/bulbasaur-2.gif</file>
         <file alias="charizard.gif">resource/charizard-4.gif</file>
         <file alias="pikachu2.gif">resource/pikachu-5.gif</file>
+        <file alias="arceus.jpg">resource/arceus.jpg</file>
+        <file>resource/blastoise.jpg</file>
+        <file alias="background.jpg">resource/blaziken.jpg</file>
+        <file>resource/bulbasaur.jpg</file>
+        <file>resource/charmander.jpg</file>
+        <file>resource/eevee.jpg</file>
+        <file>resource/flareon.jpg</file>
+        <file>resource/mewtwo.jpg</file>
+        <file>resource/poliwhirl.jpg</file>
+        <file>resource/togepi.jpg</file>
+        <file>resource/tyranitar.jpg</file>
+        <file>resource/vaporeon.jpg</file>
+        <file alias="pokeball">resource/pokeball.gif</file>
+        <file alias="onlinePlayer">resource/onlinePlayer.png</file>
+        <file alias="package">resource/package.png</file>
+        <file alias="player">resource/player.png</file>
+        <file alias="rank">resource/rank.png</file>
+        <file alias="storage">resource/storage.png</file>
+        <file alias="logo">resource/logo.ico</file>
+        <file alias="back">resource/back.png</file>
+        <file alias="forest1">resource/forest1.jpeg</file>
+        <file alias="forest2">resource/forest2.jpg</file>
+        <file alias="forest3">resource/forest3.jpg</file>
+        <file alias="pokemonball">resource/pokemonball.png</file>
     </qresource>
 </RCC>

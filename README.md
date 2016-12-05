@@ -162,3 +162,7 @@
 
 * `server`端增加`onlinePlayer`数组存储在线用户的`name` 和 `rank`
 * `client:MainPage统一CalledThreadFunc`和`RecvThreadFunc`到`RecvThreadFunc`并将线程初始化置于`RecvSwitch`中，即切换到主界面即开始阻塞式接受，根据接受内容调用负责显示的功能函数
+
+### v0.2.8(2016/12/5)
+
+* `client`端加入`Hunt`界面用于捕捉小精灵

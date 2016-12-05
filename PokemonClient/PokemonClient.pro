@@ -16,18 +16,21 @@ SOURCES += src/main.cpp \
     src/signin.cpp \
     src/mainpage.cpp \
     src/signon.cpp \
-    src/socketclient.cpp
+    src/socketclient.cpp \
+    src/hunt.cpp
 
 HEADERS  += \
     lib/json.hpp \
     src/signin.h \
     src/mainpage.h \
     src/signon.h \
-    src/socketClient.h
+    src/socketClient.h \
+    src/hunt.h
 
 FORMS    += \
     signin.ui \
     mainpage.ui \
-    signon.ui
+    signon.ui \
+    hunt.ui
 
 RESOURCES   += resource.qrc

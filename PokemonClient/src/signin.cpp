@@ -10,7 +10,11 @@ SignIn::SignIn(QWidget *parent) :
     ui(new Ui::SignIn)
 {
     ui->setupUi(this);
-    this->setWindowTitle("Sign In");
+    this->setWindowTitle("pokemon");
+    QIcon LOGO (":/logo");
+    this->setWindowIcon(LOGO);
+    setWindowFlags(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_TranslucentBackground);
 
     setAutoFillBackground(true);
     QPalette palette;
