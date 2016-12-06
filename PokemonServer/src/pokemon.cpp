@@ -180,6 +180,7 @@ int GiftGenFunc(int MIN, int MAX) {
 }
 
 //御三家构造时经验值为零 模拟对战 或者 野外抓捕时为随机经验值 在相应的类函数解决
+//For pokemon construct first time after caught
 Fire::Fire(Kind kind, int level, string name) {
     this->setNature(FIRE);
     this->setKind(kind);
@@ -209,6 +210,7 @@ Fire::Fire(Kind kind, int level, string name) {
     //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Defence Point:" << this->getDefencePoint() << "  TotalHP:" << this->getTotalHP() << endl;
 }
 
+//For pokemon construct from db
 Fire::Fire(PokemonInfo pokemonInfo)
 {
     this->setNature(FIRE);

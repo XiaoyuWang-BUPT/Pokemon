@@ -4,7 +4,6 @@
         <file alias="blastoise.gif">resource/blastoise-2.gif</file>
         <file alias="bulbasaur.gif">resource/bulbasaur-2.gif</file>
         <file alias="charizard.gif">resource/charizard-4.gif</file>
-        <file alias="pikachu2.gif">resource/pikachu-5.gif</file>
         <file alias="arceus.jpg">resource/arceus.jpg</file>
         <file>resource/blastoise.jpg</file>
         <file alias="background.jpg">resource/blaziken.jpg</file>
@@ -29,5 +28,12 @@
         <file alias="forest2">resource/forest2.jpg</file>
         <file alias="forest3">resource/forest3.jpg</file>
         <file alias="pokemonball">resource/pokemonball.png</file>
+        <file alias="catch1">resource/catch1.png</file>
+        <file alias="catch2">resource/catch2.png</file>
+        <file alias="catch3">resource/catch3.png</file>
+        <file alias="fail1">resource/fail1.png</file>
+        <file alias="fail2">resource/fail2.png</file>
+        <file alias="fail3">resource/fail3.png</file>
+        <file alias="word">resource/word.png</file>
     </qresource>
 </RCC>

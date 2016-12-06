@@ -12,7 +12,7 @@ MainPage::MainPage(QWidget *parent) :
     this->setWindowTitle("pokemon");
     QIcon LOGO (":/logo");
     this->setWindowIcon(LOGO);
-    this->ui->pokeballButton->setStyleSheet("#pokeballButton{border-image: url(:/pokeball);}");
+    this->ui->pokeballButton->setStyleSheet("#pokeballButton{border-image: url(:/pokeball);}");//QToolTip{background-color:red;}");
     this->ui->rankButton->setStyleSheet("#rankButton{border-image: url(:/rank);}");
     this->ui->onlinePlayerBtn->setStyleSheet("#onlinePlayerBtn{border-image: url(:/onlinePlayer);}");
     this->ui->myInfoButton->setStyleSheet("#myInfoButton{border-image: url(:/player);}");
@@ -32,7 +32,7 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->huntPicContainer->installEventFilter(this);
     this->ui->battlePicContainer->installEventFilter(this);
 
-    this->ui->pokeballButton->setToolTip("click to konw more");
+    this->ui->pokeballButton->setToolTip("click to know more");
     this->ui->huntPicContainer->setToolTip("click to hunt");
     this->ui->battlePicContainer->setToolTip("click to battle");
     this->ui->rankButton->setToolTip("rank");
@@ -53,7 +53,7 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this->ui->onlinePlayerBtn, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerClicked()));
 }
 
-MainPage::MainPage(SocketClient* sc, QWidget *parent) :
+MainPage::MainPage(SocketClient *sc, QWidget *parent) :
     MainPage(parent)
 {
     socketClient = sc;
@@ -65,14 +65,12 @@ MainPage::~MainPage()
     delete ui;
 }
 
-DWORD WINAPI RecvdThreadFunc(SocketClient* socketClient, MainPage* mainpage);
+DWORD WINAPI RecvThreadFuncMainpage(SocketClient* socketClient, MainPage* mainpage);
 DWORD WINAPI SendThreadFuncMainpage(LPVOID lParam, LPVOID sParam);
 
 void MainPage::receiveSwitch()
 {
     this->show();
-    calledThread = std::thread(RecvdThreadFunc, socketClient, this);
-    calledThread.detach();
 }
 
 void MainPage::LoadOnlinePlayer(json &recvJ)
@@ -169,9 +167,11 @@ void MainPage::onOnlinePlayerClicked()
 
     std::thread mainpageSendThread = std::thread(SendThreadFuncMainpage, socketClient, &str);
     mainpageSendThread.join();
+    std::thread mainpageRecvThread = std::thread(RecvThreadFuncMainpage, socketClient, this);
+    mainpageRecvThread.join();
 }
 
-DWORD WINAPI RecvdThreadFunc(SocketClient* socketClient, MainPage* mainpage)
+DWORD WINAPI RecvThreadFuncMainpage(SocketClient* socketClient, MainPage* mainpage)
 {
     SOCKET ConnectSocket = socketClient->getConnectSocket();
     socketClient->ClearRecvBuf();
@@ -190,7 +190,6 @@ DWORD WINAPI RecvdThreadFunc(SocketClient* socketClient, MainPage* mainpage)
     }
     return 0;
 }
-
 DWORD WINAPI SendThreadFuncMainpage(LPVOID lParam, LPVOID sParam)
 {
     std::string *sendStr = (std::string*)sParam;

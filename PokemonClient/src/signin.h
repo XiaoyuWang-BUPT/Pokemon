@@ -27,15 +27,18 @@ public:
     explicit SignIn(SocketClient* sc, QWidget *parent = 0);
     explicit SignIn(QWidget *parent = 0);
     ~SignIn();
+
 private:
     Ui::SignIn *ui;
     std::string recvString = "";
+
 private slots:
     void onSignInClicked();
     void onTopSignOnClicked();
     void receiveSwitch();
     Q_INVOKABLE bool setRecvStrSignIn(QString s);
     bool eventFilter(QObject *watched, QEvent *event);
+
 signals:
     void switchToSignOn();
     void switchToMainPage();

@@ -5,6 +5,7 @@
 #include "socketServer.h"
 #include <thread>
 #include "pokemon.h"
+#include "pokemonfactory.h"
 #include "player.h"
 #include "lib/json.hpp"
 #include <iostream>
@@ -77,7 +78,7 @@ std::string GetSendStr(int pid, Helper* helper)
             QDateTime qdt = QDateTime::currentDateTime();
             std::string s = qdt.toString("yyyyMMddhhmm").toStdString();
             std::cout << "QDateTime:" << s << std::endl;
-            struct PlayerInfo p = {nameRecv, pwRecv, 0, 9999, s, "000"};
+            struct PlayerInfo p = {nameRecv, pwRecv, 0, 0, 9999, s, "000"};
             sendJ["signonsuccess"] = playerMapper.Insert(p);
             onlinePlayer[pid] = std::make_pair(p.name, p.rank);
         }
@@ -100,6 +101,25 @@ std::string GetSendStr(int pid, Helper* helper)
             tmpKeyStr = "rank" + indexStr;
             sendJ[tmpKeyStr] = onlinePlayer[i].second;
         }
+    }
+    if (symbol == "hunt")
+    {
+        std::string kindStr = recvJ["kind"];
+        //TODO combine username and pokemon name
+        std::string name = "xxx";
+        int level = 1;
+        Kind kind;
+        for (int i = 0; i < (sizeof(kindOfString)/sizeof(kindOfString[0])); i++)
+        {
+            if (kindStr == kindOfString[i])
+            {
+                kind = (Kind)i;
+            }
+        }
+        PokemonFactory *pokemonFactory = new PokemonFactory();
+        Pokemon* caughtPokemon = pokemonFactory->CreatePokemon(kind, level, name);
+        //TODO...
+        //TODO palyer capacity/storage increase
     }
     helper->setSendStrHelper(sendJ.dump());
     std::string strSend = helper->getSendStrHelper();

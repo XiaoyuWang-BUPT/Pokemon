@@ -77,17 +77,19 @@ int main(int argc, char *argv[])
         Pokemon *RPokemon = pokemonFactory->CreatePokemon(pokemonInfo);
         PrintPokeData(RPokemon);
 
-        Poor_ORM::ORMapper<PokemonInfo> pokemonMapper ("pokemoninfo.db");
-        pokemonMapper.CreateTable();
-        pokemonMapper.Insert(pokemonInfo);
+        Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
+        Poor_ORM::ORMapper<PokemonInfo> pokeStgMapper("pokeStorage.db");
+        pokePackMapper.CreateTable();
+        pokeStgMapper.CreateTable();
+        pokePackMapper.Insert(pokemonInfo);
 
         pokemonInfo = {
             "Father Pokemon",0, 1, 0, 7, 1200, 120,
             38, 678, 467, 34, 25, 2, 0, 0, 1 };
-        pokemonMapper.Insert(pokemonInfo);
+        pokePackMapper.Insert(pokemonInfo);
 
         PokemonInfo pHelper;
-        auto pokemonQuery = pokemonMapper.Query(pHelper)
+        auto pokemonQuery = pokePackMapper.Query(pHelper)
                 .ToVector();
         for (auto c : pokemonQuery)
             cout << "PokemonInfo from DB:" << natureOfString[c.nature] <<
@@ -109,6 +111,7 @@ int main(int argc, char *argv[])
             "Lee",
             "2014232",
             0,
+            0,
             9999,
             "201611171230", //201611171230 2016-11-17 12:30
             "122300" //1223hours 00minutes
@@ -121,8 +124,9 @@ int main(int argc, char *argv[])
                 .ToVector();
         for (auto c : query)
             cout << "PlayerInfo from DB:" << c.name << " " << c.password <<
-                    " " << c.pokemonNumber << " " << c.rank <<
-                    " " << c.beginDateTime << " " << c.gameTime << endl << endl;
+                    " " << c.pokemonNumber << " " << c.packageCapacity <<
+                    " "<< c.rank << " " << c.beginDateTime <<
+                    " " << c.gameTime << endl << endl;
 
         Player *p = playerFactory->CreatePlayer(playerInfo);
         p->addPokemon(pikachu);

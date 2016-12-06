@@ -8,18 +8,27 @@
 #include <QMovie>
 #include <QRect>
 #include <QString>
+#include <QPoint>
+#include <QMouseEvent>
+#include <QPropertyAnimation>
+#include <QRect>
+#include <QCursor>
+#include <QMessageBox>
 #include <string>
+#include <sstream>
 #include "lib/json.hpp"
 #include "helper.h"
 #include "socketClient.h"
 
-#define ZMin 20
-#define ZMax 30
+#define ZMin 400
+#define ZMax 600
 
-const std::string kindOfString[] = {"Charamander", "Charmeleon", "Charizard",
+using json = nlohmann::json;
+
+const std::string kindOfString[] = {"Charmander", "Charmeleon", "Charizard",
                          "Torchic", "Combusken", "Blaziken",
                          "Chimchar", "Monferno", "Infernape",
-                        "Squirtle", "Watortle", "Blastoise",
+                        "Squirtle", "Wartortle", "Blastoise",
                          "Mudkip", "Marshtomp", "Swampert",
                          "Piplup", "Prinplup", "Empoleon",
                         "Bulbasaur", "Ivysaur", "Venusaur",
@@ -27,7 +36,7 @@ const std::string kindOfString[] = {"Charamander", "Charmeleon", "Charizard",
                          "Turtwig", "Grotle", "Torterra",
                         "Pichu", "Pikachu", "Raichu",
                          "Shinx", "Luxio", "Luxray",
-                         "Marrep", "Flaaffy", "Ampharos"};
+                         "Mareep", "Flaaffy", "Ampharos"};
 
 namespace Ui {
 class Hunt;
@@ -45,14 +54,22 @@ public:
 
 private:
     Ui::Hunt *ui;
-    std::string GetPokeKind();
+    void GetPokeKind();
     int GetZ();
     QMovie* GetMovie();
     void SetPokeGif();
+    void SetPokeBallPng();
+    std::string GetSendStr();
+    bool ballPressed = false;
+    bool caught = false;
+    QMovie* movie;
+    std::string kindStr;
 
 private slots:
     void receiveSwitch();
     void backClicked();
+    void showWord(bool caught);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 signals:
     void switchToMainPage();

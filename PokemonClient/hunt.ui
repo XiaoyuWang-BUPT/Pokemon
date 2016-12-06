@@ -50,14 +50,40 @@
    <widget class="QLabel" name="pokeLabel">
     <property name="geometry">
      <rect>
-      <x>329</x>
-      <y>119</y>
+      <x>330</x>
+      <y>130</y>
       <width>200</width>
       <height>200</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true"/>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pokeBallLabel">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>390</y>
+      <width>90</width>
+      <height>90</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="wordLabel">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>160</y>
+      <width>120</width>
+      <height>30</height>
+     </rect>
     </property>
     <property name="text">
      <string/>

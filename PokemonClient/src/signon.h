@@ -26,18 +26,21 @@ public:
     explicit SignOn(QWidget *parent = 0);
     explicit SignOn(SocketClient* sc, QWidget *parent = 0);
     ~SignOn();
+
 private:
     Ui::SignOn *ui;
     bool isUNNotCLK = true; //username lineedit not clicked, first time change cursor
     bool isPWNotCLK = true; //password lineedit not clicked, first time change cursor
     bool isEPWNotCLK = true; //ensure password lineedit not clicked, first time change cursor
     std::string recvString = "";
+
 private slots:    
     void onTopSignInClicked();
     void signOnButtonClicked();
     void receiveSwitch();
     Q_INVOKABLE bool setRecvStrSignOn(QString s);
     bool eventFilter(QObject *watched, QEvent *event);
+
 signals:
     void switchToSignIn();
     void switchToMainPage();

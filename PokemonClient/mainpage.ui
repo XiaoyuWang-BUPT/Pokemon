@@ -13,6 +13,12 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QToolTip {
+	opacity : 200;	
+	font: 75 16pt &quot;Consolas&quot;;
+}</string>
+  </property>
   <widget class="QLabel" name="welcomeLabel">
    <property name="geometry">
     <rect>

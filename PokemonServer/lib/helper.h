@@ -19,10 +19,10 @@ enum Kind{
             SHINX, LUXIO, LUXRAY, //小猫怪 勒克猫 伦琴猫
             MARREP, FLAAFFY, AMPHAROS //咩利羊 绵绵 电龙
             };
-const std::string kindOfString[] = {"Charamander", "Charmeleon", "Charizard",
+const std::string kindOfString[] = {"Charmander", "Charmeleon", "Charizard",
                          "Torchic", "Combusken", "Blaziken",
                          "Chimchar", "Monferno", "Infernape",
-                        "Squirtle", "Watortle", "Blastoise",
+                        "Squirtle", "Wartortle", "Blastoise",
                          "Mudkip", "Marshtomp", "Swampert",
                          "Piplup", "Prinplup", "Empoleon",
                         "Bulbasaur", "Ivysaur", "Venusaur",
@@ -30,7 +30,7 @@ const std::string kindOfString[] = {"Charamander", "Charmeleon", "Charizard",
                          "Turtwig", "Grotle", "Torterra",
                         "Pichu", "Pikachu", "Raichu",
                          "Shinx", "Luxio", "Luxray",
-                         "Marrep", "Flaaffy", "Ampharos"};
+                         "Mareep", "Flaaffy", "Ampharos"};
 //在对局时使用下列数组对应获得 Kind 中的枚举类型 例如(Kind1) == CHARMELEON
 const int EmbryoPokemon[] = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33}; //对战难度--简单 创建初级口袋妖怪
 const int IntermediatePokemon[] = {1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34}; //对战难度--普通 创建中级口袋妖怪
