@@ -35,5 +35,7 @@
         <file alias="fail2">resource/fail2.png</file>
         <file alias="fail3">resource/fail3.png</file>
         <file alias="word">resource/word.png</file>
+        <file alias="charmander.gif">resource/charmander-3.gif</file>
+        <file alias="squirtle.gif">resource/squirtle-3.gif</file>
     </qresource>
 </RCC>

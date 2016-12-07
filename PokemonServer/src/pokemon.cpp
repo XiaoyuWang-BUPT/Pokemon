@@ -15,6 +15,18 @@ unsigned int Random(int max) {
         return (unsigned int)((double)number / ((double)UINT_MAX + 1) * double(max)) + 1;
 }
 
+struct PokemonInfo Pokemon::ToPokeStruInfo()
+{
+    struct PokemonInfo pi = {
+        this->_name_, (int)this->_nature_, (int)this->_kind_,
+                (int)this->_character_, this->_level_, this->_experiencePoint_,
+                this->_attackPoint_, this->_defencePoint_, this->_totalHP_,
+                this->_currentHP_, this->_intervalIncrease_, this->_criticalPoint_,
+                (int)this->_state_, this->_sickCounter_, this->_sickPoint_, (int)this->_alive_
+    };
+    return pi;
+}
+
 /* 攻击函数
  * 暴击双倍伤害 依小概率造成烧伤，冻伤，中毒和麻痹效果 火属性不能对火属性造成烧伤 其他属性类比*/
 void Pokemon::Attack(Pokemon *dePokemon) {

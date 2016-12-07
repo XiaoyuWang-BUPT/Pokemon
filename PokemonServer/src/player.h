@@ -5,6 +5,8 @@
 #include <QDateTime>
 #include <set>
 
+#define CAPACITY 3
+
 struct PlayerInfo
 {
     string name;

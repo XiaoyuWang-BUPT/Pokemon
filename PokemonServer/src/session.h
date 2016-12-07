@@ -78,7 +78,7 @@ std::string GetSendStr(int pid, Helper* helper)
             QDateTime qdt = QDateTime::currentDateTime();
             std::string s = qdt.toString("yyyyMMddhhmm").toStdString();
             std::cout << "QDateTime:" << s << std::endl;
-            struct PlayerInfo p = {nameRecv, pwRecv, 0, 0, 9999, s, "000"};
+            struct PlayerInfo p = {nameRecv, pwRecv, 0, CAPACITY, 9999, s, "000"};
             sendJ["signonsuccess"] = playerMapper.Insert(p);
             onlinePlayer[pid] = std::make_pair(p.name, p.rank);
         }
@@ -105,8 +105,7 @@ std::string GetSendStr(int pid, Helper* helper)
     if (symbol == "hunt")
     {
         std::string kindStr = recvJ["kind"];
-        //TODO combine username and pokemon name
-        std::string name = "xxx";
+        std::string name = recvJ["name"];
         int level = 1;
         Kind kind;
         for (int i = 0; i < (sizeof(kindOfString)/sizeof(kindOfString[0])); i++)
@@ -118,8 +117,38 @@ std::string GetSendStr(int pid, Helper* helper)
         }
         PokemonFactory *pokemonFactory = new PokemonFactory();
         Pokemon* caughtPokemon = pokemonFactory->CreatePokemon(kind, level, name);
-        //TODO...
-        //TODO palyer capacity/storage increase
+        struct PokemonInfo pokemoninfo = caughtPokemon->ToPokeStruInfo();
+
+        //Get player information
+        std::string playerName = onlinePlayer[pid].first;
+        struct PlayerInfo playerinfo;
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        PlayerInfo qHelper;
+        auto query = playerMapper.Query(qHelper)
+                .ToVector();
+        for (auto q : query)
+        {
+            if (q.name == playerName)
+            {
+                playerinfo = q;
+                break;
+            }
+        }
+
+        playerinfo.pokemonNumber += 1;
+        playerMapper.Update(playerinfo);
+        //If player's package not full, add pokemon into package.Else into storage
+        if (playerinfo.packageCapacity > 0)
+        {
+            playerinfo.packageCapacity -= 1;
+            Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
+            pokePackMapper.Insert(pokemoninfo);
+        }
+        else
+        {
+            Poor_ORM::ORMapper<PokemonInfo> pokeStgMapper("pokeStorage.db");
+            pokeStgMapper.Insert(pokemoninfo);
+        }
     }
     helper->setSendStrHelper(sendJ.dump());
     std::string strSend = helper->getSendStrHelper();

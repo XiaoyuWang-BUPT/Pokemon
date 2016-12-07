@@ -89,6 +89,126 @@
      <string/>
     </property>
    </widget>
+   <widget class="QWidget" name="renameWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>180</y>
+      <width>300</width>
+      <height>100</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#renameWidget {	
+	border : 3px solid rgba(255, 255, 255, 255);
+	border-radius : 5px;
+	background-color: rgba(255, 255, 255, 150);
+}
+QLineEdit {
+	border-radius : 3px;
+	background-color: rgba(255, 255, 255, 100);
+}
+QPushButton{
+	border-radius : 3px;	
+	background-color: rgba(255, 255, 255, 100);
+}</string>
+    </property>
+    <widget class="QLineEdit" name="nameLineEdit">
+     <property name="geometry">
+      <rect>
+       <x>41</x>
+       <y>51</y>
+       <width>133</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>10</y>
+       <width>221</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string> Name your Pokemon</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="confirmButton">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>50</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>confirm</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="decorationL" native="true">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>185</y>
+      <width>281</width>
+      <height>90</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#decorationL {	
+	border : 3px solid rgba(255, 255, 255, 255);
+	border-left-width : 0px;
+	border-right-width : 0px;
+	background-color: rgba(255, 255, 255, 150);
+}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="decorationR" native="true">
+    <property name="geometry">
+     <rect>
+      <x>579</x>
+      <y>185</y>
+      <width>281</width>
+      <height>90</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#decorationR {	
+	border : 3px solid rgba(255, 255, 255, 255);
+	border-right-width : 0;
+	border-left-width : 0;
+	background-color: rgba(255, 255, 255, 150);
+}</string>
+    </property>
+   </widget>
   </widget>
   <zorder>widget</zorder>
   <zorder>backButton</zorder>

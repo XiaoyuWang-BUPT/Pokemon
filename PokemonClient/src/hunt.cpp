@@ -8,6 +8,9 @@ Hunt::Hunt(QWidget *parent) :
     ui(new Ui::Hunt)
 {
     ui->setupUi(this);
+    this->ui->renameWidget->hide();
+    this->ui->decorationL->hide();
+    this->ui->decorationR->hide();
     this->setWindowTitle("pokemon");
     QIcon LOGO (":/logo");
     this->setWindowIcon(LOGO);
@@ -20,6 +23,7 @@ Hunt::Hunt(QWidget *parent) :
     SetPokeGif();
     SetPokeBallPng();
 
+    QObject::connect(this->ui->confirmButton, SIGNAL(clicked(bool)), this, SLOT(catchPokemon()));
     QObject::connect(this->ui->backButton, SIGNAL(clicked(bool)), this, SLOT(backClicked()));
 }
 
@@ -39,18 +43,29 @@ void Hunt::receiveSwitch()
 {
     this->ui->pokeBallLabel->setGeometry(370, 430, 90, 90);
     SetPokeGif();
+    this->ui->renameWidget->hide();
+    this->ui->decorationL->hide();
+    this->ui->decorationR->hide();
     this->show();
 }
 
 DWORD WINAPI SendThreadFuncHunt(LPVOID lParam, LPVOID sParam);
 
-std::string Hunt::GetSendStr()
+void Hunt::catchPokemon()
 {
-    json j;
-    j["symbol"] = "hunt";
-    j["kind"] = kindStr;
-    j["end"] = "end";
-    return j.dump();
+    if (caught)
+    {
+        json j;
+        j["symbol"] = "hunt";
+        j["kind"] = kindStr;
+        j["name"] = this->ui->nameLineEdit->text().toStdString();
+        j["end"] = "end";
+
+        std::string sendStr = j.dump();
+        std::thread sendThread = std::thread(SendThreadFuncHunt, socketClient, &sendStr);
+        sendThread.join();
+        emit this->ui->backButton->clicked();
+    }
 }
 
 void Hunt::backClicked()
@@ -81,13 +96,13 @@ void Hunt::GetPokeKind()
     switch (x)
     {
     case 1:
-        kindStr = "Charizard";
+        kindStr = "Charmander";
         break;
     case 2:
         kindStr = "Bulbasaur";
         break;
     case 3:
-        kindStr = "Blastoise";
+        kindStr = "Squirtle";
         break;
     case 0:
         kindStr = "Pikachu";
@@ -193,9 +208,9 @@ bool Hunt::eventFilter(QObject *watched, QEvent *event)
                 showWord(caught);
                 if (caught)
                 {
-                    std::string sendStr = GetSendStr();
-                    std::thread sendThread = std::thread(SendThreadFuncHunt, socketClient, &sendStr);
-                    sendThread.join();
+                    this->ui->renameWidget->show();
+                    this->ui->decorationL->show();
+                    this->ui->decorationR->show();
                 }
                 ballPressed = false;
             }

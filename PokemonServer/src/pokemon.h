@@ -69,6 +69,8 @@ public:
 
     ~Pokemon(){}
 
+    struct PokemonInfo ToPokeStruInfo();
+
     void setNature(Nature nature) {
         this->_nature_ = nature;
     }

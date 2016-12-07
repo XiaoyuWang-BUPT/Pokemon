@@ -64,11 +64,13 @@ private:
     bool caught = false;
     QMovie* movie;
     std::string kindStr;
+    std::string name;
 
 private slots:
     void receiveSwitch();
     void backClicked();
     void showWord(bool caught);
+    void catchPokemon();
     bool eventFilter(QObject *watched, QEvent *event);
 
 signals:
