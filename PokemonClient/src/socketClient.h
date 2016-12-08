@@ -29,6 +29,8 @@ public:
 	void ConnectToServer();
 	void Try();
 	void Shutdown();
+    void setPlayerName(std::string playerName);
+    std::string getPlayerName();
 	int Receive();
 	void Cleanup();
 	void ClearRecvBuf();
@@ -43,6 +45,7 @@ private:
 	struct addrinfo *result = NULL;
 	struct addrinfo *ptr = NULL;
 	struct addrinfo hints;
+    std::string playerName = "";
 };
 
 #endif //!SOCKET_CLIENT_H

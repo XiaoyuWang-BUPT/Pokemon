@@ -18,7 +18,7 @@ unsigned int Random(int max) {
 struct PokemonInfo Pokemon::ToPokeStruInfo()
 {
     struct PokemonInfo pi = {
-        this->_name_, (int)this->_nature_, (int)this->_kind_,
+        this->_owner_, this->_name_, (int)this->_nature_, (int)this->_kind_,
                 (int)this->_character_, this->_level_, this->_experiencePoint_,
                 this->_attackPoint_, this->_defencePoint_, this->_totalHP_,
                 this->_currentHP_, this->_intervalIncrease_, this->_criticalPoint_,
@@ -193,7 +193,8 @@ int GiftGenFunc(int MIN, int MAX) {
 
 //御三家构造时经验值为零 模拟对战 或者 野外抓捕时为随机经验值 在相应的类函数解决
 //For pokemon construct first time after caught
-Fire::Fire(Kind kind, int level, string name) {
+Fire::Fire(Kind kind, int level, string name, string owner) {
+    this->setOwner(owner);
     this->setNature(FIRE);
     this->setKind(kind);
     this->setName(name);
@@ -225,6 +226,7 @@ Fire::Fire(Kind kind, int level, string name) {
 //For pokemon construct from db
 Fire::Fire(PokemonInfo pokemonInfo)
 {
+    this->setOwner(pokemonInfo.owner);
     this->setNature(FIRE);
     this->setKind((Kind)pokemonInfo.kind);
     this->setName(pokemonInfo.name);
@@ -259,7 +261,8 @@ void Fire::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setSickCounter(3);
 }
 
-Water::Water(Kind kind, int level, string name) {
+Water::Water(Kind kind, int level, string name, string owner) {
+    this->setOwner(owner);
     this->setNature(WATER);
     this->setKind(kind);
     this->setName(name);
@@ -288,6 +291,7 @@ Water::Water(Kind kind, int level, string name) {
 
 Water::Water(PokemonInfo pokemonInfo)
 {
+    this->setOwner(pokemonInfo.owner);
     this->setNature(WATER);
     this->setKind((Kind)pokemonInfo.kind);
     this->setName(pokemonInfo.name);
@@ -322,7 +326,8 @@ void Water::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setSickCounter(3);
 }
 
-Bush::Bush(Kind kind, int level, string name) {
+Bush::Bush(Kind kind, int level, string name, string owner) {
+    this->setOwner(owner);
     this->setNature(BUSH);
     this->setKind(kind);
     this->setName(name);
@@ -352,6 +357,7 @@ Bush::Bush(Kind kind, int level, string name) {
 
 Bush::Bush(PokemonInfo pokemonInfo)
 {
+    this->setOwner(pokemonInfo.owner);
     this->setNature(BUSH);
     this->setKind((Kind)pokemonInfo.kind);
     this->setName(pokemonInfo.name);
@@ -387,7 +393,8 @@ void Bush::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setSickCounter(3);
 }
 
-Electricity::Electricity(Kind kind, int level, string name) {
+Electricity::Electricity(Kind kind, int level, string name, string owner) {
+    this->setOwner(owner);
     this->setNature(ELECTRICITY);
     this->setKind(kind);
     this->setName(name);
@@ -418,6 +425,7 @@ Electricity::Electricity(Kind kind, int level, string name) {
 
 Electricity::Electricity(PokemonInfo pokemonInfo)
 {
+    this->setOwner(pokemonInfo.owner);
     this->setNature(ELECTRICITY);
     this->setKind((Kind)pokemonInfo.kind);
     this->setName(pokemonInfo.name);

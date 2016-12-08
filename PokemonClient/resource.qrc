@@ -37,5 +37,11 @@
         <file alias="word">resource/word.png</file>
         <file alias="charmander.gif">resource/charmander-3.gif</file>
         <file alias="squirtle.gif">resource/squirtle-3.gif</file>
+        <file alias="close">resource/close.png</file>
+        <file alias="reload">resource/reload.png</file>
+        <file alias="offline">resource/offline.png</file>
+        <file alias="online">resource/online.png</file>
+        <file alias="thumb">resource/thumb.png</file>
+        <file alias="pokehauk">resource/poke.png</file>
     </qresource>
 </RCC>

@@ -6,6 +6,7 @@ Player::Player() {
     this->_password_ = "NULL";
     this->_pokemonNumber_ = 0;
     this->_rank_ = 9999; //TODO 初始化为总人数最后一名
+    this->_thumb_ = 0;
     this->_beginDateTime_ = QDateTime::currentDateTime();
     this->_gameTime_ = "0000";
     this->_pokemonGot_.clear();
@@ -16,6 +17,7 @@ Player::Player(PlayerInfo playerInfo) {
     this->_password_ = playerInfo.password;
     this->_pokemonNumber_ = playerInfo.pokemonNumber;
     this->_rank_ = playerInfo.rank;
+    this->_thumb_ = playerInfo.thumb;
 
     //set Begin Time
     string beginYear = playerInfo.beginDateTime.substr(0, 4);
@@ -61,6 +63,11 @@ int Player::getRank() {
     return this->_rank_;
 }
 
+int Player::getThumb()
+{
+    return this->_thumb_;
+}
+
 QDateTime Player::getBeginDT() {
     return this->_beginDateTime_;
 }
@@ -87,6 +94,10 @@ void Player::setPMNumber(int pokemonNumber) {
 
 void Player::setRank(int rank) {
     this->_rank_ = rank;
+}
+
+void Player::setThumb(int thumb) {
+    this->_thumb_ = thumb;
 }
 
 void Player::setBeginDateTime(QDateTime beginDateTime) {

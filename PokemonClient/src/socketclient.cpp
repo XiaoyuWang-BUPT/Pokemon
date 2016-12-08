@@ -95,6 +95,16 @@ void SocketClient::Shutdown()
     }
 }
 
+void SocketClient::setPlayerName(std::string playerName)
+{
+    this->playerName = playerName;
+}
+
+std::string SocketClient::getPlayerName()
+{
+    return this->playerName;
+}
+
 int SocketClient::Receive()
 {
     iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);

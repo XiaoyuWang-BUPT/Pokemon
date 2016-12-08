@@ -21,6 +21,7 @@ using namespace std;
    2.counterVec info is not recorded in db but construct function knows*/
 struct PokemonInfo
 {
+    string owner;
     string name; //获得新的小精灵时命名 不命名则默认为 小火龙 水箭龟 皮卡丘
     int nature; //火 水 草 冰 四种属性 FIRE> BUSH; FIRE> ELECTRICITY; WATER> FIRE; BUSH> WATER; ELECTRICITY> FIRE
     int kind; //小精灵的细类 小火龙 水箭龟 皮卡丘 等
@@ -38,7 +39,7 @@ struct PokemonInfo
     int sickCounter;
     int sickPoint;
     int alive;
-    ORMAP(PokemonInfo, name, nature, kind, character, level, experiencePoint,
+    ORMAP(PokemonInfo, name, owner, nature, kind, character, level, experiencePoint,
           attackPoint, defencePoint, totalHP, currentHP, intervalIncrease,
           criticalPoint, state, sickCounter, sickPoint, alive)
 };
@@ -46,6 +47,7 @@ struct PokemonInfo
 class Pokemon
 {
 private:
+    string _owner_;
     Nature _nature_; //火 水 草 冰 四种属性 FIRE> BUSH; FIRE> ELECTRICITY; WATER> FIRE; BUSH> WATER; ELECTRICITY> FIRE
     Kind _kind_; //小精灵的细类 小火龙 水箭龟 皮卡丘 等
     string _name_; //获得新的小精灵时命名 不命名则默认为 小火龙 水箭龟 皮卡丘
@@ -70,6 +72,11 @@ public:
     ~Pokemon(){}
 
     struct PokemonInfo ToPokeStruInfo();
+
+    void setOwner(std::string o)
+    {
+        this->_owner_ = o;
+    }
 
     void setNature(Nature nature) {
         this->_nature_ = nature;
@@ -137,6 +144,11 @@ public:
 
     void setAlive(bool alive) {
         this->_alive_ = alive;
+    }
+
+    std::string getOwner()
+    {
+        return this->_owner_;
     }
 
     Nature getNature()
@@ -242,7 +254,7 @@ class Fire : public Pokemon
 {
 public:
     //Fire(Kind kind);// 御三家构造函数
-    Fire(Kind kind, int level, string name); //对战时随机生成的精灵构造函数 野生精灵构造函数
+    Fire(Kind kind, int level, string name, string owner); //对战时随机生成的精灵构造函数 野生精灵构造函数
     Fire(struct PokemonInfo pokemonInfo);
     ~Fire() {}
     void EnSick(Pokemon *sickPokemon);
@@ -253,7 +265,7 @@ class Water : public Pokemon
 {
 public:
     //Water(Kind kind);
-    Water(Kind kind, int level, string name); //对战时随机生成的精灵构造函数 野生精灵构造函数
+    Water(Kind kind, int level, string name, string owner); //对战时随机生成的精灵构造函数 野生精灵构造函数
     Water(struct PokemonInfo pokemonInfo);
     ~Water() {}
     void EnSick(Pokemon *sickPokemon);
@@ -264,7 +276,7 @@ class Bush : public Pokemon
 {
 public:
     //Bush(Kind kind);
-    Bush(Kind kind, int level, string name); //对战时随机生成的精灵构造函数 野生精灵构造函数
+    Bush(Kind kind, int level, string name, string owner); //对战时随机生成的精灵构造函数 野生精灵构造函数
     Bush(struct PokemonInfo pokemonInfo);
     ~Bush() {}
     void EnSick(Pokemon *sickPokemon);
@@ -275,7 +287,7 @@ class Electricity : public Pokemon
 {
 public:
     //Electricity(Kind kind);
-    Electricity(Kind kind, int level, string name); //对战时随机生成的精灵构造函数 野生精灵构造函数
+    Electricity(Kind kind, int level, string name, string owner); //对战时随机生成的精灵构造函数 野生精灵构造函数
     Electricity(struct PokemonInfo pokemonInfo);
     ~Electricity() {}
     void EnSick(Pokemon *sickPokemon);

@@ -56,10 +56,10 @@ int main(int argc, char *argv[])
     cout << "Please name your pokemon: ";
     string name;
     cin >> name;
-    Pokemon *charamander = pokemonFactory->CreatePokemon(CHARMELEON, 6, name);
+    Pokemon *charamander = pokemonFactory->CreatePokemon(CHARMELEON, 6, name, "chuck");
     cout << "Please name your pokemon: ";
     cin >> name;
-    Pokemon *pikachu = pokemonFactory->CreatePokemon(RAICHU, 15, name);
+    Pokemon *pikachu = pokemonFactory->CreatePokemon(RAICHU, 15, name, "Taylor");
     /* An apparent visual test
      * including Attack specialAttack database display */
     {
@@ -71,8 +71,9 @@ int main(int argc, char *argv[])
         charamander->SpecialAttack(pikachu);
         charamander->DeadJudge();
         PrintPokeData(pikachu);
+
         struct PokemonInfo pokemonInfo = {
-            "RainING Pokemon",0, 1, 0, 7, 900, 120,
+            "RainING", "RainING Pokemon",0, 1, 0, 7, 900, 120,
             38, 678, 467, 34, 25, 2, 1, 2, 1 };
         Pokemon *RPokemon = pokemonFactory->CreatePokemon(pokemonInfo);
         PrintPokeData(RPokemon);
@@ -84,9 +85,10 @@ int main(int argc, char *argv[])
         pokePackMapper.Insert(pokemonInfo);
 
         pokemonInfo = {
-            "Father Pokemon",0, 1, 0, 7, 1200, 120,
+            "Father", "Father Pokemon",0, 1, 0, 7, 1200, 120,
             38, 678, 467, 34, 25, 2, 0, 0, 1 };
         pokePackMapper.Insert(pokemonInfo);
+
 
         PokemonInfo pHelper;
         auto pokemonQuery = pokePackMapper.Query(pHelper)
@@ -113,6 +115,7 @@ int main(int argc, char *argv[])
             0,
             CAPACITY,
             9999,
+            0,
             "201611171230", //201611171230 2016-11-17 12:30
             "122300" //1223hours 00minutes
         };

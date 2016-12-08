@@ -31,6 +31,7 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->pokeballButton->installEventFilter(this);
     this->ui->huntPicContainer->installEventFilter(this);
     this->ui->battlePicContainer->installEventFilter(this);
+    this->ui->closeOPButton->installEventFilter(this);
 
     this->ui->pokeballButton->setToolTip("click to know more");
     this->ui->huntPicContainer->setToolTip("click to hunt");
@@ -47,10 +48,30 @@ MainPage::MainPage(QWidget *parent) :
     palette.setBrush(QPalette::Window, QBrush(pixmap.scaled(width(), height())));
     setPalette(palette);
 
-    QMovie* movie = new QMovie(":/pikachu.gif");
-    this->ui->welcomeLabel->setMovie(movie);
-    movie->start();
+    // online/offline icon label innitialize
+    for (int i = 0; i < MAXSIZE_PLAYER; i++)
+    {
+        headLabel[i] = new QLabel(this->ui->headLabelWidget);
+        headLabel[i]->hide();
+        playerPokeButton[i] = new QPushButton(this->ui->playerPokeButtonWidget);
+        playerPokeButton[i]->hide();
+        playerPokeButton[i]->setFlat(true);
+        playerPokeButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
+        playerPokeButton[i]->installEventFilter(this);
+        thumbButton[i] = new QPushButton(this->ui->thumbButtonWidget);
+        thumbButton[i]->hide();
+        thumbButton[i]->setFlat(true);
+        thumbButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
+        thumbButton[i]->installEventFilter(this);
+    }
+
     QObject::connect(this->ui->onlinePlayerBtn, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerClicked()));
+    QObject::connect(this->ui->OPReloadButton, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerReloadClicked()));
+    QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->listWidgetContainer, SLOT(hide()));
+    QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->OPListWidget, SLOT(clear()));
+    QObject::connect(this, SIGNAL(playerPokeClicked(int)), this, SLOT(onPlayerPokeClicked(int)));
+    QObject::connect(this, SIGNAL(playerThumbClicked(int)), this, SLOT(onPlayerThumbClicked(int)));
+    QObject::connect(this, SIGNAL(setOnlinePlayerIconSignal(int)), this, SLOT(setOnlinePlayerIcon(int)));
 }
 
 MainPage::MainPage(SocketClient *sc, QWidget *parent) :
@@ -69,12 +90,35 @@ DWORD WINAPI RecvThreadFuncMainpage(SocketClient* socketClient, MainPage* mainpa
 DWORD WINAPI SendThreadFuncMainpage(LPVOID lParam, LPVOID sParam);
 
 void MainPage::receiveSwitch()
-{
+{    
+    this->ui->listWidgetContainer->hide();
+    for (int i = 0; i < MAXSIZE_PLAYER; i++)
+    {
+        headLabel[i]->hide();
+        playerPokeButton[i]->hide();
+        thumbButton[i]->hide();
+    }
     this->show();
+    return;
+}
+
+void MainPage::setOnlinePlayerIcon(int i)
+{
+    headLabel[i]->setGeometry(2, 24*i, 24, 24);
+    headLabel[i]->setStyleSheet("border-image: url(:/online); background-color : rgba(255, 255, 255, 100);");
+    playerPokeButton[i]->setGeometry(2, 24*i, 24, 24);
+    playerPokeButton[i]->setStyleSheet("border-image: url(:/pokehauk);");
+    thumbButton[i]->setGeometry(10, 24*i, 24, 24);
+    thumbButton[i]->setStyleSheet("border-image: url(:/thumb);");
+    thumbButton[i]->show();
+    playerPokeButton[i]->show();
+    headLabel[i]->show();
+    return;
 }
 
 void MainPage::LoadOnlinePlayer(json &recvJ)
 {
+    QListWidgetItem* item;
     int amount = recvJ["amount"];
     for (int i = 0; i < amount; i++)
     {
@@ -82,11 +126,21 @@ void MainPage::LoadOnlinePlayer(json &recvJ)
         std::string indexStr;
         stream << (i + 1);
         stream >> indexStr;
-        std::string tmpKeyStr = "name" + indexStr;
-        std::cout << recvJ[tmpKeyStr] << ":";
-        tmpKeyStr = "rank" + indexStr;
-        std::cout << recvJ[tmpKeyStr] << std::endl;
+        std::string nameKey = "name" + indexStr;
+        std::string rankKey = "rank" + indexStr;
+        std::string rank;
+        stream.clear();
+        stream << recvJ[rankKey];
+        stream >> rank;
+        QString str = QString::fromStdString(recvJ[nameKey]);
+        playerNames[i] = recvJ[nameKey];
+        str.append("        ");
+        str.append(QString::fromStdString(rank));
+        item = new QListWidgetItem(str, this->ui->OPListWidget);
+        item->setFont(QFont("Consolas", 16, 2, false));
+        emit setOnlinePlayerIconSignal(i);
     }
+    return;
 }
 
 bool MainPage::eventFilter(QObject *watched, QEvent *event)
@@ -141,6 +195,28 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
             animation->start(QPropertyAnimation::DeleteWhenStopped);
         }
     }
+    if (watched == this->ui->closeOPButton)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+            this->ui->battlePicContainer->setEnabled(true);
+            this->ui->huntPicContainer->setEnabled(true);
+        }
+    }
+    for (int i = 0; i < MAXSIZE_PLAYER; i++)
+    {
+        if (watched == this->playerPokeButton[i])
+        {
+            if (event->type() == QEvent::MouseButtonPress)
+                emit playerPokeClicked(i);
+        }
+        if (watched == this->thumbButton[i])
+        {
+            if (event->type() == QEvent::MouseButtonPress)
+                emit playerThumbClicked(i);
+        }
+    }
     return QWidget::eventFilter(watched, event);
 }
 
@@ -155,20 +231,90 @@ bool MainPage::getRecvStr(QString str)
     {
         LoadOnlinePlayer(recvJ);
     }
+    if (symbol == "playerPoke")
+    {
+
+    }
+    if (symbol == "thumb")
+    {
+
+    }
     return true;
+}
+
+void MainPage::RecvAndSendOnlinePlayer(json j)
+{
+    std::string str = j.dump();
+    std::thread mainpageSendThread = std::thread(SendThreadFuncMainpage, socketClient, &str);
+    mainpageSendThread.join();
+
+    std::thread mainpageRecvThread = std::thread(RecvThreadFuncMainpage, socketClient, this);
+    mainpageRecvThread.join();
+    return;
+}
+
+void MainPage::onOnlinePlayerReloadClicked()
+{
+    this->ui->OPListWidget->clear();
+    for (int i = 0; i < MAXSIZE_PLAYER; i++)
+    {
+        headLabel[i]->hide();
+        playerPokeButton[i]->hide();
+        thumbButton[i]->hide();
+    }
+    for (auto& s : playerNames)
+        s = "";
+    json j;
+    j["symbol"] = "onlinePlayer";
+    j["end"] = "end";
+    RecvAndSendOnlinePlayer(j);
+    return;
 }
 
 void MainPage::onOnlinePlayerClicked()
 {
-    json j;
-    j["symbol"] = "onlinePlayer";
-    j["end"] = "end";
-    std::string str = j.dump();
+    if (this->ui->listWidgetContainer->isHidden())
+    {
+        for (auto& s : playerNames)
+            s = "";
+        this->ui->battlePicContainer->setEnabled(false);
+        this->ui->huntPicContainer->setEnabled(false);
+        json j;
+        j["symbol"] = "onlinePlayer";
+        j["end"] = "end";
+        RecvAndSendOnlinePlayer(j);
+        this->ui->onlinePlayerBtn->setGeometry(258, 398, 72, 72);
+        this->ui->listWidgetContainer->show();
+    }
+    else
+    {
+        this->ui->battlePicContainer->setEnabled(true);
+        this->ui->huntPicContainer->setEnabled(true);
+        this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+        this->ui->listWidgetContainer->hide();
+        this->ui->OPListWidget->clear();
+    }
+    return;
+}
 
-    std::thread mainpageSendThread = std::thread(SendThreadFuncMainpage, socketClient, &str);
-    mainpageSendThread.join();
-    std::thread mainpageRecvThread = std::thread(RecvThreadFuncMainpage, socketClient, this);
-    mainpageRecvThread.join();
+void MainPage::onPlayerPokeClicked(int i)
+{
+    json j;
+    j["symbol"] = "playerPoke";
+    j["name"] = playerNames[i];
+    j["end"] = "end";
+    RecvAndSendOnlinePlayer(j);
+    return;
+}
+
+void MainPage::onPlayerThumbClicked(int i)
+{
+    json j;
+    j["symbol"] = "thumb";
+    j["name"] = playerNames[i];
+    j["end"] = "end";
+    RecvAndSendOnlinePlayer(j);
+    return;
 }
 
 DWORD WINAPI RecvThreadFuncMainpage(SocketClient* socketClient, MainPage* mainpage)

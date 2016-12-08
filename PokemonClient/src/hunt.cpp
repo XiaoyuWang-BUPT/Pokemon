@@ -55,23 +55,52 @@ void Hunt::catchPokemon()
 {
     if (caught)
     {
+        if (this->ui->nameLineEdit->text().isEmpty())
+        {
+            QString info = QString::fromStdString(kindStr) + " wants a name";
+            QMessageBox::information(this, "Info", info);
+        }
         json j;
         j["symbol"] = "hunt";
+        j["owner"] = socketClient->getPlayerName();
         j["kind"] = kindStr;
         j["name"] = this->ui->nameLineEdit->text().toStdString();
+        name = this->ui->nameLineEdit->text().toStdString();
         j["end"] = "end";
 
         std::string sendStr = j.dump();
         std::thread sendThread = std::thread(SendThreadFuncHunt, socketClient, &sendStr);
         sendThread.join();
+        this->ui->backButton->setEnabled(true);
+        this->ui->nameLineEdit->clear();
         emit this->ui->backButton->clicked();
     }
+    return;
 }
 
 void Hunt::backClicked()
 {
-    this->hide();
-    emit switchToMainPage();
+    if (caught)
+    {
+        if (name == "")
+        {
+            QString info = QString::fromStdString(kindStr) + " wants a name";
+            QMessageBox::information(this, "Info", info);
+        }
+        else
+        {
+            name = "";
+            kindStr = "";
+            this->hide();
+            emit switchToMainPage();
+        }
+    }
+    else
+    {
+        this->hide();
+        emit switchToMainPage();
+    }
+    return;
 }
 
 unsigned int Random(int max) {

@@ -8,7 +8,7 @@ class PokemonFactory
 public:
     PokemonFactory(){}
     ~PokemonFactory(){}
-    Pokemon *CreatePokemon(Kind kind, int level, string name);
+    Pokemon *CreatePokemon(Kind kind, int level, string name, string owner);
     Pokemon *CreatePokemon(struct PokemonInfo pokemonInfo);
 };
 

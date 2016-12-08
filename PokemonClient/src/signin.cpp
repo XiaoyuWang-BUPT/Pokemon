@@ -154,6 +154,8 @@ void SignIn::onSignInClicked()
             {
                 this->ui->userLineEdit->clear();
                 this->ui->pwLineEdit->clear();
+                std::string tmp = j["username"];
+                socketClient->setPlayerName(tmp);
                 this->hide();
                 emit switchToMainPage();
             }

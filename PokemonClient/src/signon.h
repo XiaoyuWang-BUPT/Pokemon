@@ -1,7 +1,6 @@
 ﻿#ifndef SIGNON_H
 #define SIGNON_H
 
-#include "helper.h"
 #include "socketClient.h"
 #include <QWidget>
 #include <QPalette>

@@ -17,7 +17,6 @@
 #include <string>
 #include <sstream>
 #include "lib/json.hpp"
-#include "helper.h"
 #include "socketClient.h"
 
 #define ZMin 400

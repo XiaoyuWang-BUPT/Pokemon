@@ -1,12 +1,12 @@
 ﻿#include "pokemonfactory.h"
 #include <string>
 
-Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name) {
+Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name, string owner) {
     Pokemon *pokemonCreated;
     if (kind >= CHARMANDER && kind <= INFERNAPE) {
         if (Helper::isKindMeetLevel(kind, level))
         {
-            pokemonCreated = new Fire(kind, level, name);
+            pokemonCreated = new Fire(kind, level, name, owner);
         }
         else
             cout << "Kind does NOT meet level" << endl;
@@ -14,7 +14,7 @@ Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name) {
     else if (kind >= SQUIRTLE && kind <= EMPOLEON) {
         if (Helper::isKindMeetLevel(kind, level))
         {
-            pokemonCreated = new Water(kind, level, name);
+            pokemonCreated = new Water(kind, level, name, owner);
         }
         else
             cout << "Kind does NOT meet level" << endl;
@@ -22,7 +22,7 @@ Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name) {
     else if (kind >= BULBASAUR && kind <= TORTERRA) {
         if (Helper::isKindMeetLevel(kind, level))
         {
-            pokemonCreated = new Bush(kind, level, name);
+            pokemonCreated = new Bush(kind, level, name, owner);
         }
         else
             cout << "Kind does NOT meet level" << endl;
@@ -30,7 +30,7 @@ Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name) {
     else if (kind >= PICHU && kind <= AMPHAROS) {
         if (Helper::isKindMeetLevel(kind, level))
         {
-            pokemonCreated = new Electricity(kind, level, name);
+            pokemonCreated = new Electricity(kind, level, name, owner);
         }
         else
             cout << "Kind does NOT meet level" << endl;

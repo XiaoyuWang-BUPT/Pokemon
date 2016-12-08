@@ -122,6 +122,9 @@ QPushButton{
        <height>20</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">font: 75 9pt &quot;Consolas&quot;;</string>
+     </property>
     </widget>
     <widget class="QLabel" name="label">
      <property name="geometry">

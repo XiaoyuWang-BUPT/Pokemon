@@ -2,15 +2,12 @@
 #define SIGNIN_H
 
 #pragma once
-#include "helper.h"
 #include "socketClient.h"
 #include <QWidget>
 #include <QMessageBox>
 #include <QString>
-#include "mainpage.h"
-#include "signon.h"
+#include <QMovie>
 #include "lib/json.hpp"
-
 
 using json = nlohmann::json;
 

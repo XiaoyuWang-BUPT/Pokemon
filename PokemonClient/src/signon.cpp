@@ -183,6 +183,8 @@ void SignOn::signOnButtonClicked()
         {
             if (signonsuccess)
             {
+                std::string tmp = j["username"];
+                socketClient->setPlayerName(tmp);
                 this->hide();
                 emit switchToMainPage();
             }

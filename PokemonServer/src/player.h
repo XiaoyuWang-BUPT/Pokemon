@@ -14,10 +14,11 @@ struct PlayerInfo
     int pokemonNumber;
     int packageCapacity;
     int rank;
+    int thumb;
     string beginDateTime; //201611171230 2016-11-17 12:30
     string gameTime; //12003 120hours 3minutes
     ORMAP(PlayerInfo, name, password,
-          pokemonNumber, packageCapacity, rank, beginDateTime,
+          pokemonNumber, packageCapacity, rank, thumb, beginDateTime,
           gameTime)
 };
 
@@ -28,6 +29,7 @@ private:
     string _password_;
     int _pokemonNumber_;
     int _rank_;
+    int _thumb_;
     QDateTime _beginDateTime_;
     string _gameTime_;
     set<Pokemon*> _pokemonGot_;
@@ -39,6 +41,7 @@ public:
     string getPassword();
     int getPMNumber();
     int getRank();
+    int getThumb();
     QDateTime getBeginDT();
     string getGameTime();
     set<Pokemon*> getGotPokemon();
@@ -47,6 +50,7 @@ public:
     void setPassword(string password);
     void setPMNumber(int pokemonNumber);
     void setRank(int rank);
+    void setThumb(int thumb);
     void setBeginDateTime(QDateTime beginDateTime);
     void setGameTime(QDateTime startDateTime);
     void addPokemon(Pokemon *PMtoGet);

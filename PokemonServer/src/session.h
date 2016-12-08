@@ -78,7 +78,7 @@ std::string GetSendStr(int pid, Helper* helper)
             QDateTime qdt = QDateTime::currentDateTime();
             std::string s = qdt.toString("yyyyMMddhhmm").toStdString();
             std::cout << "QDateTime:" << s << std::endl;
-            struct PlayerInfo p = {nameRecv, pwRecv, 0, CAPACITY, 9999, s, "000"};
+            struct PlayerInfo p = {nameRecv, pwRecv, 0, CAPACITY, 9999, 0, s, "000"};
             sendJ["signonsuccess"] = playerMapper.Insert(p);
             onlinePlayer[pid] = std::make_pair(p.name, p.rank);
         }
@@ -104,8 +104,11 @@ std::string GetSendStr(int pid, Helper* helper)
     }
     if (symbol == "hunt")
     {
+        sendJ["symbol"] = "hunt";
+        sendJ["end"] = "end";
         std::string kindStr = recvJ["kind"];
         std::string name = recvJ["name"];
+        std::string owner = recvJ["owner"];
         int level = 1;
         Kind kind;
         for (int i = 0; i < (sizeof(kindOfString)/sizeof(kindOfString[0])); i++)
@@ -116,7 +119,7 @@ std::string GetSendStr(int pid, Helper* helper)
             }
         }
         PokemonFactory *pokemonFactory = new PokemonFactory();
-        Pokemon* caughtPokemon = pokemonFactory->CreatePokemon(kind, level, name);
+        Pokemon* caughtPokemon = pokemonFactory->CreatePokemon(kind, level, name, owner);
         struct PokemonInfo pokemoninfo = caughtPokemon->ToPokeStruInfo();
 
         //Get player information
@@ -136,7 +139,6 @@ std::string GetSendStr(int pid, Helper* helper)
         }
 
         playerinfo.pokemonNumber += 1;
-        playerMapper.Update(playerinfo);
         //If player's package not full, add pokemon into package.Else into storage
         if (playerinfo.packageCapacity > 0)
         {
@@ -149,6 +151,32 @@ std::string GetSendStr(int pid, Helper* helper)
             Poor_ORM::ORMapper<PokemonInfo> pokeStgMapper("pokeStorage.db");
             pokeStgMapper.Insert(pokemoninfo);
         }
+        playerMapper.Update(playerinfo);
+    }
+    if (symbol == "playerPoke")
+    {
+        std::string name = recvJ["name"];
+        sendJ["symbol"] = "playerPoke";
+        sendJ["end"] = "end";
+    }
+    if (symbol == "thumb")
+    {
+        std::string name = recvJ["name"];
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        PlayerInfo qHelper;
+        auto query = playerMapper.Query(qHelper)
+                .ToVector();
+        for (auto q : query)
+        {
+            if (q.name == name)
+            {
+                q.thumb += 1;
+                playerMapper.Update(q);
+                break;
+            }
+        }
+        sendJ["symbol"] = "thumb";
+        sendJ["end"] = "end";
     }
     helper->setSendStrHelper(sendJ.dump());
     std::string strSend = helper->getSendStrHelper();

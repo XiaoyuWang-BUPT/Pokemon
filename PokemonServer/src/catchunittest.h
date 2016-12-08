@@ -9,9 +9,9 @@
 TEST_CASE("Pokemon Unit Test") {
     PokemonFactory *pokemonFactory4Test = new PokemonFactory();
 
-    Pokemon *charmander4Test = pokemonFactory4Test->CreatePokemon(CHARMANDER, 4, "charmander4Test");
-    Pokemon *charmeleon4Test = pokemonFactory4Test->CreatePokemon(CHARMELEON, 10, "charmeleon4Test");
-    Pokemon *charizard4Test = pokemonFactory4Test->CreatePokemon(CHARIZARD, 14, "charizard4Test");
+    Pokemon *charmander4Test = pokemonFactory4Test->CreatePokemon(CHARMANDER, 4, "charmander4Test", "test");
+    Pokemon *charmeleon4Test = pokemonFactory4Test->CreatePokemon(CHARMELEON, 10, "charmeleon4Test", "test");
+    Pokemon *charizard4Test = pokemonFactory4Test->CreatePokemon(CHARIZARD, 14, "charizard4Test", "test");
 
     SECTION("Experience Point Test")
     {
