@@ -6,6 +6,7 @@ Player::Player() {
     this->_password_ = "NULL";
     this->_pokemonNumber_ = 0;
     this->_rank_ = 9999; //TODO 初始化为总人数最后一名
+    this->_packageCapacity_ = CAPACITY;
     this->_thumb_ = 0;
     this->_beginDateTime_ = QDateTime::currentDateTime();
     this->_gameTime_ = "0000";
@@ -16,6 +17,7 @@ Player::Player(PlayerInfo playerInfo) {
     this->_name_ = playerInfo.name;
     this->_password_ = playerInfo.password;
     this->_pokemonNumber_ = playerInfo.pokemonNumber;
+    this->_packageCapacity_ = playerInfo.packageCapacity;
     this->_rank_ = playerInfo.rank;
     this->_thumb_ = playerInfo.thumb;
 
@@ -45,6 +47,17 @@ Player::Player(PlayerInfo playerInfo) {
     this->_gameTime_ = gameHour + gameMin;
 
     this->_pokemonGot_.clear(); //pokemon would be added in
+}
+
+struct PlayerInfo Player::ToPlayerInfo()
+{
+    struct PlayerInfo playerinfo = {
+        this->_name_, this->_password_, this->_pokemonNumber_,
+        this->_packageCapacity_, this->_rank_, this->_thumb_,
+        this->_beginDateTime_.toString("yyyyMMddhhmm").toStdString(),
+        this->_gameTime_
+    };
+    return playerinfo;
 }
 
 string Player::getName() {
@@ -106,10 +119,10 @@ void Player::setBeginDateTime(QDateTime beginDateTime) {
 
 void Player::setGameTime(QDateTime startDateTime) {
     QDateTime currentDateTime = QDateTime::currentDateTime();
-    int daysDuration = currentDateTime.daysTo(startDateTime);
-    int secsDuration = currentDateTime.secsTo(startDateTime);
+    int daysDuration = startDateTime.daysTo(currentDateTime);
+    int secsDuration = startDateTime.secsTo(currentDateTime);
+    std::cout << "secsDuration:" << secsDuration << std::endl;
     int minsDuration = secsDuration/ 60;
-    secsDuration -= minsDuration* 60;
     int hoursDuration = minsDuration/ 60;
     minsDuration -= hoursDuration* 60;
     hoursDuration += daysDuration* 24;

@@ -102,6 +102,40 @@ std::string GetSendStr(int pid, Helper* helper)
             sendJ[tmpKeyStr] = onlinePlayer[i].second;
         }
     }
+    if (symbol == "myinfo")
+    {
+        sendJ["symbol"] = "myinfo";
+        sendJ["end"] = "end";
+        std::string name = recvJ["name"];
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        PlayerInfo qHelper;
+        struct PlayerInfo playerinfo;
+        auto query = playerMapper.Query(qHelper)
+                .ToVector();
+        for (auto q : query)
+        {
+            if (q.name == name)
+            {
+//                sendJ["name"] = q.name;
+//                sendJ["pokemonNumber"] = q.pokemonNumber;
+//                sendJ["rank"] = q.rank;
+//                sendJ["thumb"] = q.thumb;
+//                sendJ["begintime"] = q.beginDateTime;
+//                sendJ["gametime"] = q.gameTime;
+                playerinfo = q;
+                break;
+            }
+        }
+        Player* player = new Player(playerinfo);
+        player->setGameTime(player->getBeginDT());
+        playerinfo = player->ToPlayerInfo();
+        sendJ["name"] = playerinfo.name;
+        sendJ["pokemonNumber"] = playerinfo.pokemonNumber;
+        sendJ["rank"] = playerinfo.rank;
+        sendJ["thumb"] = playerinfo.thumb;
+        sendJ["begintime"] = playerinfo.beginDateTime;
+        sendJ["gametime"] = playerinfo.gameTime;
+    }
     if (symbol == "hunt")
     {
         sendJ["symbol"] = "hunt";

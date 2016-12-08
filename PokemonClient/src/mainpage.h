@@ -17,6 +17,7 @@
 #include <QFont>
 #include <QLabel>
 #include <QPushButton>
+#include <QDateTime>
 #include "lib/json.hpp"
 #include "socketClient.h"
 
@@ -54,6 +55,7 @@ private slots:
     void onOnlinePlayerReloadClicked();
     void onPlayerPokeClicked(int i);
     void onPlayerThumbClicked(int i);
+    void onMyInfoClicked();
     Q_INVOKABLE bool getRecvStr(QString str);
     bool eventFilter(QObject *watched, QEvent *event);
     void setOnlinePlayerIcon(int i);

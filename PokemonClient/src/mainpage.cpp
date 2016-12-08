@@ -48,7 +48,6 @@ MainPage::MainPage(QWidget *parent) :
     palette.setBrush(QPalette::Window, QBrush(pixmap.scaled(width(), height())));
     setPalette(palette);
 
-    // online/offline icon label innitialize
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
     {
         headLabel[i] = new QLabel(this->ui->headLabelWidget);
@@ -72,6 +71,8 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this, SIGNAL(playerPokeClicked(int)), this, SLOT(onPlayerPokeClicked(int)));
     QObject::connect(this, SIGNAL(playerThumbClicked(int)), this, SLOT(onPlayerThumbClicked(int)));
     QObject::connect(this, SIGNAL(setOnlinePlayerIconSignal(int)), this, SLOT(setOnlinePlayerIcon(int)));
+    QObject::connect(this->ui->myInfoButton, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
+    QObject::connect(this->ui->myinfoCloseBtn, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
 }
 
 MainPage::MainPage(SocketClient *sc, QWidget *parent) :
@@ -92,6 +93,9 @@ DWORD WINAPI SendThreadFuncMainpage(LPVOID lParam, LPVOID sParam);
 void MainPage::receiveSwitch()
 {    
     this->ui->listWidgetContainer->hide();
+    this->ui->myinfoWidget->hide();
+    this->ui->onlinePlayerBtn->setGeometry(380, 410, 48, 48);
+    this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
     {
         headLabel[i]->hide();
@@ -231,6 +235,51 @@ bool MainPage::getRecvStr(QString str)
     {
         LoadOnlinePlayer(recvJ);
     }
+    if (symbol == "myinfo")
+      {
+        std::string name = recvJ["name"];
+        int pokeNum = recvJ["pokemonNumber"];
+        int rank = recvJ["rank"];
+        int thumb = recvJ["thumb"];
+        std::string begintime = recvJ["begintime"];
+        std::string beginYear = begintime.substr(0, 4);
+        std::string beginMonth = begintime.substr(4, 2);
+        std::string beginDay = begintime.substr(6, 2);
+        std::string beginHour = begintime.substr(8, 2);
+        std::string beginMin = begintime.substr(10,2);
+        begintime.clear();
+        begintime = beginYear + "/" + beginMonth + "/" + beginDay + " "
+                + beginHour + ":" + beginMin;
+        std::string gametime = recvJ["gametime"];
+        std::string reverseGameTime(gametime.rbegin(),
+                               gametime.rend());
+        std::string gameMin = reverseGameTime.substr(0, 2);
+        gameMin = std::string(gameMin.rbegin(), gameMin.rend());
+        reverseGameTime.erase(0, 2);
+        std::string gameHour = std::string(reverseGameTime.rbegin(),
+                          reverseGameTime.rend());
+        gametime = gameHour + "h " + gameMin + "m";
+        std::stringstream stream;
+        std::string pokeNumStr;
+        std::string rankStr;
+        std::string thumbStr;
+        stream << pokeNum;
+        stream >>pokeNumStr;
+        stream.clear();
+        stream << rank;
+        stream >> rankStr;
+        stream.clear();
+        stream << thumb;
+        stream >> thumbStr;
+        stream.clear();
+        std::string textString = "          " + name + "\n"
+                + "Pokemon Number:" + pokeNumStr + "\n"
+                + "Rank:" + rankStr + "\n"
+                + "Thumb Number:" + thumbStr + "\n"
+                + "Game  Time:" + gametime + "\n"
+                + "Begin From:\n" + "   " + begintime;
+        this->ui->myinfoText->appendPlainText(QString::fromStdString(textString));
+    }
     if (symbol == "playerPoke")
     {
 
@@ -315,6 +364,26 @@ void MainPage::onPlayerThumbClicked(int i)
     j["end"] = "end";
     RecvAndSendOnlinePlayer(j);
     return;
+}
+
+void MainPage::onMyInfoClicked()
+{
+    if (this->ui->myinfoWidget->isHidden())
+    {
+        json j;
+        j["symbol"] = "myinfo";
+        j["name"] = socketClient->getPlayerName();
+        j["end"] = "end";
+        RecvAndSendOnlinePlayer(j);
+        this->ui->myInfoButton->setGeometry(368, 398, 72, 72);
+        this->ui->myinfoWidget->show();
+    }
+    else
+    {
+        this->ui->myinfoText->clear();
+        this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
+        this->ui->myinfoWidget->hide();
+    }
 }
 
 DWORD WINAPI RecvThreadFuncMainpage(SocketClient* socketClient, MainPage* mainpage)

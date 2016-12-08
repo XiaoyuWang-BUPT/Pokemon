@@ -241,8 +241,8 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius: 3px;
-background-color: rgba(255, 255, 255, 100);</string>
+     <string notr="true">background-color: rgba(255, 255, 255, 100);
+color: rgb(93, 93, 93);</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::NoFrame</enum>
@@ -298,14 +298,15 @@ background-color: rgba(255, 255, 255, 100);</string>
    <widget class="QLabel" name="onlineNameLabel">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>2</y>
+      <x>32</x>
+      <y>3</y>
       <width>54</width>
       <height>20</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 75 12pt &quot;Consolas&quot;;</string>
+     <string notr="true">font: 75 14pt &quot;Consolas&quot;;
+color: rgba(125, 125, 125, 250);</string>
     </property>
     <property name="text">
      <string>Name</string>
@@ -315,13 +316,14 @@ background-color: rgba(255, 255, 255, 100);</string>
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>2</y>
+      <y>3</y>
       <width>54</width>
       <height>20</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 75 12pt &quot;Consolas&quot;;</string>
+     <string notr="true">font: 75 14pt &quot;Consolas&quot;;
+color: rgba(125, 125, 125, 250);</string>
     </property>
     <property name="text">
      <string>Rank</string>
@@ -337,9 +339,10 @@ background-color: rgba(255, 255, 255, 100);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius: 3px;
+     <string notr="true">border-bottom-right-radius: 5px;
 background-color: rgba(255, 255, 255, 110);</string>
     </property>
+    <zorder>myinfoWidget</zorder>
    </widget>
    <widget class="QWidget" name="headLabelWidget" native="true">
     <property name="geometry">
@@ -352,7 +355,7 @@ background-color: rgba(255, 255, 255, 110);</string>
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgba(255, 255, 255, 110);
-border-radius: 3px;</string>
+border-bottom-left-radius: 5px;</string>
     </property>
    </widget>
    <widget class="QWidget" name="playerPokeButtonWidget" native="true">
@@ -365,8 +368,91 @@ border-radius: 3px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius: 3px;
-background-color: rgba(255, 255, 255, 110);</string>
+     <string notr="true">background-color: rgba(255, 255, 255, 110);</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="myinfoWidget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>190</y>
+     <width>320</width>
+     <height>200</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#myinfoWidget {
+	border-radius: 10px;
+	background-color: rgba(170, 170, 170, 100);
+}</string>
+   </property>
+   <widget class="QPushButton" name="myinfoCloseBtn">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>0</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/close);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="myinfoText">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>273</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Consolas</family>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-top-left-radius: 5px;
+border-top-right-radius: 5px;
+border-bottom-left-radius: 5px;
+background-color: rgba(255, 255, 255, 100);
+color: rgb(93, 93, 93);</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="decorationLabel">
+    <property name="geometry">
+     <rect>
+      <x>283</x>
+      <y>35</y>
+      <width>29</width>
+      <height>156</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-bottom-right-radius: 5px;
+border-top-right-radius: 5px;
+background-color: rgba(255, 255, 255, 100);</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
@@ -380,6 +466,7 @@ background-color: rgba(255, 255, 255, 110);</string>
   <zorder>battlePicContainer</zorder>
   <zorder>pokeballButton</zorder>
   <zorder>listWidgetContainer</zorder>
+  <zorder>myinfoWidget</zorder>
  </widget>
  <resources/>
  <connections/>

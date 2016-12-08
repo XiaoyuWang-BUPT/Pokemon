@@ -28,6 +28,7 @@ private:
     string _name_;
     string _password_;
     int _pokemonNumber_;
+    int _packageCapacity_;
     int _rank_;
     int _thumb_;
     QDateTime _beginDateTime_;
@@ -45,6 +46,7 @@ public:
     QDateTime getBeginDT();
     string getGameTime();
     set<Pokemon*> getGotPokemon();
+    struct PlayerInfo ToPlayerInfo();
 
     void setName(string name);
     void setPassword(string password);
