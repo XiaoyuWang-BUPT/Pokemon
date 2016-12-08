@@ -45,8 +45,11 @@ private:
     QLabel* headLabel[MAXSIZE_PLAYER];
     QPushButton* playerPokeButton[MAXSIZE_PLAYER];
     QPushButton* thumbButton[MAXSIZE_PLAYER];
+    QPushButton* rankPokeButton[MAXSIZE_PLAYER];
+    QPushButton* rankThumbButton[MAXSIZE_PLAYER];
     void LoadOnlinePlayer(json &recvJ);
     std::string playerNames[MAXSIZE_PLAYER];
+    std::string rankPlayerNames[MAXSIZE_PLAYER];
     void RecvAndSendOnlinePlayer(json j);
 
 private slots:
@@ -56,15 +59,22 @@ private slots:
     void onPlayerPokeClicked(int i);
     void onPlayerThumbClicked(int i);
     void onMyInfoClicked();
+    void onRankClicked();
+    void onRankPokeClicked(int i);
+    void onRankThumbClicked(int i);
     Q_INVOKABLE bool getRecvStr(QString str);
     bool eventFilter(QObject *watched, QEvent *event);
     void setOnlinePlayerIcon(int i);
+    void setRankIcons(int i);
 
 signals:
     void switchToHunt();
     void setOnlinePlayerIconSignal(int i);
+    void setRankIconSignal(int i);
     void playerPokeClicked(int i);
     void playerThumbClicked(int i);
+    void rankPokeClicked(int i);
+    void rankThumbClicked(int i);
 };
 
 #endif // !MAINPAGE_H

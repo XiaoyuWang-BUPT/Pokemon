@@ -70,7 +70,7 @@
   *   创建与`Class Player`对应的`Struct Player`存储`Player` 信息 `Primary Key`为`name`
   *   创建与`Class Pokemon`对应的`Struct Pokemon`存储`Pokemon`信息 `Primary Key`为`name` 并存储`owner`作为`condition: Where`
 
-### v0.1.7(2016/11/19)
+### v0.1.7 (2016/11/19)
 
 * 对`Player`测试创建新玩家对象并输出信息
 * 数据库小精灵实例化 传`struct PokemonInfo` 
@@ -83,7 +83,7 @@
   * 添加`session.h` `session.cpp`测试会话
 
 
-### v0.1.8(2016/11/20)
+### v0.1.8 (2016/11/20)
 
 * `Player`与数据库测试连接
 * `PoorORMLite`修复bug(`insert`语句不正确)
@@ -93,21 +93,21 @@
   * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
   * 添加`session.h` `session.cpp`测试会话
 
-### v0.1.9(2016/11/21)
+### v0.1.9 (2016/11/21)
 
 * `Pokemon`与数据库测试连接
 * `PoorORMLite`修复bug(`insert`语句*sqlCmd*中*where*前无空格 导致数字无法得到识别 但字符串可以识别)
   * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
   * 添加`session.h` `session.cpp`测试会话
 
-### v0.2.0(2016/11/23)
+### v0.2.0 (2016/11/23)
 
 * `PokemonServer`初步完成`Sign In登录` `Sign On注册`界面及跳转
 * TODO
   * 将`Socket Server`和`Socket Client`分别添加至*project server* 和 *project client*
   * 添加`session.h` `session.cpp`测试会话
 
-### v0.2.1(2016/12/1)
+### v0.2.1 (2016/12/1)
 
 * `添加Socket Server` 和 `Socket Client`到项目
 * 可实现登录 操作即 `sign in` ，客户端发送用户名及密码，服务器在数据库查询后返回查询结果
@@ -118,7 +118,7 @@
   * 完善*unit test*
 
 
-### v0.2.2(2016/12/2)
+### v0.2.2 (2016/12/2)
 
 * 创建*Helper* 消除*extern*
 
@@ -137,54 +137,58 @@
   * 完善*Unit test*
   * `Client`端优化过程损失了**被呼叫**功能 (创建线程`recv`)
 
-### v0.2.3(2016/12/2)
+### v0.2.3 (2016/12/2)
 
 * 完善*Unit test*测试`pokemon`的属性
 * 调整玩家对战机制，玩家发起对战请求，服务器在其他请求对战的用户中选择建立对战
 * **被呼叫**功能:只在主页查看聊天信息。进入主界面时创建`CalledThread`线程用于`recv`，接受到后显示。玩家发送聊天信息，则同普通发送行为
 
-### v0.2.4(2016/12/3)
+### v0.2.4 (2016/12/3)
 
 * `client`端删除冗余的*Helper Class*
 * `CalledThread`加入`socketClient`用于`recv`由于目前尚未在`server`端实现`call`功能故`CalledThread`处于阻塞在`recv`阶段
 
-### v0.2.5(2016/12/3)
+### v0.2.5 (2016/12/3)
 
 * 实现注册功能
 * 实现焦点高亮
 * 支持`Key-Tab` 和 `Key_Enter / Key_Return` 操作
 
-### v0.2.6(2016/12/4)
+### v0.2.6 (2016/12/4)
 
 * 美化UI
 
-### v0.2.7(2016/12/4)
+### v0.2.7 (2016/12/4)
 
 * `server`端增加`onlinePlayer`数组存储在线用户的`name` 和 `rank`
 * `client:MainPage统一CalledThreadFunc`和`RecvThreadFunc`到`RecvThreadFunc`并将线程初始化置于`RecvSwitch`中，即切换到主界面即开始阻塞式接受，根据接受内容调用负责显示的功能函数
 
-### v0.2.8(2016/12/5)
+### v0.2.8 (2016/12/5)
 
 * `client`端加入`Hunt`界面用于捕捉小精灵
 
-### v0.2.9(2016/12/6)
+### v0.2.9 (2016/12/6)
 
 * 完成捕捉动画并传送捕捉到的精灵信息
 * TODO
   * 完善服务器接受到捕捉信息后更新数据操作
 
-### v0.3.0(2016/12/7)
+### v0.3.0 (2016/12/7)
 
 * 完成捕捉信息的传送和数据库更新操作
 
-### v0.3.1(2016/12/8)
+### v0.3.1 (2016/12/8)
 
 * 完成在线用户列表 增加点赞功能
 * TODO
   * 查看在线用户的宠物小精灵
 
-### v0.3.2(2016/12/8)
+### v0.3.2 (2016/12/8)
 
 * 完成查看当前玩家信息
+
+### v0.3.3 (2016/12/9)
+
+* 完成查看排位信息
 * TODO
-  * 下列表完成
+  * 查看宠物小精灵

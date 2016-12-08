@@ -15,6 +15,11 @@
 
 using json = nlohmann::json;
 
+bool SortByRank(const struct PlayerInfo& p1, const struct PlayerInfo& p2)
+{
+    return p1.rank < p2.rank;
+}
+
 std::string GetSendStr(int pid, Helper* helper)
 {
     json recvJ = json::parse(helper->getRecvStrHelper());
@@ -211,6 +216,33 @@ std::string GetSendStr(int pid, Helper* helper)
         }
         sendJ["symbol"] = "thumb";
         sendJ["end"] = "end";
+    }
+    if (symbol == "rank")
+    {
+        sendJ["symbol"] = "rank";
+        sendJ["end"] = "end";
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        struct PlayerInfo qHelper;
+        auto query = playerMapper.Query(qHelper)
+                .ToVector();
+        std::sort(query.begin(), query.end(), SortByRank);
+        std::stringstream stream;
+        std::string numStr;
+        std::string nameKey;
+        std::string rankKey;
+        int amount = 0;
+        for (int i = 0; i < query.size()&&i < 10; i++)
+        {
+            amount++;
+            stream.clear();
+            stream << i;
+            stream >> numStr;
+            nameKey = "name" + numStr;
+            rankKey = "rank" + numStr;
+            sendJ[nameKey] = query[i].name;
+            sendJ[rankKey] = query[i].rank;
+        }
+        sendJ["amount"] = amount;
     }
     helper->setSendStrHelper(sendJ.dump());
     std::string strSend = helper->getSendStrHelper();

@@ -51,17 +51,33 @@ MainPage::MainPage(QWidget *parent) :
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
     {
         headLabel[i] = new QLabel(this->ui->headLabelWidget);
+        headLabel[i]->setStyleSheet("border-image: url(:/online); background-color : rgba(255, 255, 255, 100);");
         headLabel[i]->hide();
         playerPokeButton[i] = new QPushButton(this->ui->playerPokeButtonWidget);
         playerPokeButton[i]->hide();
+        playerPokeButton[i]->setStyleSheet("border-image: url(:/pokehauk);");
         playerPokeButton[i]->setFlat(true);
         playerPokeButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
         playerPokeButton[i]->installEventFilter(this);
         thumbButton[i] = new QPushButton(this->ui->thumbButtonWidget);
         thumbButton[i]->hide();
+        thumbButton[i]->setStyleSheet("border-image: url(:/thumb);");
         thumbButton[i]->setFlat(true);
         thumbButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
         thumbButton[i]->installEventFilter(this);
+
+        rankPokeButton[i] = new QPushButton(this->ui->rankPokeWidget);
+        rankPokeButton[i]->hide();
+        rankPokeButton[i]->setStyleSheet("border-image: url(:/pokehauk);");
+        rankPokeButton[i]->setFlat(true);
+        rankPokeButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
+        rankPokeButton[i]->installEventFilter(this);
+        rankThumbButton[i] = new QPushButton(this->ui->rankThumbWidget);
+        rankThumbButton[i]->hide();
+        rankThumbButton[i]->setStyleSheet("border-image: url(:/thumb);");
+        rankThumbButton[i]->setFlat(true);
+        rankThumbButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
+        rankThumbButton[i]->installEventFilter(this);
     }
 
     QObject::connect(this->ui->onlinePlayerBtn, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerClicked()));
@@ -73,6 +89,11 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this, SIGNAL(setOnlinePlayerIconSignal(int)), this, SLOT(setOnlinePlayerIcon(int)));
     QObject::connect(this->ui->myInfoButton, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
     QObject::connect(this->ui->myinfoCloseBtn, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
+    QObject::connect(this->ui->rankButton, SIGNAL(clicked(bool)), this, SLOT(onRankClicked()));
+    QObject::connect(this->ui->closeRankButton, SIGNAL(clicked(bool)), this, SLOT(onRankClicked()));
+    QObject::connect(this, SIGNAL(setRankIconSignal(int)), this, SLOT(setRankIcons(int)));
+    QObject::connect(this, SIGNAL(rankPokeClicked(int)), this, SLOT(onRankPokeClicked(int)));
+    QObject::connect(this, SIGNAL(rankThumbClicked(int)), this, SLOT(onRankThumbClicked(int)));
 }
 
 MainPage::MainPage(SocketClient *sc, QWidget *parent) :
@@ -94,6 +115,7 @@ void MainPage::receiveSwitch()
 {    
     this->ui->listWidgetContainer->hide();
     this->ui->myinfoWidget->hide();
+    this->ui->rankWidget->hide();
     this->ui->onlinePlayerBtn->setGeometry(380, 410, 48, 48);
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
@@ -101,6 +123,8 @@ void MainPage::receiveSwitch()
         headLabel[i]->hide();
         playerPokeButton[i]->hide();
         thumbButton[i]->hide();
+        rankPokeButton[i]->hide();
+        rankThumbButton[i]->hide();
     }
     this->show();
     return;
@@ -109,14 +133,20 @@ void MainPage::receiveSwitch()
 void MainPage::setOnlinePlayerIcon(int i)
 {
     headLabel[i]->setGeometry(2, 24*i, 24, 24);
-    headLabel[i]->setStyleSheet("border-image: url(:/online); background-color : rgba(255, 255, 255, 100);");
     playerPokeButton[i]->setGeometry(2, 24*i, 24, 24);
-    playerPokeButton[i]->setStyleSheet("border-image: url(:/pokehauk);");
-    thumbButton[i]->setGeometry(10, 24*i, 24, 24);
-    thumbButton[i]->setStyleSheet("border-image: url(:/thumb);");
+    thumbButton[i]->setGeometry(10, 24*i, 24, 24);    
     thumbButton[i]->show();
     playerPokeButton[i]->show();
     headLabel[i]->show();
+    return;
+}
+
+void MainPage::setRankIcons(int i)
+{
+    rankPokeButton[i]->setGeometry(2, 24*i, 24, 24);
+    rankPokeButton[i]->show();
+    rankThumbButton[i]->setGeometry(10, 24*i, 24, 24);
+    rankThumbButton[i]->show();
     return;
 }
 
@@ -220,6 +250,16 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
             if (event->type() == QEvent::MouseButtonPress)
                 emit playerThumbClicked(i);
         }
+        if (watched == this->rankPokeButton[i])
+        {
+            if (event->type() == QEvent::MouseButtonPress)
+                emit rankPokeClicked(i);
+        }
+        if (watched == this->rankThumbButton[i])
+        {
+            if (event->type() == QEvent::MouseButtonPress)
+                emit rankThumbClicked(i);
+        }
     }
     return QWidget::eventFilter(watched, event);
 }
@@ -288,6 +328,32 @@ bool MainPage::getRecvStr(QString str)
     {
 
     }
+    if (symbol == "rank")
+    {
+        int amount = recvJ["amount"];
+        QListWidgetItem* item;
+        for (int i = 0; i < amount; i++)
+        {
+            std::stringstream stream;
+            std::string indexStr;
+            stream << i;
+            stream >> indexStr;
+            std::string nameKey = "name" + indexStr;
+            std::string rankKey = "rank" + indexStr;
+            std::string rank;
+            stream.clear();
+            stream << recvJ[rankKey];
+            stream >> rank;
+            QString str = "  ";
+            str.append(QString::fromStdString(recvJ[nameKey]));
+            rankPlayerNames[i] = recvJ[nameKey];
+            str.append("         ");
+            str.append(QString::fromStdString(rank));
+            item = new QListWidgetItem(str, this->ui->rankList);
+            item->setFont(QFont("Consolas", 16, 2, false));
+            emit setRankIconSignal(i);
+        }
+    }
     return true;
 }
 
@@ -322,6 +388,11 @@ void MainPage::onOnlinePlayerReloadClicked()
 
 void MainPage::onOnlinePlayerClicked()
 {
+    this->ui->OPListWidget->clear();
+    this->ui->rankWidget->hide();
+    this->ui->rankButton->setGeometry(170, 410, 48, 48);
+    this->ui->myinfoWidget->hide();
+    this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     if (this->ui->listWidgetContainer->isHidden())
     {
         for (auto& s : playerNames)
@@ -368,6 +439,11 @@ void MainPage::onPlayerThumbClicked(int i)
 
 void MainPage::onMyInfoClicked()
 {
+    this->ui->myinfoText->clear();
+    this->ui->rankWidget->hide();
+    this->ui->rankButton->setGeometry(170, 410, 48, 48);
+    this->ui->listWidgetContainer->hide();
+    this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
     if (this->ui->myinfoWidget->isHidden())
     {
         json j;
@@ -380,10 +456,54 @@ void MainPage::onMyInfoClicked()
     }
     else
     {
-        this->ui->myinfoText->clear();
         this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
         this->ui->myinfoWidget->hide();
     }
+    return;
+}
+
+void MainPage::onRankClicked()
+{
+    this->ui->myinfoWidget->hide();
+    this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
+    this->ui->listWidgetContainer->hide();
+    this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+    if (this->ui->rankWidget->isHidden())
+    {
+        this->ui->rankList->clear();
+        json j;
+        j["symbol"] = "rank";
+        j["end"] = "end";
+        RecvAndSendOnlinePlayer(j);
+        this->ui->rankWidget->show();
+        this->ui->rankButton->setGeometry(158, 398, 72, 72);
+    }
+    else
+    {
+        this->ui->rankWidget->hide();
+        this->ui->rankButton->setGeometry(170, 410, 48, 48);
+    }
+    return;
+}
+
+void MainPage::onRankPokeClicked(int i)
+{
+    json j;
+    j["symbol"] = "playerPoke";
+    j["name"] = rankPlayerNames[i];
+    j["end"] = "end";
+    RecvAndSendOnlinePlayer(j);
+    return;
+}
+
+void MainPage::onRankThumbClicked(int i)
+{
+    json j;
+    j["symbol"] = "thumb";
+    j["name"] = rankPlayerNames[i];
+    j["end"] = "end";
+    RecvAndSendOnlinePlayer(j);
+    return;
 }
 
 DWORD WINAPI RecvThreadFuncMainpage(SocketClient* socketClient, MainPage* mainpage)
