@@ -14,15 +14,21 @@
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QTableWidget>
+#include <QTableWidgetItem>
 #include <QFont>
 #include <QLabel>
 #include <QPushButton>
 #include <QDateTime>
+#include <QUrl>
 #include "lib/json.hpp"
 #include "socketClient.h"
 
 using json = nlohmann::json;
-#define MAXSIZE_PLAYER 10//maximum of player can be shown
+#define MAXSIZE_PLAYER 10 //maximum of player can be shown
+#define TABLE_ROW 3
+#define TABLE_COL 6
+#define MAXSIZE_POKEMON 15 //maximum of pokemon can be shown in one QTableWidget
 
 namespace Ui {
 class MainPage;
@@ -42,6 +48,7 @@ private:
     Ui::MainPage *ui;
     std::thread calledThread;
     std::string recvString = "";
+    QTableWidgetItem* pokeTableItem[MAXSIZE_POKEMON];
     QLabel* headLabel[MAXSIZE_PLAYER];
     QPushButton* playerPokeButton[MAXSIZE_PLAYER];
     QPushButton* thumbButton[MAXSIZE_PLAYER];
@@ -62,10 +69,12 @@ private slots:
     void onRankClicked();
     void onRankPokeClicked(int i);
     void onRankThumbClicked(int i);
+    void onPackageClicked();
     Q_INVOKABLE bool getRecvStr(QString str);
     bool eventFilter(QObject *watched, QEvent *event);
     void setOnlinePlayerIcon(int i);
     void setRankIcons(int i);
+    void OpenInChrome(const QUrl& url);
 
 signals:
     void switchToHunt();

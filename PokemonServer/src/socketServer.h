@@ -17,8 +17,8 @@
 #define MAXSIZE_POOL 3
 
 SOCKET cSock[MAXSIZE_POOL] = { INVALID_SOCKET };
-std::pair<std::string, int> onlinePlayer[MAXSIZE_POOL] = {std::make_pair("", NULL)}; //<name, rank>
-const std::pair<std::string, int> nullPlayerPair = std::make_pair("", NULL);
+std::string onlinePlayer[MAXSIZE_POOL] = {""};
+const std::string nullPlayerPair = "";
 const std::string Permision = "permision";
 const std::string Deny = "Thread pool is full, please wait";
 

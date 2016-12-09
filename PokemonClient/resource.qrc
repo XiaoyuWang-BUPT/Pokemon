@@ -43,5 +43,10 @@
         <file alias="online">resource/online.png</file>
         <file alias="thumb">resource/thumb.png</file>
         <file alias="pokehauk">resource/poke.png</file>
+        <file alias="bulbasaur">resource/bulbasaur.png</file>
+        <file alias="charmander">resource/charmander.png</file>
+        <file alias="squirtle">resource/squirtle.png</file>
+        <file alias="pichu">resource/pichu.png</file>
+        <file alias="pichu.gif">resource/pichu-2.gif</file>
     </qresource>
 </RCC>

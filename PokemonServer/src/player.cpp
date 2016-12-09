@@ -5,7 +5,9 @@ Player::Player() {
     this->_name_ = "NULL";
     this->_password_ = "NULL";
     this->_pokemonNumber_ = 0;
-    this->_rank_ = 9999; //TODO 初始化为总人数最后一名
+    this->_rate_ = 0.0;
+    this->_games_ = 0;
+    this->_rank_ = 0; //TODO 初始化为总人数最后一名
     this->_packageCapacity_ = CAPACITY;
     this->_thumb_ = 0;
     this->_beginDateTime_ = QDateTime::currentDateTime();
@@ -18,6 +20,8 @@ Player::Player(PlayerInfo playerInfo) {
     this->_password_ = playerInfo.password;
     this->_pokemonNumber_ = playerInfo.pokemonNumber;
     this->_packageCapacity_ = playerInfo.packageCapacity;
+    this->_rate_ = playerInfo.rate;
+    this->_games_ = playerInfo.games;
     this->_rank_ = playerInfo.rank;
     this->_thumb_ = playerInfo.thumb;
 
@@ -53,7 +57,8 @@ struct PlayerInfo Player::ToPlayerInfo()
 {
     struct PlayerInfo playerinfo = {
         this->_name_, this->_password_, this->_pokemonNumber_,
-        this->_packageCapacity_, this->_rank_, this->_thumb_,
+        this->_packageCapacity_, this->_rate_, this->_games_,
+        this->_rank_, this->_thumb_,
         this->_beginDateTime_.toString("yyyyMMddhhmm").toStdString(),
         this->_gameTime_
     };
@@ -70,6 +75,16 @@ string Player::getPassword() {
 
 int Player::getPMNumber() {
     return this->_pokemonNumber_;
+}
+
+double Player::getRate()
+{
+    return this->_rate_;
+}
+
+int Player::getGames()
+{
+    return this->_games_;
 }
 
 int Player::getRank() {

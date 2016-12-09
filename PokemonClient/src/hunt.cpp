@@ -71,6 +71,8 @@ void Hunt::catchPokemon()
         std::string sendStr = j.dump();
         std::thread sendThread = std::thread(SendThreadFuncHunt, socketClient, &sendStr);
         sendThread.join();
+        socketClient->Receive();
+        socketClient->ClearRecvBuf();
         this->ui->backButton->setEnabled(true);
         this->ui->nameLineEdit->clear();
         emit this->ui->backButton->clicked();
@@ -94,6 +96,7 @@ void Hunt::backClicked()
             this->hide();
             emit switchToMainPage();
         }
+        caught = false;
     }
     else
     {
@@ -121,24 +124,25 @@ int GetRanIndex(int MIN, int MAX) {
 void Hunt::GetPokeKind()
 {
     //return kindOfString[GetRanIndex(0, 35)];
-    int x = GetRanIndex(0, 3);
+    int x = GetRanIndex(1, 4);
     switch (x)
     {
     case 1:
-        kindStr = "Charmander";
+        kindStr = "Pichu";
         break;
     case 2:
-        kindStr = "Bulbasaur";
+        kindStr = "Charmander";
         break;
     case 3:
-        kindStr = "Squirtle";
+        kindStr = "Bulbasaur";
         break;
-    case 0:
-        kindStr = "Pikachu";
+    case 4:
+        kindStr = "Squirtle";
         break;
     default:
         break;
     }
+    return;
 }
 
 int Hunt::GetZ()
@@ -165,11 +169,13 @@ void Hunt::SetPokeGif()
     movie->setScaledSize(QSize(w, h));
     this->ui->pokeLabel->setMovie(movie);
     movie->start();
+    return;
 }
 
 void Hunt::SetPokeBallPng()
 {
     this->ui->pokeBallLabel->setStyleSheet("#pokeBallLabel{border-image: url(:/pokemonball);}");
+    return;
 }
 
 bool Hunt::eventFilter(QObject *watched, QEvent *event)
@@ -266,6 +272,7 @@ void Hunt::showWord(bool caught)
     }
     this->ui->wordLabel->setStyleSheet(sheet);
     this->ui->wordLabel->show();
+    return;
 }
 
 DWORD WINAPI SendThreadFuncHunt(LPVOID lParam, LPVOID sParam)

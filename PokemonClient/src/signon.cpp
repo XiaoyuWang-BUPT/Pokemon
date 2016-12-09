@@ -52,6 +52,7 @@ SignOn::~SignOn()
 void SignOn::receiveSwitch()
 {
     this->show();
+    this->ui->userLineEdit->setFocus();
     this->ui->userLineEdit->setText(QString::fromStdString("input username"));
     this->ui->pwLineEdit1->setText(QString::fromStdString("input password"));
     this->ui->pwLineEidt2->setText(QString::fromStdString("ensure password"));

@@ -12,6 +12,7 @@ MainPage::MainPage(QWidget *parent) :
     this->setWindowTitle("pokemon");
     QIcon LOGO (":/logo");
     this->setWindowIcon(LOGO);
+    this->ui->textBrowser->setOpenLinks(false);
     this->ui->pokeballButton->setStyleSheet("#pokeballButton{border-image: url(:/pokeball);}");//QToolTip{background-color:red;}");
     this->ui->rankButton->setStyleSheet("#rankButton{border-image: url(:/rank);}");
     this->ui->onlinePlayerBtn->setStyleSheet("#onlinePlayerBtn{border-image: url(:/onlinePlayer);}");
@@ -86,7 +87,7 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->OPListWidget, SLOT(clear()));
     QObject::connect(this, SIGNAL(playerPokeClicked(int)), this, SLOT(onPlayerPokeClicked(int)));
     QObject::connect(this, SIGNAL(playerThumbClicked(int)), this, SLOT(onPlayerThumbClicked(int)));
-    QObject::connect(this, SIGNAL(setOnlinePlayerIconSignal(int)), this, SLOT(setOnlinePlayerIcon(int)));
+    QObject::connect(this, SIGNAL(setOnlinePlayerIconSignal(int)), this, SLOT(setOnlinePlayerIcon(int)));    
     QObject::connect(this->ui->myInfoButton, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
     QObject::connect(this->ui->myinfoCloseBtn, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
     QObject::connect(this->ui->rankButton, SIGNAL(clicked(bool)), this, SLOT(onRankClicked()));
@@ -94,6 +95,16 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this, SIGNAL(setRankIconSignal(int)), this, SLOT(setRankIcons(int)));
     QObject::connect(this, SIGNAL(rankPokeClicked(int)), this, SLOT(onRankPokeClicked(int)));
     QObject::connect(this, SIGNAL(rankThumbClicked(int)), this, SLOT(onRankThumbClicked(int)));
+    QObject::connect(this->ui->packageButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
+    QObject::connect(this->ui->pokeCloseButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
+    QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
+    QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->readmeWidget, SLOT(show()));
+    QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->rankWidget, SLOT(hide()));
+    QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->myinfoWidget, SLOT(hide()));
+    QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->listWidgetContainer, SLOT(hide()));
+    QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
+    QObject::connect(this->ui->textBrowserCloseButton, SIGNAL(clicked(bool)), this->ui->textBrowser, SLOT(hide()));
+    QObject::connect(this->ui->textBrowser, SIGNAL(anchorClicked(QUrl)), this, SLOT(OpenInChrome(QUrl)));
 }
 
 MainPage::MainPage(SocketClient *sc, QWidget *parent) :
@@ -113,11 +124,15 @@ DWORD WINAPI SendThreadFuncMainpage(LPVOID lParam, LPVOID sParam);
 
 void MainPage::receiveSwitch()
 {    
+    this->ui->readmeWidget->hide();
     this->ui->listWidgetContainer->hide();
     this->ui->myinfoWidget->hide();
     this->ui->rankWidget->hide();
-    this->ui->onlinePlayerBtn->setGeometry(380, 410, 48, 48);
+    this->ui->pokeTableContainer->hide();
+    this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+    this->ui->rankButton->setGeometry(170, 410, 48, 48);
+    this->ui->packageButton->setGeometry(490, 410, 48, 48);
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
     {
         headLabel[i]->hide();
@@ -162,16 +177,28 @@ void MainPage::LoadOnlinePlayer(json &recvJ)
         stream >> indexStr;
         std::string nameKey = "name" + indexStr;
         std::string rankKey = "rank" + indexStr;
+        std::string rateKey = "rate" + indexStr;
         std::string rank;
+        std::string rate;
         stream.clear();
         stream << recvJ[rankKey];
         stream >> rank;
+        stream.clear();
+        stream << recvJ[rateKey];
+        stream >> rate;
         QString str = QString::fromStdString(recvJ[nameKey]);
         playerNames[i] = recvJ[nameKey];
-        str.append("        ");
+        int nameLen = str.length();
+        int rankLen = rank.length();
+        for (int j = 0; j < ((14 - nameLen - rankLen)/2); j++)
+            str.append(" ");
+        str.append(QString::fromStdString(rate + "%"));
+        for (int j = 0; j < ((14 - nameLen - rankLen)/2); j++)
+            str.append(" ");
         str.append(QString::fromStdString(rank));
         item = new QListWidgetItem(str, this->ui->OPListWidget);
         item->setFont(QFont("Consolas", 16, 2, false));
+        item->setFlags(Qt::NoItemFlags);
         emit setOnlinePlayerIconSignal(i);
     }
     return;
@@ -281,6 +308,7 @@ bool MainPage::getRecvStr(QString str)
         int pokeNum = recvJ["pokemonNumber"];
         int rank = recvJ["rank"];
         int thumb = recvJ["thumb"];
+        double rate = recvJ["rate"];
         std::string begintime = recvJ["begintime"];
         std::string beginYear = begintime.substr(0, 4);
         std::string beginMonth = begintime.substr(4, 2);
@@ -303,6 +331,7 @@ bool MainPage::getRecvStr(QString str)
         std::string pokeNumStr;
         std::string rankStr;
         std::string thumbStr;
+        std::string rateStr;
         stream << pokeNum;
         stream >>pokeNumStr;
         stream.clear();
@@ -312,17 +341,59 @@ bool MainPage::getRecvStr(QString str)
         stream << thumb;
         stream >> thumbStr;
         stream.clear();
+        stream << rate;
+        stream >> rateStr;
+        rateStr.append("%");
         std::string textString = "          " + name + "\n"
                 + "Pokemon Number:" + pokeNumStr + "\n"
-                + "Rank:" + rankStr + "\n"
+                + "Rank:" + rankStr + "  Rate:" + rateStr + "\n"
                 + "Thumb Number:" + thumbStr + "\n"
                 + "Game  Time:" + gametime + "\n"
                 + "Begin From:\n" + "   " + begintime;
         this->ui->myinfoText->appendPlainText(QString::fromStdString(textString));
     }
-    if (symbol == "playerPoke")
+    if (symbol == "hunt")
     {
 
+    }
+    if (symbol == "playerPoke")
+    {
+        int amount = recvJ["amount"];
+        int row = 0;
+        int col = 0;
+        std::stringstream stream;
+        std::string indexStr;
+        std::string keyStr;
+        for (int i = 0; i < amount; i++)
+        {
+            stream.clear();
+            stream << i;
+            stream >> indexStr;
+            keyStr = "kind" + indexStr;
+            QString kind = QString::fromStdString(recvJ[keyStr]);
+            std::string tooltipStd = recvJ[keyStr];
+            QString iconStr = ":/" + kind.toLower();
+            QIcon icon(iconStr);
+            QTableWidgetItem* tableItem = new QTableWidgetItem((QIcon)icon, "");
+            keyStr = "name" + indexStr;
+            std::string name = recvJ[keyStr];
+            tooltipStd.append("\nName:" + name);
+            keyStr = "level" + indexStr;
+            std::string levelStr;
+            stream.clear();
+            stream << recvJ[keyStr];
+            stream >> levelStr;
+            tooltipStd.append("\nLevel:" + levelStr);
+            QString tooltip = QString::fromStdString(tooltipStd);
+            tableItem->setToolTip(tooltip);
+            this->ui->pokeTable->setItem(row, col, tableItem);
+            col++;
+            if (col == TABLE_COL)
+            {
+                row++;
+                col=0;
+            }
+        }
     }
     if (symbol == "thumb")
     {
@@ -340,14 +411,26 @@ bool MainPage::getRecvStr(QString str)
             stream >> indexStr;
             std::string nameKey = "name" + indexStr;
             std::string rankKey = "rank" + indexStr;
+            std::string rateKey = "rate" + indexStr;
             std::string rank;
+            std::string rate;
             stream.clear();
             stream << recvJ[rankKey];
             stream >> rank;
-            QString str = "  ";
+            stream.clear();
+            stream << recvJ[rateKey];
+            stream >> rate;
+            QString str = "   ";
             str.append(QString::fromStdString(recvJ[nameKey]));
             rankPlayerNames[i] = recvJ[nameKey];
-            str.append("         ");
+            std::string name = recvJ[nameKey];
+            int nameLen = name.length();
+            int rankLen = rank.length();
+            for (int j = 0; j < ((13 - nameLen - rankLen)/2); j++)
+                str.append(" ");
+            str.append(QString::fromStdString(rate + "%"));
+            for (int j = 0; j < ((13 - nameLen - rankLen)/2); j++)
+                str.append(" ");
             str.append(QString::fromStdString(rank));
             item = new QListWidgetItem(str, this->ui->rankList);
             item->setFont(QFont("Consolas", 16, 2, false));
@@ -381,6 +464,7 @@ void MainPage::onOnlinePlayerReloadClicked()
         s = "";
     json j;
     j["symbol"] = "onlinePlayer";
+    j["name"] = socketClient->getPlayerName();
     j["end"] = "end";
     RecvAndSendOnlinePlayer(j);
     return;
@@ -388,19 +472,29 @@ void MainPage::onOnlinePlayerReloadClicked()
 
 void MainPage::onOnlinePlayerClicked()
 {
+    this->ui->readmeWidget->hide();
     this->ui->OPListWidget->clear();
     this->ui->rankWidget->hide();
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
+    this->ui->pokeTableContainer->hide();
+    this->ui->packageButton->setGeometry(490, 410, 48, 48);
     if (this->ui->listWidgetContainer->isHidden())
     {
         for (auto& s : playerNames)
             s = "";
+        for (int i = 0; i < MAXSIZE_PLAYER; i++)
+        {
+            headLabel[i]->hide();
+            playerPokeButton[i]->hide();
+            thumbButton[i]->hide();
+        }
         this->ui->battlePicContainer->setEnabled(false);
         this->ui->huntPicContainer->setEnabled(false);
         json j;
         j["symbol"] = "onlinePlayer";
+        j["name"] = socketClient->getPlayerName();
         j["end"] = "end";
         RecvAndSendOnlinePlayer(j);
         this->ui->onlinePlayerBtn->setGeometry(258, 398, 72, 72);
@@ -408,6 +502,12 @@ void MainPage::onOnlinePlayerClicked()
     }
     else
     {
+        for (int i = 0; i < MAXSIZE_PLAYER; i++)
+        {
+            headLabel[i]->hide();
+            playerPokeButton[i]->hide();
+            thumbButton[i]->hide();
+        }
         this->ui->battlePicContainer->setEnabled(true);
         this->ui->huntPicContainer->setEnabled(true);
         this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
@@ -419,11 +519,22 @@ void MainPage::onOnlinePlayerClicked()
 
 void MainPage::onPlayerPokeClicked(int i)
 {
-    json j;
-    j["symbol"] = "playerPoke";
-    j["name"] = playerNames[i];
-    j["end"] = "end";
-    RecvAndSendOnlinePlayer(j);
+    if (this->ui->pokeTableContainer->isHidden())
+    {
+        json j;
+        j["symbol"] = "playerPoke";
+        j["name"] = playerNames[i];
+        j["end"] = "end";
+        this->ui->pokeTable->clear();
+        RecvAndSendOnlinePlayer(j);
+        this->ui->pokeTableContainer->setGeometry(480, 190, 320, 200);
+        this->ui->pokeOwnerLabel->setText(QString::fromStdString(playerNames[i]));
+        this->ui->pokeTableContainer->show();
+    }
+    else
+    {
+        this->ui->pokeTableContainer->hide();
+    }
     return;
 }
 
@@ -439,11 +550,14 @@ void MainPage::onPlayerThumbClicked(int i)
 
 void MainPage::onMyInfoClicked()
 {
+    this->ui->readmeWidget->hide();
     this->ui->myinfoText->clear();
     this->ui->rankWidget->hide();
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+    this->ui->pokeTableContainer->hide();
+    this->ui->packageButton->setGeometry(490, 410, 48, 48);
     if (this->ui->myinfoWidget->isHidden())
     {
         json j;
@@ -464,15 +578,27 @@ void MainPage::onMyInfoClicked()
 
 void MainPage::onRankClicked()
 {
+    this->ui->readmeWidget->hide();
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+    this->ui->pokeTableContainer->hide();
+    this->ui->packageButton->setGeometry(490, 410, 48, 48);
+
+    for (int i = 0; i < MAXSIZE_PLAYER; i++)
+    {
+        headLabel[i]->hide();
+        playerPokeButton[i]->hide();
+        thumbButton[i]->hide();
+    }
+
     if (this->ui->rankWidget->isHidden())
     {
         this->ui->rankList->clear();
         json j;
         j["symbol"] = "rank";
+        j["name"] = socketClient->getPlayerName();
         j["end"] = "end";
         RecvAndSendOnlinePlayer(j);
         this->ui->rankWidget->show();
@@ -480,6 +606,7 @@ void MainPage::onRankClicked()
     }
     else
     {
+        this->ui->rankList->clear();
         this->ui->rankWidget->hide();
         this->ui->rankButton->setGeometry(170, 410, 48, 48);
     }
@@ -488,11 +615,22 @@ void MainPage::onRankClicked()
 
 void MainPage::onRankPokeClicked(int i)
 {
-    json j;
-    j["symbol"] = "playerPoke";
-    j["name"] = rankPlayerNames[i];
-    j["end"] = "end";
-    RecvAndSendOnlinePlayer(j);
+    if (this->ui->pokeTableContainer->isHidden())
+    {
+        json j;
+        j["symbol"] = "playerPoke";
+        j["name"] = rankPlayerNames[i];
+        j["end"] = "end";
+        this->ui->pokeTable->clear();
+        RecvAndSendOnlinePlayer(j);
+        this->ui->pokeOwnerLabel->setText(QString::fromStdString(rankPlayerNames[i]));
+        this->ui->pokeTableContainer->setGeometry(370, 190, 320, 200);
+        this->ui->pokeTableContainer->show();
+    }
+    else
+    {
+        this->ui->pokeTableContainer->hide();
+    }
     return;
 }
 
@@ -504,6 +642,39 @@ void MainPage::onRankThumbClicked(int i)
     j["end"] = "end";
     RecvAndSendOnlinePlayer(j);
     return;
+}
+
+void MainPage::onPackageClicked()
+{
+    this->ui->readmeWidget->hide();
+    this->ui->myinfoWidget->hide();
+    this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
+    this->ui->listWidgetContainer->hide();
+    this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+    this->ui->rankWidget->hide();
+    this->ui->rankButton->setGeometry(170, 410, 48, 48);
+    if (this->ui->pokeTableContainer->isHidden())
+    {
+        this->ui->pokeTable->clear();
+//        json j;
+//        j["symbol"] = "playerPoke";
+//        j["name"] = socketClient->getPlayerName();
+//        j["end"] = "end";
+//        RecvAndSendOnlinePlayer(j);
+        this->ui->pokeTableContainer->show();
+        this->ui->packageButton->setGeometry(478, 398, 72, 72);
+    }
+    else
+    {
+        this->ui->pokeTableContainer->hide();
+        this->ui->packageButton->setGeometry(490, 410, 48, 48);
+    }
+    return;
+}
+
+void MainPage::OpenInChrome(const QUrl &url)
+{
+    ShellExecuteA(NULL, "open", url.toString().toStdString().c_str(), "", "", SW_SHOW);
 }
 
 DWORD WINAPI RecvThreadFuncMainpage(SocketClient* socketClient, MainPage* mainpage)

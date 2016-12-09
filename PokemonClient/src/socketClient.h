@@ -15,7 +15,7 @@
 
 #pragma warning(disable:4996)
 
-#define DEFAULT_BUFLEN 256
+#define DEFAULT_BUFLEN 1024
 #define DEFAULT_PORT "27015"
 
 class SocketClient

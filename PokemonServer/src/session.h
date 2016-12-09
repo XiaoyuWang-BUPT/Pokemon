@@ -15,6 +15,8 @@
 
 using json = nlohmann::json;
 
+using namespace Poor_ORM;
+
 bool SortByRank(const struct PlayerInfo& p1, const struct PlayerInfo& p2)
 {
     return p1.rank < p2.rank;
@@ -46,7 +48,7 @@ std::string GetSendStr(int pid, Helper* helper)
                 if (q.password == pwRecv)
                 {
                     sendJ["passwordcorrect"] = true;
-                    onlinePlayer[pid] = std::make_pair(q.name, q.rank);
+                    onlinePlayer[pid] = q.name;
                 }
                 else
                 {
@@ -83,9 +85,9 @@ std::string GetSendStr(int pid, Helper* helper)
             QDateTime qdt = QDateTime::currentDateTime();
             std::string s = qdt.toString("yyyyMMddhhmm").toStdString();
             std::cout << "QDateTime:" << s << std::endl;
-            struct PlayerInfo p = {nameRecv, pwRecv, 0, CAPACITY, 9999, 0, s, "000"};
+            struct PlayerInfo p = {nameRecv, pwRecv, 0, CAPACITY, 0, 0, 0, 0, s, "000"};
             sendJ["signonsuccess"] = playerMapper.Insert(p);
-            onlinePlayer[pid] = std::make_pair(p.name, p.rank);
+            onlinePlayer[pid] = p.name;
         }
     }
     if (symbol == "onlinePlayer")
@@ -93,19 +95,45 @@ std::string GetSendStr(int pid, Helper* helper)
         sendJ["symbol"] = "onlinePlayer";
         sendJ["amount"] = 0;
         sendJ["end"] = "end";
+        std::string player = recvJ["name"];
+        int rank;
+        double rate;
+        int amount = 0;
+
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        PlayerInfo qHelper;
+        auto query = playerMapper.Query(qHelper)
+                .ToVector();
+
         for (int i = 0; onlinePlayer[i] != nullPlayerPair; i++)
         {
-            std::string tmpKeyStr = "";
-            std::stringstream stream;
-            std::string indexStr;
-            stream << (i + 1);
-            stream >> indexStr;
-            sendJ["amount"] = i + 1;
-            tmpKeyStr = "name" + indexStr;
-            sendJ[tmpKeyStr] = onlinePlayer[i].first;
-            tmpKeyStr = "rank" + indexStr;
-            sendJ[tmpKeyStr] = onlinePlayer[i].second;
+            if (onlinePlayer[i] != player)
+            {
+                for (int j = 0; j < query.size(); j++)
+                {
+                    if (query[j].name == onlinePlayer[i])
+                    {
+                        rank = query[j].rank;
+                        rate = query[j].rate;
+                        break;
+                    }
+                }
+
+                std::string tmpKeyStr = "";
+                std::stringstream stream;
+                std::string indexStr;
+                stream << amount;
+                stream >> indexStr;
+                tmpKeyStr = "name" + indexStr;
+                sendJ[tmpKeyStr] = onlinePlayer[i];
+                tmpKeyStr = "rate" + indexStr;
+                sendJ[tmpKeyStr] = rate;
+                tmpKeyStr = "rank" + indexStr;
+                sendJ[tmpKeyStr] = rank;
+                amount++;
+            }
         }
+        sendJ["amount"] = amount;
     }
     if (symbol == "myinfo")
     {
@@ -121,12 +149,6 @@ std::string GetSendStr(int pid, Helper* helper)
         {
             if (q.name == name)
             {
-//                sendJ["name"] = q.name;
-//                sendJ["pokemonNumber"] = q.pokemonNumber;
-//                sendJ["rank"] = q.rank;
-//                sendJ["thumb"] = q.thumb;
-//                sendJ["begintime"] = q.beginDateTime;
-//                sendJ["gametime"] = q.gameTime;
                 playerinfo = q;
                 break;
             }
@@ -136,6 +158,7 @@ std::string GetSendStr(int pid, Helper* helper)
         playerinfo = player->ToPlayerInfo();
         sendJ["name"] = playerinfo.name;
         sendJ["pokemonNumber"] = playerinfo.pokemonNumber;
+        sendJ["rate"] = playerinfo.rate;
         sendJ["rank"] = playerinfo.rank;
         sendJ["thumb"] = playerinfo.thumb;
         sendJ["begintime"] = playerinfo.beginDateTime;
@@ -162,7 +185,7 @@ std::string GetSendStr(int pid, Helper* helper)
         struct PokemonInfo pokemoninfo = caughtPokemon->ToPokeStruInfo();
 
         //Get player information
-        std::string playerName = onlinePlayer[pid].first;
+        std::string playerName = onlinePlayer[pid];
         struct PlayerInfo playerinfo;
         Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
         PlayerInfo qHelper;
@@ -192,11 +215,90 @@ std::string GetSendStr(int pid, Helper* helper)
         }
         playerMapper.Update(playerinfo);
     }
+    if (symbol == "rank")
+    {
+        sendJ["symbol"] = "rank";
+        sendJ["end"] = "end";
+        std::string player = recvJ["name"];
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        struct PlayerInfo qHelper;
+        auto query = playerMapper.Query(qHelper)
+                .ToVector();
+        std::sort(query.begin(), query.end(), SortByRank);
+        std::stringstream stream;
+        std::string numStr;
+        std::string nameKey;
+        std::string rankKey;
+        std::string rateKey;
+        int amount = 0;
+        for (int i = 0; i < query.size() && i < 10; i++)
+        {
+            if (player != query[i].name)
+            {
+                stream.clear();
+                stream << amount;
+                stream >> numStr;
+                nameKey = "name" + numStr;
+                rankKey = "rank" + numStr;
+                rateKey = "rate" + numStr;
+                sendJ[nameKey] = query[i].name;
+                sendJ[rankKey] = query[i].rank;
+                sendJ[rateKey] = query[i].rate;
+                amount++;
+            }
+        }
+        sendJ["amount"] = amount;
+    }
     if (symbol == "playerPoke")
     {
         std::string name = recvJ["name"];
         sendJ["symbol"] = "playerPoke";
         sendJ["end"] = "end";
+        Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
+        PokemonInfo qHelper;
+        auto query = pokePackMapper.Query(qHelper)
+                .ToVector();
+        std::stringstream stream;
+        std::string indexStr;
+        std::string keyStr;
+        int index = 0;
+        for (int i = 0; i < query.size();i++)
+        {
+            if (query[i].owner == name)
+            {
+                stream.clear();
+                stream << index;
+                stream >> indexStr;
+                keyStr = "name" + indexStr;
+                sendJ[keyStr] = query[i].name;
+                keyStr = "kind" + indexStr;
+                sendJ[keyStr] = kindOfString[query[i].kind];
+                keyStr = "level" + indexStr;
+                sendJ[keyStr] = query[i].level;
+                index++;
+            }
+        }
+        query.clear();
+        Poor_ORM::ORMapper<PokemonInfo> pokeStoreMapper ("pokeStorage.db");
+        query = pokeStoreMapper.Query(qHelper)
+                .ToVector();
+        for (int i = 0; i < query.size();i++)
+        {
+            if (query[i].owner == name)
+            {
+                stream.clear();
+                stream << index;
+                stream >> indexStr;
+                keyStr = "name" + indexStr;
+                sendJ[keyStr] = query[i].name;
+                keyStr = "kind" + indexStr;
+                sendJ[keyStr] = kindOfString[query[i].kind];
+                keyStr = "level" + indexStr;
+                sendJ[keyStr] = query[i].level;
+                index++;
+            }
+        }
+        sendJ["amount"] = index;
     }
     if (symbol == "thumb")
     {
@@ -216,33 +318,6 @@ std::string GetSendStr(int pid, Helper* helper)
         }
         sendJ["symbol"] = "thumb";
         sendJ["end"] = "end";
-    }
-    if (symbol == "rank")
-    {
-        sendJ["symbol"] = "rank";
-        sendJ["end"] = "end";
-        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
-        struct PlayerInfo qHelper;
-        auto query = playerMapper.Query(qHelper)
-                .ToVector();
-        std::sort(query.begin(), query.end(), SortByRank);
-        std::stringstream stream;
-        std::string numStr;
-        std::string nameKey;
-        std::string rankKey;
-        int amount = 0;
-        for (int i = 0; i < query.size()&&i < 10; i++)
-        {
-            amount++;
-            stream.clear();
-            stream << i;
-            stream >> numStr;
-            nameKey = "name" + numStr;
-            rankKey = "rank" + numStr;
-            sendJ[nameKey] = query[i].name;
-            sendJ[rankKey] = query[i].rank;
-        }
-        sendJ["amount"] = amount;
     }
     helper->setSendStrHelper(sendJ.dump());
     std::string strSend = helper->getSendStrHelper();
@@ -304,7 +379,7 @@ DWORD WINAPI ProcessClientRequests(int pid, LPVOID cParam, LPVOID sParam, LPVOID
 
     socketServer->existingClientCount--;
     cSock[pid] = INVALID_SOCKET;
-    onlinePlayer[pid] = std::make_pair("", NULL);
+    onlinePlayer[pid] = "";
     delete helper;
 
     return 0;
