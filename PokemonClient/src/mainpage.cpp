@@ -42,6 +42,8 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->myInfoButton->setToolTip("about me");
     this->ui->packageButton->setToolTip("package");
     this->ui->storageButton->setToolTip("storage");
+    this->ui->otherLabel->setToolTip("To be online");
+    this->ui->anotherLabel->setToolTip("To be online");
 
     setAutoFillBackground(true);
     QPalette palette;
@@ -81,7 +83,7 @@ MainPage::MainPage(QWidget *parent) :
         rankThumbButton[i]->installEventFilter(this);
     }
 
-    scrollVLayout = new QVBoxLayout(this->ui->scrollWidget);
+    scrollVLayout = new QVBoxLayout();
     for (int i = 0; i < MAXSIZE_POKEMON; i++)
     {
         scrollHLayout[i] = new QHBoxLayout();
@@ -100,6 +102,7 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this, SIGNAL(setOnlinePlayerIconSignal(int)), this, SLOT(setOnlinePlayerIcon(int)));    
     QObject::connect(this->ui->myInfoButton, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
     QObject::connect(this->ui->myinfoCloseBtn, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
+    QObject::connect(this, SIGNAL(setMyInfoSignal(int, int, double, QString)), this, SLOT(setMyInfo(int, int, double, QString)));
     QObject::connect(this->ui->rankButton, SIGNAL(clicked(bool)), this, SLOT(onRankClicked()));
     QObject::connect(this->ui->closeRankButton, SIGNAL(clicked(bool)), this, SLOT(onRankClicked()));
     QObject::connect(this->ui->closeRankButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
@@ -117,7 +120,7 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this->ui->textBrowser, SIGNAL(anchorClicked(QUrl)), this, SLOT(OpenInChrome(QUrl)));
     QObject::connect(this->ui->packageButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
     QObject::connect(this->ui->myPokemonCloseButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
-    QObject::connect(this, SIGNAL(setPackegeScrollAreaSignal(QString, QString, QString, int)), this, SLOT(setPackageScrollArea(QString, QString, QString, int)));
+    QObject::connect(this, SIGNAL(setPackegeScrollAreaSignal(QString, QString, QString, QString, int)), this, SLOT(setPackageScrollArea(QString, QString, QString, QString, int)));
     QObject::connect(this, SIGNAL(clearScrollAreaSignal()), this, SLOT(clearScrollArea()));
     QObject::connect(this->ui->storageButton, SIGNAL(clicked(bool)), this, SLOT(onStorageClicked()));
     QObject::connect(this->ui->myStorageCloseButton, SIGNAL(clicked(bool)), this, SLOT(onStorageClicked()));
@@ -184,7 +187,7 @@ void MainPage::setRankIcons(int i)
     return;
 }
 
-void MainPage::setPackageScrollArea(QString kind, QString name, QString tip, int index)
+void MainPage::setPackageScrollArea(QString symbol, QString kind, QString name, QString tip, int index)
 {
     QString pixmap = ":/" + kind.toLower();
     pokePicLabel[index]->setPixmap(QPixmap(pixmap));
@@ -201,10 +204,132 @@ void MainPage::setPackageScrollArea(QString kind, QString name, QString tip, int
     pokePicLabel[index]->setMaximumSize(36, 36);
     exButton[index]->setMaximumSize(36, 36);
     scrollHLayout[index]->addWidget(pokePicLabel[index]);
-    scrollHLayout[index]->addSpacing(5);
     scrollHLayout[index]->addWidget(pokeTextLabel[index]);
     scrollHLayout[index]->addWidget(exButton[index]);
     scrollVLayout->addLayout(scrollHLayout[index]);
+    if (symbol == "package")
+        this->ui->scrollWidget->setLayout(scrollVLayout);
+    if (symbol == "storage")
+        this->ui->storageScrollWidget->setLayout(scrollVLayout);
+}
+
+void MainPage::setMyInfo(int pokeNum, int rank, double rate, QString info)
+{
+    this->ui->myinfoText->appendPlainText(info);
+    QString trainerToolTip = "";
+    QString rankToolTip = "";
+    QString rateToolTip = "";
+    std::stringstream stream;
+    std::string numStr;
+
+    if (pokeNum < PokeNumLevel[0])
+    {
+        trainerToolTip.append("Noviciate\nGet ");
+        stream.clear();
+        stream << PokeNumLevel[0];
+        stream >> numStr;
+        trainerToolTip.append(QString::fromStdString(numStr));
+        trainerToolTip.append(" pokemon to get promoted");
+    }
+    if (pokeNum >= PokeNumLevel[0] && pokeNum < PokeNumLevel[1])
+    {
+        trainerToolTip.append("Sophomore\nGet ");
+        stream.clear();
+        stream << PokeNumLevel[1];
+        stream >> numStr;
+        trainerToolTip.append(QString::fromStdString(numStr));
+        trainerToolTip.append(" pokemon to get promoted");
+        this->ui->trainerLevelLabel->setStyleSheet("#trainerLevelLabel{image: url(:/trainerBronze);}");
+    }
+    if (pokeNum >= PokeNumLevel[1] && pokeNum < PokeNumLevel[2])
+    {
+        trainerToolTip.append("Junior\nGet ");
+        stream.clear();
+        stream << PokeNumLevel[2];
+        stream >> numStr;
+        trainerToolTip.append(QString::fromStdString(numStr));
+        trainerToolTip.append(" pokemon to get promoted");
+        this->ui->trainerLevelLabel->setStyleSheet("#trainerLevelLabel{image: url(:/trainerSilver);}");
+    }
+    if (pokeNum >= PokeNumLevel[2])
+    {
+        trainerToolTip.append("Senior\nGinius pokemon trainer");
+        this->ui->trainerLevelLabel->setStyleSheet("#trainerLevelLabel{image: url(:/trainerGold);}");
+    }
+    this->ui->trainerLevelLabel->setToolTip(trainerToolTip);
+
+    if (rank < RankLevel[0])
+    {
+        rankToolTip.append("Noviciate\nGet ");
+        stream.clear();
+        stream << RankLevel[0];
+        stream >> numStr;
+        rankToolTip.append(QString::fromStdString(numStr));
+        rankToolTip.append(" rank score to get promoted");
+    }
+    if (rank >= RankLevel[0] && rank < RankLevel[1])
+    {
+        rankToolTip.append("Sophomore\nGet ");
+        stream.clear();
+        stream << RankLevel[1];
+        stream >> numStr;
+        rankToolTip.append(QString::fromStdString(numStr));
+        rankToolTip.append(" rank score to get promoted");
+        this->ui->rankLevelLabel->setStyleSheet("#rankLevelLabel{image: url(:/rankBronze);}");
+    }
+    if (rank >= RankLevel[1] && rank < RankLevel[2])
+    {
+        rankToolTip.append("Junior\nGet ");
+        stream.clear();
+        stream << RankLevel[2];
+        stream >> numStr;
+        rankToolTip.append(QString::fromStdString(numStr));
+        rankToolTip.append(" rank score to get promoted");
+        this->ui->rankLevelLabel->setStyleSheet("#rankLevelLabel{image: url(:/rankSilver);}");
+    }
+    if (rank >= RankLevel[2])
+    {
+        rankToolTip.append("Senior\nGinius ranker");
+        this->ui->rankLevelLabel->setStyleSheet("#rankLevelLabel{image: url(:/rankGold);}");
+    }
+    this->ui->rankLevelLabel->setToolTip(rankToolTip);
+
+    int rateInteger = (int)(rate * 100);
+    if (rateInteger < RateLevel[0])
+    {
+        rateToolTip.append("Noviciate\nGet ");
+        stream.clear();
+        stream << RateLevel[0];
+        stream >> numStr;
+        rateToolTip.append(QString::fromStdString(numStr));
+        rateToolTip.append(" % rate to get promoted");
+    }
+    if ((rateInteger >= RateLevel[0]) && (rateInteger < RateLevel[1]))
+    {
+        rateToolTip.append("Sophomore\nGet ");
+        stream.clear();
+        stream << RateLevel[1];
+        stream >> numStr;
+        rateToolTip.append(QString::fromStdString(numStr));
+        rateToolTip.append(" % rate to get promoted");
+        this->ui->rateLevelLabel->setStyleSheet("#rateLevelLabel{image: url(:/rateBronze);}");
+    }
+    if ((rateInteger >= RateLevel[1]) && (rateInteger < RateLevel[2]))
+    {
+        rateToolTip.append("Junior\nGet ");
+        stream.clear();
+        stream << RateLevel[2];
+        stream >> numStr;
+        rateToolTip.append(QString::fromStdString(numStr));
+        rateToolTip.append(" % rate to get promoted");
+        this->ui->rateLevelLabel->setStyleSheet("#rateLevelLabel{image: url(:/rateSilver);}");
+    }
+    if (rateInteger >= RateLevel[2])
+    {
+        rateToolTip.append("Senior\nGinius combater");
+        this->ui->rateLevelLabel->setStyleSheet("#rateLevelLabel{image: url(:/rateGold);}");
+    }
+    this->ui->rateLevelLabel->setToolTip(rateToolTip);
 }
 
 void MainPage::clearScrollArea()
@@ -414,7 +539,7 @@ bool MainPage::getRecvStr(QString str)
                 + "Thumb Number:" + thumbStr + "\n"
                 + "Game  Time:" + gametime + "\n"
                 + "Begin From:\n" + "   " + begintime;
-        this->ui->myinfoText->appendPlainText(QString::fromStdString(textString));
+        emit setMyInfoSignal(pokeNum, rank, rate, QString::fromStdString(textString));
     }
     if (symbol == "hunt")
     {
@@ -501,7 +626,7 @@ bool MainPage::getRecvStr(QString str)
             emit setRankIconSignal(i);
         }
     }
-    if (symbol == "package")
+    if (symbol == "package" || symbol == "storage")
     {
         std::stringstream stream;
         std::string indexStr;
@@ -563,7 +688,8 @@ bool MainPage::getRecvStr(QString str)
             stream << recvJ[keyStr];
             stream >> valueStr;
             tooltipStd.append("     critical:" + valueStr + "%");
-            emit setPackegeScrollAreaSignal(QString::fromStdString(kind),
+            emit setPackegeScrollAreaSignal(QString::fromStdString(symbol),
+                                            QString::fromStdString(kind),
                                             QString::fromStdString(name),
                                             QString::fromStdString(tooltipStd),
                                             i);
@@ -686,6 +812,7 @@ void MainPage::onPlayerThumbClicked(int i)
 
 void MainPage::onMyInfoClicked()
 {
+    emit clearScrollAreaSignal();
     this->ui->readmeWidget->hide();
     this->ui->myinfoText->clear();
     this->ui->rankWidget->hide();
@@ -693,7 +820,6 @@ void MainPage::onMyInfoClicked()
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
     this->ui->myPokemonContainer->hide();
-    emit clearScrollAreaSignal();
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->myStorageContainer->hide();
     this->ui->storageButton->setGeometry(622, 410, 48, 48);
@@ -789,6 +915,7 @@ void MainPage::onRankThumbClicked(int i)
 
 void MainPage::onPackageClicked()
 {
+    emit clearScrollAreaSignal();
     this->ui->readmeWidget->hide();
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
@@ -812,26 +939,30 @@ void MainPage::onPackageClicked()
     {
         this->ui->myPokemonContainer->hide();
         this->ui->packageButton->setGeometry(490, 410, 48, 48);
-        emit clearScrollAreaSignal();
     }
     return;
 }
 
 void MainPage::onStorageClicked()
 {
+    emit clearScrollAreaSignal();
     this->ui->readmeWidget->hide();
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
     this->ui->myPokemonContainer->hide();
-    emit clearScrollAreaSignal();
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->rankWidget->hide();
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
 
     if (this->ui->myStorageContainer->isHidden())
     {
+        json j;
+        j["symbol"] = "storage";
+        j["name"] = socketClient->getPlayerName();
+        j["end"] = "end";
+        RecvAndSendOnlinePlayer(j);
         this->ui->myStorageContainer->show();
         this->ui->storageButton->setGeometry(598, 386, 72, 72);
     }

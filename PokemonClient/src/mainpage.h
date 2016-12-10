@@ -23,6 +23,7 @@
 #include <QPushButton>
 #include <QDateTime>
 #include <QUrl>
+#include <QScrollBar>
 #include "lib/json.hpp"
 #include "socketClient.h"
 
@@ -31,6 +32,10 @@ using json = nlohmann::json;
 #define TABLE_ROW 3
 #define TABLE_COL 6
 #define MAXSIZE_POKEMON 15 //maximum of pokemon can be shown in one QTableWidget
+
+const int PokeNumLevel[3] = {5, 10, 20};
+const int RankLevel[3] = {10, 50, 100};
+const double RateLevel[3] = {20, 50, 80};
 
 namespace Ui {
 class MainPage;
@@ -90,15 +95,17 @@ private slots:
     bool eventFilter(QObject *watched, QEvent *event);
     void setOnlinePlayerIcon(int i);
     void setRankIcons(int i);
-    void setPackageScrollArea(QString kind, QString name, QString tip, int index);
+    void setPackageScrollArea(QString symbol, QString kind, QString name, QString tip, int index);
     void clearScrollArea();
+    void setMyInfo(int pokenum, int rank, double rate, QString info);
     void OpenInChrome(const QUrl& url);
 
 signals:
     void switchToHunt();
     void setOnlinePlayerIconSignal(int i);
     void setRankIconSignal(int i);
-    void setPackegeScrollAreaSignal(QString kind, QString name, QString tip, int index);
+    void setPackegeScrollAreaSignal(QString symbol, QString kind, QString name, QString tip, int index);
+    void setMyInfoSignal(int pokenum, int rank, double rate, QString info);
     void clearScrollAreaSignal();
     void playerPokeClicked(int i);
     void playerThumbClicked(int i);

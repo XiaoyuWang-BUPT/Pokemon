@@ -249,15 +249,26 @@ std::string GetSendStr(int pid, Helper* helper)
         }
         sendJ["amount"] = amount;
     }
-    if (symbol == "package")
+    if (symbol == "package" || symbol == "storage")
     {
-        sendJ["symbol"] = "package";
         sendJ["end"] = "end";
-        std::string owner = recvJ["name"];
-        Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
         PokemonInfo qHelper;
-        auto query = pokePackMapper.Query(qHelper)
-                .ToVector();
+        std::vector<PokemonInfo> query;
+        std::string owner = recvJ["name"];
+        if (symbol == "package")
+        {
+            sendJ["symbol"] = "package";
+            Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
+            query = pokePackMapper.Query(qHelper)
+                            .ToVector();
+        }
+        if (symbol == "storage")
+        {
+            sendJ["symbol"] = "storage";
+            Poor_ORM::ORMapper<PokemonInfo> pokeStoMapper ("pokeStorage.db");
+            query = pokeStoMapper.Query(qHelper)
+                            .ToVector();
+        }
         int amount = 0;
         std::stringstream stream;
         std::string indexStr;

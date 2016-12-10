@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="rateBronze">resource/fightBronze.png</file>
+        <file alias="ratetGold">resource/fightGold.png</file>
+        <file alias="trainerBronze">resource/trainerBronze.png</file>
+        <file alias="trainerGold">resource/trainerGold.png</file>
+        <file alias="rankBronze">resource/rankBronze.png</file>
+        <file alias="rankGold">resource/rankGold.png</file>
+        <file alias="rateSilver">resource/fightSilver.png</file>
+        <file alias="rankSilver">resource/rankSilver.png</file>
+        <file alias="trainerSilver">resource/trainerSilver.png</file>
+    </qresource>
+</RCC>

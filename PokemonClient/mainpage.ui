@@ -27,11 +27,9 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QToolTip {
-	opacity : 200;	
-	font: 75 16pt &quot;Consolas&quot;;	
-		
-	selection-background-color: rgb(255, 36, 8);
-	color: rgba(52, 52, 52, 200);
+	opacity: 100;
+	font: 75 16pt &quot;Consolas&quot;;			
+	background-color: rgb(0, 0, 0);
 }</string>
   </property>
   <widget class="QPushButton" name="pokeballButton">
@@ -443,7 +441,7 @@ color: rgb(93, 93, 93);</string>
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="decorationLabel">
+   <widget class="QWidget" name="decorationWidget" native="true">
     <property name="geometry">
      <rect>
       <x>283</x>
@@ -457,9 +455,91 @@ color: rgb(93, 93, 93);</string>
 border-top-right-radius: 5px;
 background-color: rgba(255, 255, 255, 100);</string>
     </property>
-    <property name="text">
-     <string/>
-    </property>
+    <widget class="QLabel" name="trainerLevelLabel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>1</y>
+       <width>29</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 5px;
+background-color: rgba(255, 255, 255, 85);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="rankLevelLabel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>32</y>
+       <width>29</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 5px;
+background-color: rgba(255, 255, 255, 85);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="rateLevelLabel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>63</y>
+       <width>29</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 5px;
+background-color: rgba(255, 255, 255, 85);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="otherLabel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>94</y>
+       <width>29</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 5px;
+background-color: rgba(255, 255, 255, 85);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="anotherLabel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>125</y>
+       <width>29</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 5px;
+background-color: rgba(255, 255, 255, 85);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QWidget" name="rankWidget" native="true">
@@ -855,6 +935,43 @@ p, li { white-space: pre-wrap; }
     <string notr="true">#myPokemonContainer {
 	border-radius: 10px;
 	background-color: rgba(170, 170, 170, 100);
+}
+QScrollBar:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,0%);
+    margin:0px,0px,0px,0px;
+    padding-top:9px;  
+    padding-bottom:9px;
+}
+QScrollBar::handle:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,25%);
+    border-radius:4px;  
+    min-height:20;
+}
+QScrollBar::handle:vertical:hover
+{
+    width:8px;
+    background:rgba(0,0,0,50%);   
+    border-radius:4px;
+    min-height:20;
+}
+
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical  
+{
+    background:rgba(0,0,0,10%);
+    border-radius:4px;
+}
+QScrollBar::add-line:vertical {
+      border: 10px;
+      background: none;
+}
+
+QScrollBar::sub-line:vertiacal {
+      border: none;
+      background: none;
 }</string>
    </property>
    <widget class="QPushButton" name="myPokemonCloseButton">
@@ -894,7 +1011,43 @@ p, li { white-space: pre-wrap; }
 	border-bottom-left-radius : 10px;
 	border-bottom-right-radius : 10px;
 }
-</string>
+QScrollBar:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,0%);
+    margin:0px,0px,0px,0px;
+    padding-top:9px;  
+    padding-bottom:9px;
+}
+QScrollBar::handle:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,25%);
+    border-radius:4px;  
+    min-height:20;
+}
+QScrollBar::handle:vertical:hover
+{
+    width:8px;
+    background:rgba(0,0,0,50%);   
+    border-radius:4px;
+    min-height:20;
+}
+
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical  
+{
+    background:rgba(0,0,0,10%);
+    border-radius:4px;
+}
+QScrollBar::add-line:vertical {
+      border: 10px;
+      background: none;
+}
+
+QScrollBar::sub-line:vertiacal {
+      border: none;
+      background: none;
+}</string>
     </property>
     <property name="widgetResizable">
      <bool>true</bool>
@@ -908,8 +1061,45 @@ p, li { white-space: pre-wrap; }
        <height>171</height>
       </rect>
      </property>
-     <zorder>myPokemonContainer_2</zorder>
-     <zorder>myPokemonContainer_2</zorder>
+     <property name="styleSheet">
+      <string notr="true">QScrollBar:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,0%);
+    margin:0px,0px,0px,0px;
+    padding-top:9px;  
+    padding-bottom:9px;
+}
+QScrollBar::handle:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,25%);
+    border-radius:4px;  
+    min-height:20;
+}
+QScrollBar::handle:vertical:hover
+{
+    width:8px;
+    background:rgba(0,0,0,50%);   
+    border-radius:4px;
+    min-height:20;
+}
+
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical  
+{
+    background:rgba(0,0,0,10%);
+    border-radius:4px;
+}
+QScrollBar::add-line:vertical {
+      border: 10px;
+      background: none;
+}
+
+QScrollBar::sub-line:vertiacal {
+      border: none;
+      background: none;
+}</string>
+     </property>
     </widget>
    </widget>
   </widget>
@@ -926,6 +1116,43 @@ p, li { white-space: pre-wrap; }
     <string notr="true">#myStorageContainer {
 	border-radius: 10px;
 	background-color: rgba(170, 170, 170, 100);
+}
+QScrollBar:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,0%);
+    margin:0px,0px,0px,0px;
+    padding-top:9px;  
+    padding-bottom:9px;
+}
+QScrollBar::handle:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,12%);
+    border-radius:4px;  
+    min-height:20;
+}
+QScrollBar::handle:vertical:hover
+{
+    width:8px;
+    background:rgba(0,0,0,25%);   
+    border-radius:4px;
+    min-height:20;
+}
+
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical  
+{
+    background:rgba(0,0,0,10%);
+    border-radius:4px;
+}
+QScrollBar::add-line:vertical {
+      border: 10px;
+      background: none;
+}
+
+QScrollBar::sub-line:vertiacal {
+      border: none;
+      background: none;
 }</string>
    </property>
    <widget class="QPushButton" name="myStorageCloseButton">
@@ -966,7 +1193,48 @@ p, li { white-space: pre-wrap; }
 	border-bottom-left-radius : 10px;
 	border-bottom-right-radius : 10px;
 }
+
+QScrollBar:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,0%);
+    margin:0px,0px,0px,0px;
+    padding-top:9px;  
+    padding-bottom:9px;
+}
+QScrollBar::handle:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,12%);
+    border-radius:4px;  
+    min-height:20;
+}
+QScrollBar::handle:vertical:hover
+{
+    width:8px;
+    background:rgba(0,0,0,25%);   
+    border-radius:4px;
+    min-height:20;
+}
+
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical  
+{
+    background:rgba(0,0,0,10%);
+    border-radius:4px;
+}
+QScrollBar::add-line:vertical {
+      border: 10px;
+      background: none;
+}
+
+QScrollBar::sub-line:vertiacal {
+      border: none;
+      background: none;
+}
 </string>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAsNeeded</enum>
     </property>
     <property name="widgetResizable">
      <bool>true</bool>
@@ -980,6 +1248,45 @@ p, li { white-space: pre-wrap; }
        <height>171</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QScrollBar:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,0%);
+    margin:0px,0px,0px,0px;
+    padding-top:9px;  
+    padding-bottom:9px;
+}
+QScrollBar::handle:vertical
+{
+    width:8px;
+    background:rgba(0,0,0,12%);
+    border-radius:4px;  
+    min-height:20;
+}
+QScrollBar::handle:vertical:hover
+{
+    width:8px;
+    background:rgba(0,0,0,25%);   
+    border-radius:4px;
+    min-height:20;
+}
+
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical  
+{
+    background:rgba(0,0,0,10%);
+    border-radius:4px;
+}
+QScrollBar::add-line:vertical {
+      border: 10px;
+      background: none;
+}
+
+QScrollBar::sub-line:vertiacal {
+      border: none;
+      background: none;
+}</string>
+     </property>
     </widget>
    </widget>
   </widget>
@@ -991,13 +1298,13 @@ p, li { white-space: pre-wrap; }
   <zorder>huntPicContainer</zorder>
   <zorder>battlePicContainer</zorder>
   <zorder>pokeballButton</zorder>
-  <zorder>myinfoWidget</zorder>
   <zorder>rankWidget</zorder>
   <zorder>pokeTableContainer</zorder>
   <zorder>listWidgetContainer</zorder>
   <zorder>readmeWidget</zorder>
   <zorder>myPokemonContainer</zorder>
   <zorder>myStorageContainer</zorder>
+  <zorder>myinfoWidget</zorder>
  </widget>
  <resources/>
  <connections/>

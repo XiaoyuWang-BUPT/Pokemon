@@ -33,4 +33,5 @@ FORMS    += \
     signon.ui \
     hunt.ui
 
-RESOURCES   += resource.qrc
+RESOURCES   += resource.qrc \
+    resource2.qrc
