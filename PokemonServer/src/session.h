@@ -249,6 +249,51 @@ std::string GetSendStr(int pid, Helper* helper)
         }
         sendJ["amount"] = amount;
     }
+    if (symbol == "package")
+    {
+        sendJ["symbol"] = "package";
+        sendJ["end"] = "end";
+        std::string owner = recvJ["name"];
+        Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
+        PokemonInfo qHelper;
+        auto query = pokePackMapper.Query(qHelper)
+                .ToVector();
+        int amount = 0;
+        std::stringstream stream;
+        std::string indexStr;
+        std::string keyStr;
+        for (int i = 0; i < query.size(); i++)
+        {
+            if (query[i].owner == owner)
+            {
+                stream.clear();
+                stream << amount;
+                stream >> indexStr;
+                keyStr = "kind" + indexStr;
+                sendJ[keyStr] = kindOfString[query[i].kind];
+                keyStr = "name" + indexStr;
+                sendJ[keyStr] = query[i].name;
+                keyStr = "character" + indexStr;
+                sendJ[keyStr] = characterOfString[query[i].character];
+                keyStr = "level" + indexStr;
+                sendJ[keyStr] = query[i].level;
+                keyStr = "exp" + indexStr;
+                sendJ[keyStr] = query[i].experiencePoint;
+                keyStr = "att" + indexStr;
+                sendJ[keyStr] = query[i].attackPoint;
+                keyStr = "def" + indexStr;
+                sendJ[keyStr] = query[i].defencePoint;
+                keyStr = "HP" + indexStr;
+                sendJ[keyStr] = query[i].totalHP;
+                keyStr = "speed" + indexStr;
+                sendJ[keyStr] = query[i].intervalIncrease;
+                keyStr = "critical" + indexStr;
+                sendJ[keyStr] = query[i].criticalPoint;
+                amount++;
+            }
+        }
+        sendJ["amount"] = amount;
+    }
     if (symbol == "playerPoke")
     {
         std::string name = recvJ["name"];

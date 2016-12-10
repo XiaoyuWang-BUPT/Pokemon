@@ -1,6 +1,8 @@
 ﻿#ifndef MAINPAGE_H
 #define MAINPAGE_H
 
+#pragma once
+
 #include <QWidget>
 #include <QMovie>
 #include <QImage>
@@ -48,15 +50,28 @@ private:
     Ui::MainPage *ui;
     std::thread calledThread;
     std::string recvString = "";
+
+    //pokemon table displaying other players' pokemons' information
     QTableWidgetItem* pokeTableItem[MAXSIZE_POKEMON];
+
+    //label and button displaying other players' state
     QLabel* headLabel[MAXSIZE_PLAYER];
     QPushButton* playerPokeButton[MAXSIZE_PLAYER];
     QPushButton* thumbButton[MAXSIZE_PLAYER];
     QPushButton* rankPokeButton[MAXSIZE_PLAYER];
     QPushButton* rankThumbButton[MAXSIZE_PLAYER];
-    void LoadOnlinePlayer(json &recvJ);
+
+    //layout label and button displaying owner's pokemon
+    QVBoxLayout* scrollVLayout;
+    QHBoxLayout* scrollHLayout[MAXSIZE_POKEMON];
+    QLabel* pokePicLabel[MAXSIZE_POKEMON];
+    QLabel* pokeTextLabel[MAXSIZE_POKEMON];
+    QPushButton* exButton[MAXSIZE_POKEMON];
+
     std::string playerNames[MAXSIZE_PLAYER];
     std::string rankPlayerNames[MAXSIZE_PLAYER];
+
+    void LoadOnlinePlayer(json &recvJ);
     void RecvAndSendOnlinePlayer(json j);
 
 private slots:
@@ -70,16 +85,21 @@ private slots:
     void onRankPokeClicked(int i);
     void onRankThumbClicked(int i);
     void onPackageClicked();
+    void onStorageClicked();
     Q_INVOKABLE bool getRecvStr(QString str);
     bool eventFilter(QObject *watched, QEvent *event);
     void setOnlinePlayerIcon(int i);
     void setRankIcons(int i);
+    void setPackageScrollArea(QString kind, QString name, QString tip, int index);
+    void clearScrollArea();
     void OpenInChrome(const QUrl& url);
 
 signals:
     void switchToHunt();
     void setOnlinePlayerIconSignal(int i);
     void setRankIconSignal(int i);
+    void setPackegeScrollAreaSignal(QString kind, QString name, QString tip, int index);
+    void clearScrollAreaSignal();
     void playerPokeClicked(int i);
     void playerThumbClicked(int i);
     void rankPokeClicked(int i);

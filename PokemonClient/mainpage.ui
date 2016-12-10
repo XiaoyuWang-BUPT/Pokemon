@@ -34,30 +34,17 @@
 	color: rgba(52, 52, 52, 200);
 }</string>
   </property>
-  <widget class="QLabel" name="welcomeLabel">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>200</width>
-     <height>200</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">image: url(:/welcome.gif);</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pokeballButton">
    <property name="geometry">
     <rect>
-     <x>365</x>
+     <x>350</x>
      <y>150</y>
      <width>120</width>
      <height>120</height>
     </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="styleSheet">
     <string notr="true"/>
@@ -72,7 +59,7 @@
   <widget class="QPushButton" name="myInfoButton">
    <property name="geometry">
     <rect>
-     <x>380</x>
+     <x>392</x>
      <y>410</y>
      <width>48</width>
      <height>48</height>
@@ -91,7 +78,7 @@
   <widget class="QPushButton" name="onlinePlayerBtn">
    <property name="geometry">
     <rect>
-     <x>270</x>
+     <x>282</x>
      <y>410</y>
      <width>48</width>
      <height>48</height>
@@ -113,7 +100,7 @@
   <widget class="QPushButton" name="rankButton">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>182</x>
      <y>410</y>
      <width>48</width>
      <height>48</height>
@@ -132,7 +119,7 @@
   <widget class="QPushButton" name="storageButton">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>622</x>
      <y>410</y>
      <width>48</width>
      <height>48</height>
@@ -151,7 +138,7 @@
   <widget class="QPushButton" name="packageButton">
    <property name="geometry">
     <rect>
-     <x>490</x>
+     <x>502</x>
      <y>410</y>
      <width>48</width>
      <height>48</height>
@@ -190,7 +177,7 @@
   <widget class="QWidget" name="listWidgetContainer" native="true">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>146</x>
      <y>190</y>
      <width>320</width>
      <height>200</height>
@@ -394,7 +381,7 @@ color: rgb(93, 93, 93);</string>
   <widget class="QWidget" name="myinfoWidget" native="true">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>256</x>
      <y>190</y>
      <width>320</width>
      <height>200</height>
@@ -474,15 +461,11 @@ background-color: rgba(255, 255, 255, 100);</string>
      <string/>
     </property>
    </widget>
-   <zorder>myinfoCloseBtn</zorder>
-   <zorder>myinfoText</zorder>
-   <zorder>decorationLabel</zorder>
-   <zorder>onlineRateLabel</zorder>
   </widget>
   <widget class="QWidget" name="rankWidget" native="true">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>46</x>
      <y>190</y>
      <width>320</width>
      <height>200</height>
@@ -749,10 +732,6 @@ color: rgb(93, 93, 93);</string>
      <column/>
      <column/>
     </widget>
-    <zorder>pokeTable</zorder>
-    <zorder>battlePicContainer</zorder>
-    <zorder>battlePicContainer</zorder>
-    <zorder>battlePicContainer</zorder>
    </widget>
    <widget class="QPushButton" name="pokeCloseButton">
     <property name="enabled">
@@ -793,16 +772,11 @@ color: rgb(93, 93, 93);</string>
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <zorder>sendLayerPokeTableWidget</zorder>
-   <zorder>pokeCloseButton</zorder>
-   <zorder>pokeOwnerLabel</zorder>
-   <zorder>onlineRateLabel</zorder>
-   <zorder>onlineRateLabel</zorder>
   </widget>
   <widget class="QWidget" name="readmeWidget" native="true">
    <property name="geometry">
     <rect>
-     <x>270</x>
+     <x>255</x>
      <y>95</y>
      <width>320</width>
      <height>200</height>
@@ -868,7 +842,147 @@ p, li { white-space: pre-wrap; }
     </property>
    </widget>
   </widget>
-  <zorder>welcomeLabel</zorder>
+  <widget class="QWidget" name="myPokemonContainer" native="true">
+   <property name="geometry">
+    <rect>
+     <x>366</x>
+     <y>190</y>
+     <width>320</width>
+     <height>200</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#myPokemonContainer {
+	border-radius: 10px;
+	background-color: rgba(170, 170, 170, 100);
+}</string>
+   </property>
+   <widget class="QPushButton" name="myPokemonCloseButton">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>-1</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/close);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QScrollArea" name="scrollArea">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>29</y>
+      <width>320</width>
+      <height>171</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#scrollArea, #scrollWidget {
+	background-color: rgba(230, 230, 230, 100);	
+	border-bottom-left-radius : 10px;
+	border-bottom-right-radius : 10px;
+}
+</string>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="scrollWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>320</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <zorder>myPokemonContainer_2</zorder>
+     <zorder>myPokemonContainer_2</zorder>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="myStorageContainer" native="true">
+   <property name="geometry">
+    <rect>
+     <x>486</x>
+     <y>190</y>
+     <width>320</width>
+     <height>200</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#myStorageContainer {
+	border-radius: 10px;
+	background-color: rgba(170, 170, 170, 100);
+}</string>
+   </property>
+   <widget class="QPushButton" name="myStorageCloseButton">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>-1</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/close);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QScrollArea" name="storageScrollArea">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>29</y>
+      <width>320</width>
+      <height>171</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#storageScrollArea, #storageScrollWidget
+ {
+	background-color: rgba(230, 230, 230, 100);	
+	border-bottom-left-radius : 10px;
+	border-bottom-right-radius : 10px;
+}
+</string>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="storageScrollWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>320</width>
+       <height>171</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+  </widget>
   <zorder>myInfoButton</zorder>
   <zorder>onlinePlayerBtn</zorder>
   <zorder>rankButton</zorder>
@@ -882,6 +996,8 @@ p, li { white-space: pre-wrap; }
   <zorder>pokeTableContainer</zorder>
   <zorder>listWidgetContainer</zorder>
   <zorder>readmeWidget</zorder>
+  <zorder>myPokemonContainer</zorder>
+  <zorder>myStorageContainer</zorder>
  </widget>
  <resources/>
  <connections/>

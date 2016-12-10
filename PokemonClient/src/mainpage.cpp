@@ -81,6 +81,16 @@ MainPage::MainPage(QWidget *parent) :
         rankThumbButton[i]->installEventFilter(this);
     }
 
+    scrollVLayout = new QVBoxLayout(this->ui->scrollWidget);
+    for (int i = 0; i < MAXSIZE_POKEMON; i++)
+    {
+        scrollHLayout[i] = new QHBoxLayout();
+        pokePicLabel[i] = new QLabel();
+        pokeTextLabel[i] = new QLabel();
+        exButton[i] = new QPushButton();
+        exButton[i]->setFlat(true);
+    }
+
     QObject::connect(this->ui->onlinePlayerBtn, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerClicked()));
     QObject::connect(this->ui->OPReloadButton, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerReloadClicked()));
     QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->listWidgetContainer, SLOT(hide()));
@@ -92,10 +102,10 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this->ui->myinfoCloseBtn, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
     QObject::connect(this->ui->rankButton, SIGNAL(clicked(bool)), this, SLOT(onRankClicked()));
     QObject::connect(this->ui->closeRankButton, SIGNAL(clicked(bool)), this, SLOT(onRankClicked()));
+    QObject::connect(this->ui->closeRankButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
     QObject::connect(this, SIGNAL(setRankIconSignal(int)), this, SLOT(setRankIcons(int)));
     QObject::connect(this, SIGNAL(rankPokeClicked(int)), this, SLOT(onRankPokeClicked(int)));
     QObject::connect(this, SIGNAL(rankThumbClicked(int)), this, SLOT(onRankThumbClicked(int)));
-    QObject::connect(this->ui->packageButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
     QObject::connect(this->ui->pokeCloseButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
     QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
     QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->readmeWidget, SLOT(show()));
@@ -103,8 +113,14 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->myinfoWidget, SLOT(hide()));
     QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->listWidgetContainer, SLOT(hide()));
     QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
-    QObject::connect(this->ui->textBrowserCloseButton, SIGNAL(clicked(bool)), this->ui->textBrowser, SLOT(hide()));
+    QObject::connect(this->ui->textBrowserCloseButton, SIGNAL(clicked(bool)), this->ui->readmeWidget, SLOT(hide()));
     QObject::connect(this->ui->textBrowser, SIGNAL(anchorClicked(QUrl)), this, SLOT(OpenInChrome(QUrl)));
+    QObject::connect(this->ui->packageButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
+    QObject::connect(this->ui->myPokemonCloseButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
+    QObject::connect(this, SIGNAL(setPackegeScrollAreaSignal(QString, QString, QString, int)), this, SLOT(setPackageScrollArea(QString, QString, QString, int)));
+    QObject::connect(this, SIGNAL(clearScrollAreaSignal()), this, SLOT(clearScrollArea()));
+    QObject::connect(this->ui->storageButton, SIGNAL(clicked(bool)), this, SLOT(onStorageClicked()));
+    QObject::connect(this->ui->myStorageCloseButton, SIGNAL(clicked(bool)), this, SLOT(onStorageClicked()));
 }
 
 MainPage::MainPage(SocketClient *sc, QWidget *parent) :
@@ -129,6 +145,9 @@ void MainPage::receiveSwitch()
     this->ui->myinfoWidget->hide();
     this->ui->rankWidget->hide();
     this->ui->pokeTableContainer->hide();
+    this->ui->myPokemonContainer->hide();
+    this->ui->myStorageContainer->hide();
+    this->ui->storageButton->setGeometry(622, 410, 48, 48);
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
@@ -163,6 +182,40 @@ void MainPage::setRankIcons(int i)
     rankThumbButton[i]->setGeometry(10, 24*i, 24, 24);
     rankThumbButton[i]->show();
     return;
+}
+
+void MainPage::setPackageScrollArea(QString kind, QString name, QString tip, int index)
+{
+    QString pixmap = ":/" + kind.toLower();
+    pokePicLabel[index]->setPixmap(QPixmap(pixmap));
+    pokePicLabel[index]->setAlignment(Qt::AlignCenter);
+    pokeTextLabel[index]->setText(name);
+    pokeTextLabel[index]->setToolTip(tip);
+    pokeTextLabel[index]->setStyleSheet("font: 75 16pt Consolas;");
+    exButton[index]->setStyleSheet("QPushButton{border-image : url(:/exchange);}");
+    exButton[index]->setCursor(QCursor(Qt::PointingHandCursor));
+    exButton[index]->setToolTip("Put in storage");
+    pokePicLabel[index]->setMinimumSize(36, 36);
+    pokeTextLabel[index]->setMinimumSize(36, 36);
+    exButton[index]->setMinimumSize(48, 36);
+    pokePicLabel[index]->setMaximumSize(36, 36);
+    exButton[index]->setMaximumSize(36, 36);
+    scrollHLayout[index]->addWidget(pokePicLabel[index]);
+    scrollHLayout[index]->addSpacing(5);
+    scrollHLayout[index]->addWidget(pokeTextLabel[index]);
+    scrollHLayout[index]->addWidget(exButton[index]);
+    scrollVLayout->addLayout(scrollHLayout[index]);
+}
+
+void MainPage::clearScrollArea()
+{
+    for (int i = 0; i < MAXSIZE_POKEMON; i++)
+    {
+        scrollHLayout[i]->removeWidget(pokePicLabel[i]);
+        scrollHLayout[i]->removeWidget(pokeTextLabel[i]);
+        scrollHLayout[i]->removeWidget(exButton[i]);
+        scrollVLayout->removeItem(scrollHLayout[i]);
+    }
 }
 
 void MainPage::LoadOnlinePlayer(json &recvJ)
@@ -211,6 +264,17 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
         if (event->type() == QEvent::MouseButtonPress)
         {
             this->hide();
+            this->ui->readmeWidget->hide();
+            this->ui->OPListWidget->clear();
+            this->ui->rankWidget->hide();
+            this->ui->rankButton->setGeometry(170, 410, 48, 48);
+            this->ui->myinfoWidget->hide();
+            this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
+            this->ui->myPokemonContainer->hide();
+            emit clearScrollAreaSignal();
+            this->ui->packageButton->setGeometry(490, 410, 48, 48);
+            this->ui->listWidgetContainer->hide();
+            this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
             emit switchToHunt();
         }
     }
@@ -222,7 +286,7 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress)
         {
-            this->ui->pokeballButton->setGeometry(364, 149, 120, 120);
+            this->ui->pokeballButton->setGeometry(350, 150, 120, 120);
             QPropertyAnimation* animation = new QPropertyAnimation(this->ui->pokeballButton, "size");
             animation->setStartValue(QSize(120, 120));
             animation->setEndValue(QSize(118, 118));
@@ -238,7 +302,7 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
 
         if (event->type() == QEvent::HoverEnter)
         {
-            this->ui->pokeballButton->setGeometry(364, 149, 120, 120);
+            this->ui->pokeballButton->setGeometry(350, 150, 120, 120);
             QPropertyAnimation* animation = new QPropertyAnimation(this->ui->pokeballButton, "size");
             animation->setStartValue(QSize(120, 120));
             animation->setEndValue(QSize(122, 122));
@@ -248,7 +312,7 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
 
         if (event->type() == QEvent::HoverLeave)
         {
-            this->ui->pokeballButton->setGeometry(364, 149, 122, 122);
+            this->ui->pokeballButton->setGeometry(350, 150, 122, 122);
             QPropertyAnimation* animation = new QPropertyAnimation(this->ui->pokeballButton, "size");
             animation->setStartValue(QSize(122, 122));
             animation->setEndValue(QSize(120, 120));
@@ -364,7 +428,7 @@ bool MainPage::getRecvStr(QString str)
         std::stringstream stream;
         std::string indexStr;
         std::string keyStr;
-        for (int i = 0; i < amount; i++)
+        for (int i = 0; i < amount && i < MAXSIZE_POKEMON; i++)
         {
             stream.clear();
             stream << i;
@@ -437,6 +501,74 @@ bool MainPage::getRecvStr(QString str)
             emit setRankIconSignal(i);
         }
     }
+    if (symbol == "package")
+    {
+        std::stringstream stream;
+        std::string indexStr;
+        std::string keyStr;
+        std::string valueStr;
+        std::string kind;
+        std::string name;
+        std::string tooltipStd = "";
+        int amount = recvJ["amount"];
+        for (int i = 0; i < amount && i < MAXSIZE_POKEMON; i++)
+        {
+            tooltipStd = "";
+            stream.clear();
+            stream << i;
+            stream >> indexStr;
+            keyStr =  "kind" + indexStr;
+            valueStr = recvJ[keyStr];
+            kind = recvJ[keyStr];
+            tooltipStd.append("kind:" + valueStr);
+            keyStr = "name" + indexStr;
+            valueStr = recvJ[keyStr];
+            name = recvJ[keyStr];
+            tooltipStd.append("  name:" + valueStr);
+            keyStr = "character" + indexStr;
+            valueStr = recvJ[keyStr];
+            tooltipStd.append("\ncharacter:" + valueStr);
+            keyStr = "level" + indexStr;
+            stream.clear();
+            stream << recvJ[keyStr];
+            stream >> valueStr;
+            tooltipStd.append("     level:" + valueStr);
+            keyStr = "exp" + indexStr;
+            stream.clear();
+            stream << recvJ[keyStr];
+            stream >> valueStr;
+            tooltipStd.append("\nexp:" + valueStr);
+            keyStr = "att" + indexStr;
+            stream.clear();
+            stream << recvJ[keyStr];
+            stream >> valueStr;
+            tooltipStd.append("     attack:" + valueStr);
+            keyStr = "def" + indexStr;
+            stream.clear();
+            stream << recvJ[keyStr];
+            stream >> valueStr;
+            tooltipStd.append("\ndefence" + valueStr);
+            keyStr = "HP" + indexStr;
+            stream.clear();
+            stream << recvJ[keyStr];
+            stream >> valueStr;
+            tooltipStd.append("     HP:" + valueStr);
+            keyStr = "speed" + indexStr;
+            stream.clear();
+            stream << recvJ[keyStr];
+            stream >> valueStr;
+            tooltipStd.append("\nspeed:" + valueStr);
+            keyStr = "critical" + indexStr;
+            stream.clear();
+            stream << recvJ[keyStr];
+            stream >> valueStr;
+            tooltipStd.append("     critical:" + valueStr + "%");
+            emit setPackegeScrollAreaSignal(QString::fromStdString(kind),
+                                            QString::fromStdString(name),
+                                            QString::fromStdString(tooltipStd),
+                                            i);
+        }
+    }
     return true;
 }
 
@@ -451,25 +583,6 @@ void MainPage::RecvAndSendOnlinePlayer(json j)
     return;
 }
 
-void MainPage::onOnlinePlayerReloadClicked()
-{
-    this->ui->OPListWidget->clear();
-    for (int i = 0; i < MAXSIZE_PLAYER; i++)
-    {
-        headLabel[i]->hide();
-        playerPokeButton[i]->hide();
-        thumbButton[i]->hide();
-    }
-    for (auto& s : playerNames)
-        s = "";
-    json j;
-    j["symbol"] = "onlinePlayer";
-    j["name"] = socketClient->getPlayerName();
-    j["end"] = "end";
-    RecvAndSendOnlinePlayer(j);
-    return;
-}
-
 void MainPage::onOnlinePlayerClicked()
 {
     this->ui->readmeWidget->hide();
@@ -478,8 +591,11 @@ void MainPage::onOnlinePlayerClicked()
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
-    this->ui->pokeTableContainer->hide();
+    this->ui->myPokemonContainer->hide();
+    emit clearScrollAreaSignal();
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
+    this->ui->myStorageContainer->hide();
+    this->ui->storageButton->setGeometry(622, 410, 48, 48);
     if (this->ui->listWidgetContainer->isHidden())
     {
         for (auto& s : playerNames)
@@ -512,8 +628,28 @@ void MainPage::onOnlinePlayerClicked()
         this->ui->huntPicContainer->setEnabled(true);
         this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
         this->ui->listWidgetContainer->hide();
+        this->ui->pokeTableContainer->hide();
         this->ui->OPListWidget->clear();
     }
+    return;
+}
+
+void MainPage::onOnlinePlayerReloadClicked()
+{
+    this->ui->OPListWidget->clear();
+    for (int i = 0; i < MAXSIZE_PLAYER; i++)
+    {
+        headLabel[i]->hide();
+        playerPokeButton[i]->hide();
+        thumbButton[i]->hide();
+    }
+    for (auto& s : playerNames)
+        s = "";
+    json j;
+    j["symbol"] = "onlinePlayer";
+    j["name"] = socketClient->getPlayerName();
+    j["end"] = "end";
+    RecvAndSendOnlinePlayer(j);
     return;
 }
 
@@ -556,8 +692,11 @@ void MainPage::onMyInfoClicked()
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
-    this->ui->pokeTableContainer->hide();
+    this->ui->myPokemonContainer->hide();
+    emit clearScrollAreaSignal();
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
+    this->ui->myStorageContainer->hide();
+    this->ui->storageButton->setGeometry(622, 410, 48, 48);
     if (this->ui->myinfoWidget->isHidden())
     {
         json j;
@@ -583,8 +722,11 @@ void MainPage::onRankClicked()
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
-    this->ui->pokeTableContainer->hide();
+    this->ui->myPokemonContainer->hide();
+    emit clearScrollAreaSignal();
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
+    this->ui->myStorageContainer->hide();
+    this->ui->storageButton->setGeometry(622, 410, 48, 48);
 
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
     {
@@ -608,6 +750,7 @@ void MainPage::onRankClicked()
     {
         this->ui->rankList->clear();
         this->ui->rankWidget->hide();
+        this->ui->pokeTableContainer->hide();
         this->ui->rankButton->setGeometry(170, 410, 48, 48);
     }
     return;
@@ -653,23 +796,50 @@ void MainPage::onPackageClicked()
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
     this->ui->rankWidget->hide();
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
-    if (this->ui->pokeTableContainer->isHidden())
+    this->ui->myStorageContainer->hide();
+    this->ui->storageButton->setGeometry(622, 410, 48, 48);
+    if (this->ui->myPokemonContainer->isHidden())
     {
-        this->ui->pokeTable->clear();
-//        json j;
-//        j["symbol"] = "playerPoke";
-//        j["name"] = socketClient->getPlayerName();
-//        j["end"] = "end";
-//        RecvAndSendOnlinePlayer(j);
-        this->ui->pokeTableContainer->show();
+        json j;
+        j["symbol"] = "package";
+        j["name"] = socketClient->getPlayerName();
+        j["end"] = "end";
+        RecvAndSendOnlinePlayer(j);
+        this->ui->myPokemonContainer->show();
         this->ui->packageButton->setGeometry(478, 398, 72, 72);
     }
     else
     {
-        this->ui->pokeTableContainer->hide();
+        this->ui->myPokemonContainer->hide();
         this->ui->packageButton->setGeometry(490, 410, 48, 48);
+        emit clearScrollAreaSignal();
     }
     return;
+}
+
+void MainPage::onStorageClicked()
+{
+    this->ui->readmeWidget->hide();
+    this->ui->myinfoWidget->hide();
+    this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
+    this->ui->listWidgetContainer->hide();
+    this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+    this->ui->myPokemonContainer->hide();
+    emit clearScrollAreaSignal();
+    this->ui->packageButton->setGeometry(490, 410, 48, 48);
+    this->ui->rankWidget->hide();
+    this->ui->rankButton->setGeometry(170, 410, 48, 48);
+
+    if (this->ui->myStorageContainer->isHidden())
+    {
+        this->ui->myStorageContainer->show();
+        this->ui->storageButton->setGeometry(598, 386, 72, 72);
+    }
+    else
+    {
+        this->ui->myStorageContainer->hide();
+        this->ui->storageButton->setGeometry(622, 410, 48, 48);
+    }
 }
 
 void MainPage::OpenInChrome(const QUrl &url)

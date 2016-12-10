@@ -48,5 +48,6 @@
         <file alias="squirtle">resource/squirtle.png</file>
         <file alias="pichu">resource/pichu.png</file>
         <file alias="pichu.gif">resource/pichu-2.gif</file>
+        <file alias="exchange">resource/exchange.png</file>
     </qresource>
 </RCC>
