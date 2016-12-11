@@ -18,6 +18,9 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->myInfoButton->setStyleSheet("#myInfoButton{border-image: url(:/player);}");
     this->ui->packageButton->setStyleSheet("#packageButton{border-image: url(:/package);}");
     this->ui->storageButton->setStyleSheet("#storageButton{border-image: url(:/storage);}");
+    this->ui->updownButton->setStyleSheet("#updownButton{border-image: url(:/down);}");
+    this->ui->updownButton->setCursor(QCursor(Qt::PointingHandCursor));
+    this->ui->updownButton->setToolTip("Click to open");
 
     this->ui->myInfoButton->setCursor(QCursor(Qt::PointingHandCursor));
     this->ui->onlinePlayerBtn->setCursor(QCursor(Qt::PointingHandCursor));
@@ -31,7 +34,6 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->huntPicContainer->installEventFilter(this);
     this->ui->battlePicContainer->installEventFilter(this);
     this->ui->closeOPButton->installEventFilter(this);
-    this->ui->vsPlayer->installEventFilter(this);
     this->ui->fireGold->installEventFilter(this);
     this->ui->fireBronze->installEventFilter(this);
     this->ui->fireSilver->installEventFilter(this);
@@ -54,7 +56,6 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->storageButton->setToolTip("storage");
     this->ui->otherLabel->setToolTip("To be online");
     this->ui->anotherLabel->setToolTip("To be online");
-    this->ui->vsPlayer->setToolTip("VS other player");
     this->ui->fireGold->setToolTip("VS fire master");
     this->ui->fireSilver->setToolTip("VS fire gym leader");
     this->ui->fireBronze->setToolTip("VS fire trainer");
@@ -68,6 +69,7 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->elecSilver->setToolTip("VS electricity gym leader");
     this->ui->elecBronze->setToolTip("VS electricity trainer");
     this->ui->closeMainWidgetButton->setToolTip("close");
+    this->ui->battleChoice->resize(274, 0);
 
     setAutoFillBackground(true);
     QPalette palette;
@@ -152,6 +154,7 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this->ui->myStorageCloseButton, SIGNAL(clicked(bool)), this, SLOT(onStorageClicked()));
     QObject::connect(this, SIGNAL(exButtonClicked(QObject*,int)), this, SLOT(onExButtonClicked(QObject*,int)));
     QObject::connect(this, SIGNAL(clearScrollLayoutSignal(QString, bool)), this, SLOT(clearScrollLayout(QString, bool)));
+    QObject::connect(this->ui->updownButton, SIGNAL(clicked(bool)), this, SLOT(onUpDownClicked()));
 }
 
 MainPage::MainPage(SocketClient *sc, QWidget *parent) :
@@ -466,6 +469,9 @@ void MainPage::SwitchClear()
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+    this->ui->updownButton->setToolTip("Click to close");
+    this->ui->updownButton->setStyleSheet("#updownButton{border-image: url(:/down)}");
+    this->ui->battleChoice->resize(274, 0);
     return;
 }
 
@@ -479,20 +485,11 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
             emit switchToHunt();
         }
     }
-    if (watched == this->ui->vsPlayer)
-    {
-        if (event->type() == QEvent::MouseButtonPress)
-        {
-            SwitchClear();
-            emit SwitchToBattle("player", "null");
-        }
-    }
     if (watched == this->ui->fireGold)
     {
         if (event->type() == QEvent::MouseButtonPress)
         {
             SwitchClear();
-            std::cout << "***event***";
             emit SwitchToBattle("fire", "gold");
         }
     }
@@ -583,10 +580,6 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
             SwitchClear();
             emit SwitchToBattle("electricity", "bronze");
         }
-    }
-    if (watched == this->ui->battlePicContainer)
-    {
-
     }
     if (watched == this->ui->pokeballButton)
     {
@@ -1146,6 +1139,30 @@ void MainPage::onPackageClicked()
         this->ui->packageButton->setGeometry(490, 410, 48, 48);
     }
     return;
+}
+
+void MainPage::onUpDownClicked()
+{
+    if (this->ui->battleChoice->height() == 0)
+    {
+        this->ui->updownButton->setStyleSheet("#updownButton{border-image: url(:/up)}");
+        this->ui->updownButton->setToolTip("Click to close");
+        QPropertyAnimation* animation = new QPropertyAnimation(this->ui->battleChoice, "size");
+        animation->setStartValue(QSize(274, 0));
+        animation->setEndValue(QSize(274, 204));
+        animation->setDuration(250);
+        animation->start(QPropertyAnimation::DeleteWhenStopped);
+    }
+    if (this->ui->battleChoice->height() == 204)
+    {
+        this->ui->updownButton->setStyleSheet("#updownButton{border-image: url(:/down)}");
+        this->ui->updownButton->setToolTip("Click to open");
+        QPropertyAnimation* animation = new QPropertyAnimation(this->ui->battleChoice, "size");
+        animation->setStartValue(QSize(274, 204));
+        animation->setEndValue(QSize(274, 0));
+        animation->setDuration(250);
+        animation->start(QPropertyAnimation::DeleteWhenStopped);
+    }
 }
 
 void MainPage::onStorageClicked()

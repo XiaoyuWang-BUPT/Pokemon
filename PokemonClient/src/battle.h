@@ -25,12 +25,14 @@ public:
 private:
     Ui::Battle *ui;
     SocketClient *socketClient;
+    void SendAndRecvFunc(json j);
 
 signals:
     void switchToMainPage();
 
 private slots:
     void receiveSwitch(QString nature, QString standard);
+    void getRecvStr(QString recvStr);
     bool eventFilter(QObject *watched, QEvent *event);
 };
 

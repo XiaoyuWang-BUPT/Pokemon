@@ -22,5 +22,7 @@
         <file>resource/waterBronze.png</file>
         <file>resource/waterGold.png</file>
         <file>resource/waterSilver.png</file>
+        <file alias="down">resource/down.png</file>
+        <file alias="up">resource/up.png</file>
     </qresource>
 </RCC>

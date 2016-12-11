@@ -97,6 +97,7 @@ private slots:
     void onRankThumbClicked(int i);
     void onPackageClicked();
     void onStorageClicked();
+    void onUpDownClicked();
     void onExButtonClicked(QObject* obj, int i);
     Q_INVOKABLE bool getRecvStr(QString str);
     bool eventFilter(QObject *watched, QEvent *event);

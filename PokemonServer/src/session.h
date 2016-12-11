@@ -17,6 +17,12 @@ using json = nlohmann::json;
 
 using namespace Poor_ORM;
 
+namespace battlePokemon
+{
+std::vector<Pokemon*> myPokemon;
+std::vector<Pokemon*> enemyPokemon;
+}
+
 bool SortByRank(const struct PlayerInfo& p1, const struct PlayerInfo& p2)
 {
     return p1.rank < p2.rank;
@@ -447,6 +453,195 @@ std::string GetSendStr(int pid, Helper* helper)
         }
         sendJ["symbol"] = "thumb";
         sendJ["end"] = "end";
+    }
+    if (symbol == "battlepre")
+    {
+        std::string owner = recvJ["name"];
+        Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
+        PokemonInfo qHelper;
+        auto query = pokePackMapper.Query(qHelper)
+                        .ToVector();
+        std::vector<Pokemon*> myPokemon;
+        std::vector<Pokemon*> enemyPokemon;
+        PokemonFactory* pokemonFactory = new PokemonFactory();
+        for (auto& q : query)
+        {
+            if (q.owner == owner)
+            {
+                Pokemon* pokemon = pokemonFactory->CreatePokemon(q);
+                myPokemon.push_back(pokemon);
+            }
+        }
+        int pokeNum = myPokemon.size();
+        std::string nature = recvJ["nature"];
+        std::string standard = recvJ["standard"];
+        if (nature == "fire")
+        {
+            if (standard == "gold")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(2 + i * 3);
+                    int level = 13;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+            if (standard == "silver")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(1 + i * 3);
+                    int level = 6;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+            if (standard == "bronze")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(0 + i * 3);
+                    int level = 2;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+        }
+        if (nature == "water")
+        {
+            if (standard == "gold")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(11 + i * 3);
+                    int level = 13;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+            if (standard == "silver")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(10 + i * 3);
+                    int level = 6;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+            if (standard == "bronze")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(9 + i * 3);
+                    int level = 2;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+        }
+        if (nature == "bush")
+        {
+            if (standard == "gold")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(20 + i * 3);
+                    int level = 13;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+            if (standard == "silver")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(19 + i * 3);
+                    int level = 6;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+            if (standard == "bronze")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(18 + i * 3);
+                    int level = 2;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+        }
+        if (nature == "electricity")
+        {
+            if (standard == "gold")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(29 + i * 3);
+                    int level = 13;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+            if (standard == "silver")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(28 + i * 3);
+                    int level = 6;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+            if (standard == "bronze")
+            {
+                for (int i = 0; i < pokeNum; i++)
+                {
+                    Kind kind = (Kind)(27 + i * 3);
+                    int level = 2;
+                    std::string bootname = "boot " + kindOfString[(int)kind];
+                    Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
+                    enemyPokemon.push_back(ep);
+                }
+            }
+         }
+// print the information of pokemon in battle
+//        for (int i = 0; i < pokeNum; i++)
+//        {
+//            std::cout << myPokemon[i]->getName() << " ";
+//            std::cout << enemyPokemon[i]->getName() << " ";
+//        }
+        battlePokemon::myPokemon = myPokemon;
+        battlePokemon::enemyPokemon = enemyPokemon;
+        symbol == "battling";
+    }
+    if (symbol == "battling")
+    {
+        //TODO
+        //sendJ["symbol"] = "battling"
+        //battlepre -> battling
+        //Then server and client pass "battling" message until game over
+        //server send symbol = "battled" as well as all message to client
+    }
+    if (symbol == "battled")
+    {
+        //When player exit during a battle
+        //client would send symbol = "battled" message to server
+        //server then judge win/defeat as well as record rank and rate
     }
     helper->setSendStrHelper(sendJ.dump());
     std::string strSend = helper->getSendStrHelper();

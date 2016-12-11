@@ -35,6 +35,18 @@ const std::string kindOfString[] = {"Charmander", "Charmeleon", "Charizard",
 const int EmbryoPokemon[] = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33}; //对战难度--简单 创建初级口袋妖怪
 const int IntermediatePokemon[] = {1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34}; //对战难度--普通 创建中级口袋妖怪
 const int LastPokemon[]= {2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35}; //对战难度--困难 创建高级口袋妖怪
+const int EmbryoFire[] = {0, 3, 6};
+const int EmbryoWater[] = {9, 12, 15};
+const int EmbryoBush[] = {18, 21, 24};
+const int EmbryoElec[] = {27, 30, 33};
+const int InterFire[] = {1, 4, 7};
+const int InterWater[] = {10, 13, 16};
+const int InterBush[] = {19, 22, 25};
+const int InterElec[] = {28, 31, 34};
+const int LastFire[] = {2, 5, 8};
+const int LastWater[] = {11, 14, 17};
+const int LastBush[] = {20, 23, 26};
+const int LastElec[] = {29, 32, 35};
 enum State {HEALTHY, DROWNED, BURNED, POISONED, FROZEN};
 const std::string stateOfString[] = {"Healthy", "Drowned", "Burned", "Poisoned", "Frozen"};
 enum Character {AGGRESIVE, DEFENSIVE, TANK, QUICK};
@@ -55,6 +67,7 @@ class Helper
 private:
     std::string recvStrHelper = "";
     std::string sendStrHelper = "";
+
 public:
     Helper() {}
     ~Helper() {}
