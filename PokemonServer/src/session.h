@@ -305,6 +305,79 @@ std::string GetSendStr(int pid, Helper* helper)
         }
         sendJ["amount"] = amount;
     }
+    if (symbol == "packout" || symbol == "stoout")
+    {
+        PokemonInfo qOutHelper;
+        PokemonInfo qInHelper;
+        std::vector<PokemonInfo> queryOut;
+        std::vector<PokemonInfo> queryIn;
+        PokemonInfo pokemonIn;
+        std::string name = recvJ["name"];
+        std::string owner = recvJ["owner"];
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        PlayerInfo pHelper;
+        PlayerInfo player;
+        auto pquery = playerMapper.Query(pHelper)
+                .ToVector();
+        for (auto p : pquery)
+        {
+            if (p.name == owner)
+            {
+                player = p;
+                break;
+            }
+        }
+        if (symbol == "packout")
+        {
+            sendJ["symbol"] = "packout";
+            Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
+            queryOut = pokePackMapper.Query(qOutHelper)
+                        .ToVector();
+            Poor_ORM::ORMapper<PokemonInfo> pokeStoMapper ("pokeStorage.db");
+            for (auto& q : queryOut)
+            {
+                if (q.name == name)
+                {
+                    pokemonIn = q;
+                    break;
+                }
+            }
+            pokePackMapper.Delete(pokemonIn);
+            pokeStoMapper.Insert(pokemonIn);
+            player.packageCapacity += 1;
+            playerMapper.Update(player);
+        }
+        if (symbol == "stoout")
+        {
+            sendJ["symbol"] = "stoout";
+            Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
+            queryIn = pokePackMapper.Query(qInHelper)
+                        .ToVector();
+            if (player.packageCapacity > 0)
+            {
+                Poor_ORM::ORMapper<PokemonInfo> pokeStoMapper ("pokeStorage.db");
+                queryOut = pokeStoMapper.Query(qOutHelper)
+                            .ToVector();
+                for (auto& q : queryOut)
+                {
+                    if (q.name == name)
+                    {
+                        pokemonIn = q;
+                        break;
+                    }
+                }
+                pokePackMapper.Insert(pokemonIn);
+                pokeStoMapper.Delete(pokemonIn);
+                player.packageCapacity -= 1;
+                playerMapper.Update(player);
+                sendJ["success"] = true;
+            }
+            else
+                sendJ["success"] = false;
+        }
+        sendJ["end"] = "end";
+
+    }
     if (symbol == "playerPoke")
     {
         std::string name = recvJ["name"];

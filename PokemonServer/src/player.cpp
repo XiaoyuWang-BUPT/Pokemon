@@ -134,13 +134,10 @@ void Player::setBeginDateTime(QDateTime beginDateTime) {
 
 void Player::setGameTime(QDateTime startDateTime) {
     QDateTime currentDateTime = QDateTime::currentDateTime();
-    int daysDuration = startDateTime.daysTo(currentDateTime);
     int secsDuration = startDateTime.secsTo(currentDateTime);
-    std::cout << "secsDuration:" << secsDuration << std::endl;
     int minsDuration = secsDuration/ 60;
     int hoursDuration = minsDuration/ 60;
     minsDuration -= hoursDuration* 60;
-    hoursDuration += daysDuration* 24;
     this->_gameTime_ = to_string(hoursDuration) + to_string(minsDuration);
 }
 

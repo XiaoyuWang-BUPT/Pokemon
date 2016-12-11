@@ -24,6 +24,8 @@
 #include <QDateTime>
 #include <QUrl>
 #include <QScrollBar>
+#include <QMessageBox>
+#include <vector>
 #include "lib/json.hpp"
 #include "socketClient.h"
 
@@ -55,6 +57,7 @@ private:
     Ui::MainPage *ui;
     std::thread calledThread;
     std::string recvString = "";
+    int delHLayIndex = -1;
 
     //pokemon table displaying other players' pokemons' information
     QTableWidgetItem* pokeTableItem[MAXSIZE_POKEMON];
@@ -76,6 +79,9 @@ private:
     std::string playerNames[MAXSIZE_PLAYER];
     std::string rankPlayerNames[MAXSIZE_PLAYER];
 
+    std::vector<std::string> packPokemon;
+    std::vector<std::string> stoPokemon;
+
     void LoadOnlinePlayer(json &recvJ);
     void RecvAndSendOnlinePlayer(json j);
 
@@ -91,6 +97,7 @@ private slots:
     void onRankThumbClicked(int i);
     void onPackageClicked();
     void onStorageClicked();
+    void onExButtonClicked(QObject* obj, int i);
     Q_INVOKABLE bool getRecvStr(QString str);
     bool eventFilter(QObject *watched, QEvent *event);
     void setOnlinePlayerIcon(int i);
@@ -99,6 +106,7 @@ private slots:
     void clearScrollArea();
     void setMyInfo(int pokenum, int rank, double rate, QString info);
     void OpenInChrome(const QUrl& url);
+    void clearScrollLayout(QString symbol, bool success);
 
 signals:
     void switchToHunt();
@@ -111,6 +119,8 @@ signals:
     void playerThumbClicked(int i);
     void rankPokeClicked(int i);
     void rankThumbClicked(int i);
+    void exButtonClicked(QObject* obj, int i);
+    void clearScrollLayoutSignal(QString symbol, bool success);
 };
 
 #endif // !MAINPAGE_H
