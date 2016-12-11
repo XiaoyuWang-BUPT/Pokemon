@@ -161,6 +161,30 @@
      <height>400</height>
     </rect>
    </property>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>40</y>
+      <width>70</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Consolas</family>
+      <pointsize>24</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgba(0, 0, 0, 150);</string>
+    </property>
+    <property name="text">
+     <string>HUNT</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QWidget" name="battlePicContainer" native="true">
    <property name="geometry">
@@ -171,6 +195,302 @@
      <height>400</height>
     </rect>
    </property>
+   <widget class="QPushButton" name="closeMainWidgetButton">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>0</y>
+      <width>36</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="toolTip">
+     <string comment="close" extracomment="Close"/>
+    </property>
+    <property name="toolTipDuration">
+     <number>1</number>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/close);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QWidget" name="waterGold" native="true">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>180</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#waterGold{background-color: rgba(0,0,255,100);
+image: url(:/resource/waterGold.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="waterSilver" native="true">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>250</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#waterSilver{background-color: rgba(0,0,255,100);
+image: url(:/resource/waterSilver.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="waterBronze" native="true">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>320</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#waterBronze{background-color: rgba(0,0,255,100);
+image: url(:/resource/waterBronze.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="fireSilver" native="true">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>250</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#fireSilver{background-color: rgba(255,0,0,100);
+image: url(:/resource/fireSilver.png);
+border-radius: 15px;}
+</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="fireBronze" native="true">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>320</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#fireBronze{background-color: rgba(255,0,0,100);
+image: url(:/resource/fireBronze.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="fireGold" native="true">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>180</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#fireGold{background-color: rgba(255,0,0,100);
+image: url(:/resource/fireGold.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="elecSilver" native="true">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>250</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#elecSilver{background-color: rgba(255,255,0,100);
+image: url(:/resource/flashSilver.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="elecBronze" native="true">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>320</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#elecBronze{background-color: rgba(255,255,0,100);
+image: url(:/resource/flashBronze.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="bushSilver" native="true">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>250</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#bushSilver{background-color: rgba(0,255,0,100);
+image: url(:/resource/bushSilver.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="bushBronze" native="true">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>320</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#bushBronze{background-color: rgba(0,255,0,100);
+image: url(:/resource/bushBronze.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="elecGold" native="true">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>180</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#elecGold{background-color: rgba(255,255,0,100);
+image: url(:/resource/flashGold.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="bushGold" native="true">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>180</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#bushGold{background-color: rgba(0,255,0,100);
+image: url(:/resource/bushGold.png);
+border-radius: 15px;}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="vsPlayer" native="true">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>110</y>
+      <width>134</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="toolTip">
+     <string comment="Combat with other player" extracomment="Combat with other player"/>
+    </property>
+    <property name="toolTipDuration">
+     <number>-1</number>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#vsPlayer{
+	background-color: rgba(0,0,0,50);
+	border-radius: 15px;
+	image: url(:/resource/vsplayer.png);
+}
+</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>40</y>
+      <width>110</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Consolas</family>
+      <pointsize>24</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgba(0, 0, 0, 150);</string>
+    </property>
+    <property name="text">
+     <string>BATTLE</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QWidget" name="listWidgetContainer" native="true">
    <property name="geometry">
@@ -1289,14 +1609,17 @@ QScrollBar::sub-line:vertiacal {
      </property>
     </widget>
    </widget>
+   <zorder>myStorageCloseButton</zorder>
+   <zorder>storageScrollArea</zorder>
+   <zorder>battlePicContainer</zorder>
   </widget>
+  <zorder>battlePicContainer</zorder>
   <zorder>myInfoButton</zorder>
   <zorder>onlinePlayerBtn</zorder>
   <zorder>rankButton</zorder>
   <zorder>storageButton</zorder>
   <zorder>packageButton</zorder>
   <zorder>huntPicContainer</zorder>
-  <zorder>battlePicContainer</zorder>
   <zorder>pokeballButton</zorder>
   <zorder>rankWidget</zorder>
   <zorder>pokeTableContainer</zorder>

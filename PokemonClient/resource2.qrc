@@ -9,5 +9,18 @@
         <file alias="rateSilver">resource/fightSilver.png</file>
         <file alias="rankSilver">resource/rankSilver.png</file>
         <file alias="trainerSilver">resource/trainerSilver.png</file>
+        <file>resource/bushBronze.png</file>
+        <file>resource/bushGold.png</file>
+        <file>resource/bushSilver.png</file>
+        <file>resource/fireBronze.png</file>
+        <file>resource/fireGold.png</file>
+        <file>resource/fireSilver.png</file>
+        <file>resource/flashBronze.png</file>
+        <file>resource/flashGold.png</file>
+        <file>resource/flashSilver.png</file>
+        <file>resource/vsplayer.png</file>
+        <file>resource/waterBronze.png</file>
+        <file>resource/waterGold.png</file>
+        <file>resource/waterSilver.png</file>
     </qresource>
 </RCC>

@@ -8,6 +8,7 @@ Hunt::Hunt(QWidget *parent) :
     ui(new Ui::Hunt)
 {
     ui->setupUi(this);
+    setWindowFlags(Qt::FramelessWindowHint);
     this->ui->renameWidget->hide();
     this->ui->decorationL->hide();
     this->ui->decorationR->hide();

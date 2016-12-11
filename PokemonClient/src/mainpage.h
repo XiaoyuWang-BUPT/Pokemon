@@ -107,9 +107,11 @@ private slots:
     void setMyInfo(int pokenum, int rank, double rate, QString info);
     void OpenInChrome(const QUrl& url);
     void clearScrollLayout(QString symbol, bool success);
+    void SwitchClear();
 
 signals:
     void switchToHunt();
+    void SwitchToBattle(QString nature, QString standard);
     void setOnlinePlayerIconSignal(int i);
     void setRankIconSignal(int i);
     void setPackegeScrollAreaSignal(QString symbol, QString kind, QString name, QString tip, int index);

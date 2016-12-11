@@ -7,8 +7,7 @@ MainPage::MainPage(QWidget *parent) :
     ui(new Ui::MainPage)
 {
     ui->setupUi(this);
-    //setWindowFlags(Qt::FramelessWindowHint);
-    //setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(Qt::FramelessWindowHint);
     this->setWindowTitle("pokemon");
     QIcon LOGO (":/logo");
     this->setWindowIcon(LOGO);
@@ -27,16 +26,27 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->rankButton->setCursor(QCursor(Qt::PointingHandCursor));
     this->ui->storageButton->setCursor(QCursor(Qt::PointingHandCursor));
     this->ui->huntPicContainer->setCursor(QCursor(Qt::PointingHandCursor));
-    this->ui->battlePicContainer->setCursor(QCursor(Qt::PointingHandCursor));
 
     this->ui->pokeballButton->installEventFilter(this);
     this->ui->huntPicContainer->installEventFilter(this);
     this->ui->battlePicContainer->installEventFilter(this);
     this->ui->closeOPButton->installEventFilter(this);
+    this->ui->vsPlayer->installEventFilter(this);
+    this->ui->fireGold->installEventFilter(this);
+    this->ui->fireBronze->installEventFilter(this);
+    this->ui->fireSilver->installEventFilter(this);
+    this->ui->waterGold->installEventFilter(this);
+    this->ui->waterSilver->installEventFilter(this);
+    this->ui->waterBronze->installEventFilter(this);
+    this->ui->bushGold->installEventFilter(this);
+    this->ui->bushSilver->installEventFilter(this);
+    this->ui->bushBronze->installEventFilter(this);
+    this->ui->elecGold->installEventFilter(this);
+    this->ui->elecSilver->installEventFilter(this);
+    this->ui->elecBronze->installEventFilter(this);
 
     this->ui->pokeballButton->setToolTip("click to know more");
     this->ui->huntPicContainer->setToolTip("click to hunt");
-    this->ui->battlePicContainer->setToolTip("click to battle");
     this->ui->rankButton->setToolTip("rank");
     this->ui->onlinePlayerBtn->setToolTip("online players");
     this->ui->myInfoButton->setToolTip("about me");
@@ -44,6 +54,20 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->storageButton->setToolTip("storage");
     this->ui->otherLabel->setToolTip("To be online");
     this->ui->anotherLabel->setToolTip("To be online");
+    this->ui->vsPlayer->setToolTip("VS other player");
+    this->ui->fireGold->setToolTip("VS fire master");
+    this->ui->fireSilver->setToolTip("VS fire gym leader");
+    this->ui->fireBronze->setToolTip("VS fire trainer");
+    this->ui->waterGold->setToolTip("VS water master");
+    this->ui->waterSilver->setToolTip("VS water gym leader");
+    this->ui->waterBronze->setToolTip("VS water trainer");
+    this->ui->bushGold->setToolTip("VS bush master");
+    this->ui->bushSilver->setToolTip("VS bush gymleader");
+    this->ui->bushBronze->setToolTip("VS bush trainer");
+    this->ui->elecGold->setToolTip("VS electricity master");
+    this->ui->elecSilver->setToolTip("VS electricity gym leader");
+    this->ui->elecBronze->setToolTip("VS electricity trainer");
+    this->ui->closeMainWidgetButton->setToolTip("close");
 
     setAutoFillBackground(true);
     QPalette palette;
@@ -94,6 +118,7 @@ MainPage::MainPage(QWidget *parent) :
         exButton[i]->installEventFilter(this);
     }
 
+    QObject::connect(this->ui->closeMainWidgetButton, SIGNAL(clicked(bool)), this, SLOT(close()));
     QObject::connect(this->ui->onlinePlayerBtn, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerClicked()));
     QObject::connect(this->ui->OPReloadButton, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerReloadClicked()));
     QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->listWidgetContainer, SLOT(hide()));
@@ -427,25 +452,136 @@ void MainPage::LoadOnlinePlayer(json &recvJ)
     return;
 }
 
+void MainPage::SwitchClear()
+{
+    this->hide();
+    this->ui->readmeWidget->hide();
+    this->ui->OPListWidget->clear();
+    this->ui->rankWidget->hide();
+    this->ui->rankButton->setGeometry(170, 410, 48, 48);
+    this->ui->myinfoWidget->hide();
+    this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
+    this->ui->myPokemonContainer->hide();
+    emit clearScrollAreaSignal();
+    this->ui->packageButton->setGeometry(490, 410, 48, 48);
+    this->ui->listWidgetContainer->hide();
+    this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+    return;
+}
+
 bool MainPage::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == this->ui->huntPicContainer)
     {
         if (event->type() == QEvent::MouseButtonPress)
         {
-            this->hide();
-            this->ui->readmeWidget->hide();
-            this->ui->OPListWidget->clear();
-            this->ui->rankWidget->hide();
-            this->ui->rankButton->setGeometry(170, 410, 48, 48);
-            this->ui->myinfoWidget->hide();
-            this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
-            this->ui->myPokemonContainer->hide();
-            emit clearScrollAreaSignal();
-            this->ui->packageButton->setGeometry(490, 410, 48, 48);
-            this->ui->listWidgetContainer->hide();
-            this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
+            SwitchClear();
             emit switchToHunt();
+        }
+    }
+    if (watched == this->ui->vsPlayer)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("player", "null");
+        }
+    }
+    if (watched == this->ui->fireGold)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            std::cout << "***event***";
+            emit SwitchToBattle("fire", "gold");
+        }
+    }
+    if (watched == this->ui->fireSilver)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("fire", "silver");
+        }
+    }
+    if (watched == this->ui->fireBronze)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("fire", "bronze");
+        }
+    }
+    if (watched == this->ui->waterGold)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("water", "gold");
+        }
+    }
+    if (watched == this->ui->waterSilver)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();;
+            emit SwitchToBattle("water", "silver");
+        }
+    }
+    if (watched == this->ui->waterBronze)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("water", "bronze");
+        }
+    }
+    if (watched == this->ui->bushGold)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("bush", "gold");
+        }
+    }
+    if (watched == this->ui->bushSilver)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("bush", "silver");
+        }
+    }
+    if (watched == this->ui->bushBronze)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("bush", "bronze");
+        }
+    }
+    if (watched == this->ui->elecGold)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("electricity", "gold");
+        }
+    }
+    if (watched == this->ui->elecSilver)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("electricity", "silver");
+        }
+    }
+    if (watched == this->ui->elecBronze)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            SwitchClear();
+            emit SwitchToBattle("electricity", "bronze");
         }
     }
     if (watched == this->ui->battlePicContainer)
