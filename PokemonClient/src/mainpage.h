@@ -58,6 +58,7 @@ private:
     std::thread calledThread;
     std::string recvString = "";
     int delHLayIndex = -1;
+    bool exClicked = false;
 
     //pokemon table displaying other players' pokemons' information
     QTableWidgetItem* pokeTableItem[MAXSIZE_POKEMON];
@@ -104,7 +105,7 @@ private slots:
     void setOnlinePlayerIcon(int i);
     void setRankIcons(int i);
     void setPackageScrollArea(QString symbol, QString kind, QString name, QString tip, int index);
-    void clearScrollArea();
+    void clearScrollArea(QString packorsto);
     void setMyInfo(int pokenum, int rank, double rate, QString info);
     void OpenInChrome(const QUrl& url);
     void clearScrollLayout(QString symbol, bool success);
@@ -117,7 +118,7 @@ signals:
     void setRankIconSignal(int i);
     void setPackegeScrollAreaSignal(QString symbol, QString kind, QString name, QString tip, int index);
     void setMyInfoSignal(int pokenum, int rank, double rate, QString info);
-    void clearScrollAreaSignal();
+    void clearScrollAreaSignal(QString packorsto);
     void playerPokeClicked(int i);
     void playerThumbClicked(int i);
     void rankPokeClicked(int i);

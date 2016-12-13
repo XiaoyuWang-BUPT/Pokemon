@@ -1,8 +1,6 @@
 ﻿#ifndef SESSION_H
 #define SESSION_H
 
-//#define _CRT_RAND_S
-//#include <stdlib.h>
 #include "lib/helper.h"
 #include "socketServer.h"
 #include <thread>
@@ -14,22 +12,10 @@
 #include <sstream>
 #include <QDateTime>
 #include <QString>
-#include <stdlib.h>
 
-//unsigned int Random(int max) {
-//    errno_t err;
-//        unsigned int number;
-//        err = rand_s(&number);
-//        if(err != 0)
-//        {
-//          return 0;
-//        }
-//        return (unsigned int)((double)number / ((double)UINT_MAX + 1) * double(max)) + 1;
-//}
-
-//int GiftAttFunc(int MIN, int MAX) {
-//    return MIN + Random(MAX - MIN);
-//}
+int AttGenFunc(int MIN, int MAX) {
+    return MIN + Random(MAX - MIN);
+}
 
 using json = nlohmann::json;
 
@@ -191,7 +177,7 @@ std::string GetSendStr(int pid, Helper* helper)
         std::string kindStr = recvJ["kind"];
         std::string name = recvJ["name"];
         std::string owner = recvJ["owner"];
-        int level = 3;
+        int level = 1;
         Kind kind;
         for (int i = 0; i < (sizeof(kindOfString)/sizeof(kindOfString[0])); i++)
         {
@@ -373,7 +359,7 @@ std::string GetSendStr(int pid, Helper* helper)
             Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
             queryIn = pokePackMapper.Query(qInHelper)
                         .ToVector();
-            if (player.packageCapacity > 0)
+            if (queryIn.size() < CAPACITY)
             {
                 Poor_ORM::ORMapper<PokemonInfo> pokeStoMapper ("pokeStorage.db");
                 queryOut = pokeStoMapper.Query(qOutHelper)
@@ -635,9 +621,29 @@ std::string GetSendStr(int pid, Helper* helper)
                 }
             }
          }
-        std::cout << "myattack:";
         sendJ["symbol"] = "battle";
         sendJ["end"] = "end";
+        sendJ["amount"] = pokeNum;
+        std::stringstream s;
+        std::string iStr;
+        for (int i = 0; i < pokeNum; i++)
+        {
+            s.clear();
+            s << i;
+            s >> iStr;
+            std::string key = "mypokename" + iStr;
+            sendJ[key] = myPokemon[i]->getName();
+            key = "mypokekind" + iStr;
+            sendJ[key] = kindOfString[myPokemon[i]->getKind()];
+            key = "mypokehp" + iStr;
+            sendJ[key] = myPokemon[i]->getTotalHP();
+            key = "enemypokename" + iStr;
+            sendJ[key] = enemyPokemon[i]->getName();
+            key = "enemypokekind" + iStr;
+            sendJ[key] = kindOfString[enemyPokemon[i]->getKind()];
+            key = "enemypokehp" + iStr;
+            sendJ[key] = enemyPokemon[i]->getTotalHP();
+        }
         int myBar = 0;
         int enemyBar = 0;
         Pokemon* myFightingPokemon;
@@ -672,6 +678,8 @@ std::string GetSendStr(int pid, Helper* helper)
                 int myBeforeHP = myFightingPokemon->getCurrentHP();
                 myFightingPokemon->Hurt();
                 int myAfterHP = myFightingPokemon->getCurrentHP();
+                if (myAfterHP < 0)
+                    myAfterHP = 0;
                 if (myAfterHP == myBeforeHP)
                 {
                     keyStr = "round" + roundStr + "myhurt";
@@ -688,12 +696,22 @@ std::string GetSendStr(int pid, Helper* helper)
                 myFightingPokemon->DeadJudge();
                 if (myFightingPokemon->getAlive())
                 {
-                    myFightingPokemon->Attack(enemyFightingPokemon);
+                    if ((AttGenFunc(0, 99) % 2) == 0)
+                    {
+                        myFightingPokemon->Attack(enemyFightingPokemon);
+                        keyStr = "round" + roundStr + "attway";
+                        sendJ[keyStr] = "att";
+                    }
+                    else
+                    {
+                        myFightingPokemon->SpecialAttack(enemyFightingPokemon);
+                        keyStr = "round" + roundStr + "attway";
+                        sendJ[keyStr] = "specialatt";
+                    }
                     //enemy pokemon current HP after attacked
-                    keyStr = "round" + roundStr + "enemypokemonHP";
-                    sendJ[keyStr] = enemyFightingPokemon->getCurrentHP();
-                    std::cout << "enemyFightingPokemon:" << enemyFightingPokemon->getCurrentHP() << std::endl;
+                    keyStr = "round" + roundStr + "enemypokemonhp";
                     enemyFightingPokemon->DeadJudge();
+                    sendJ[keyStr] = enemyFightingPokemon->getCurrentHP();
                     if (!(enemyFightingPokemon->getAlive()))
                     {
                         if ((enemyPokeIndex + 1) < enemyPokemon.size())
@@ -725,11 +743,13 @@ std::string GetSendStr(int pid, Helper* helper)
             {
                 enemyBar -= InitiativeBar;
                 keyStr = "round" + roundStr + "attack";
-                sendJ[keyStr] = "enemyPokemon";
+                sendJ[keyStr] = "enemypokemon";
                 //pokemon get hurt before attacking
                 int enemyBeforeHP = enemyFightingPokemon->getCurrentHP();
                 enemyFightingPokemon->Hurt();
                 int enemyAfterHP = enemyFightingPokemon->getCurrentHP();
+                if (enemyAfterHP < 0)
+                    enemyAfterHP = 0;
                 if (enemyAfterHP == enemyBeforeHP)
                 {
                     keyStr = "round" + roundStr + "enemyhurt";
@@ -746,11 +766,22 @@ std::string GetSendStr(int pid, Helper* helper)
                 enemyFightingPokemon->DeadJudge();
                 if (enemyFightingPokemon->getAlive())
                 {
-                    enemyFightingPokemon->Attack(myFightingPokemon);
+                    if ((AttGenFunc(0, 99) % 2) == 0)
+                    {
+                        enemyFightingPokemon->Attack(myFightingPokemon);
+                        keyStr = "round" + roundStr + "attway";
+                        sendJ[keyStr] = "att";
+                    }
+                    else
+                    {
+                        enemyFightingPokemon->SpecialAttack(myFightingPokemon);
+                        keyStr = "round" + roundStr + "attway";
+                        sendJ[keyStr] = "specialatt";
+                    }
                     //my pokemon current hp after attacked
                     keyStr = "round" + roundStr + "mypokemonhp";
-                    sendJ[keyStr] = myFightingPokemon->getCurrentHP();
                     myFightingPokemon->DeadJudge();
+                    sendJ[keyStr] = myFightingPokemon->getCurrentHP();
                     if (!(myFightingPokemon->getAlive()))
                     {
                         if ((myPokeIndex + 1) < myPokemon.size())
@@ -780,6 +811,7 @@ std::string GetSendStr(int pid, Helper* helper)
             }
             roundCnt++;
         }
+        sendJ["round"] = roundCnt;
         Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
         PlayerInfo pHelper;
         PlayerInfo player;
@@ -799,7 +831,8 @@ std::string GetSendStr(int pid, Helper* helper)
             for (Pokemon* mp : myPokemon)
             {
                 mp->setExperiencePoint(mp->getExperiencePoint() + (ExpGrade[enemyPokemon[0]->getLevel()] / 10));
-                mp->Upgrade();
+                while (mp->getExperiencePoint() >= ExpGrade[mp->getLevel() + 1])
+                    mp->Upgrade();
                 mp->setAlive(true);
                 mp->setCurrentHP(mp->getTotalHP());
                 mp->setSickCounter(0);
@@ -817,7 +850,8 @@ std::string GetSendStr(int pid, Helper* helper)
             for (Pokemon* mp : myPokemon)
             {
                 mp->setExperiencePoint(mp->getExperiencePoint() + (ExpGrade[enemyPokemon[0]->getLevel()] / 5));
-                mp->Upgrade();
+                while (mp->getExperiencePoint() >= ExpGrade[mp->getLevel() + 1])
+                    mp->Upgrade();
                 mp->setAlive(true);
                 mp->setCurrentHP(mp->getTotalHP());
                 mp->setSickCounter(0);

@@ -294,4 +294,6 @@ public:
     void SpecialAttack(Pokemon *dePokemon);
 };
 
+unsigned int Random(int max);
+
 #endif // POKEMON_H

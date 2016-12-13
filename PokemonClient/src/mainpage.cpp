@@ -149,7 +149,7 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this->ui->packageButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
     QObject::connect(this->ui->myPokemonCloseButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
     QObject::connect(this, SIGNAL(setPackegeScrollAreaSignal(QString, QString, QString, QString, int)), this, SLOT(setPackageScrollArea(QString, QString, QString, QString, int)));
-    QObject::connect(this, SIGNAL(clearScrollAreaSignal()), this, SLOT(clearScrollArea()));
+    QObject::connect(this, SIGNAL(clearScrollAreaSignal(QString)), this, SLOT(clearScrollArea(QString)));
     QObject::connect(this->ui->storageButton, SIGNAL(clicked(bool)), this, SLOT(onStorageClicked()));
     QObject::connect(this->ui->myStorageCloseButton, SIGNAL(clicked(bool)), this, SLOT(onStorageClicked()));
     QObject::connect(this, SIGNAL(exButtonClicked(QObject*,int)), this, SLOT(onExButtonClicked(QObject*,int)));
@@ -368,7 +368,7 @@ void MainPage::setMyInfo(int pokeNum, int rank, double rate, QString info)
     this->ui->rateLevelLabel->setToolTip(rateToolTip);
 }
 
-void MainPage::clearScrollArea()
+void MainPage::clearScrollArea(QString packorsto)
 {
     for (int i = 0; i < MAXSIZE_POKEMON; i++)
     {
@@ -376,6 +376,20 @@ void MainPage::clearScrollArea()
         scrollHLayout[i]->removeWidget(pokeTextLabel[i]);
         scrollHLayout[i]->removeWidget(exButton[i]);
         scrollVLayout->removeItem(scrollHLayout[i]);
+        pokePicLabel[i]->hide();
+        pokeTextLabel[i]->hide();
+        exButton[i]->hide();
+        pokePicLabel[i]->clear();
+        pokeTextLabel[i]->clear();
+    }
+    if (packorsto == "package")
+        packPokemon.clear();
+    if (packorsto == "storage")
+        stoPokemon.clear();
+    if (packorsto == "both")
+    {
+        packPokemon.clear();
+        stoPokemon.clear();
     }
 }
 
@@ -383,30 +397,15 @@ void MainPage::clearScrollLayout(QString symbol, bool success)
 {
     if (symbol == "packout")
     {
-        std::vector<std::string>::iterator iter = packPokemon.begin() + delHLayIndex;
-        packPokemon.erase(iter);
-        pokePicLabel[delHLayIndex]->clear();
-        pokePicLabel[delHLayIndex]->hide();
-        pokeTextLabel[delHLayIndex]->clear();
-        pokeTextLabel[delHLayIndex]->hide();
-        exButton[delHLayIndex]->hide();
-        exButton[delHLayIndex]->hide();
-        scrollVLayout->removeItem(scrollHLayout[delHLayIndex]);
-        delHLayIndex = -1;
+        exClicked = true;
+        emit this->ui->packageButton->clicked();
     }
     if (symbol == "stoout")
     {
         if (success)
         {
-            std::vector<std::string>::iterator iter = stoPokemon.begin() + delHLayIndex;
-            stoPokemon.erase(iter);
-            pokePicLabel[delHLayIndex]->clear();
-            pokePicLabel[delHLayIndex]->hide();
-            pokeTextLabel[delHLayIndex]->clear();
-            pokeTextLabel[delHLayIndex]->hide();
-            exButton[delHLayIndex]->hide();
-            exButton[delHLayIndex]->hide();
-            scrollVLayout->removeItem(scrollHLayout[delHLayIndex]);
+            exClicked = true;
+            emit this->ui->storageButton->clicked();
         }
         else
         {
@@ -465,7 +464,7 @@ void MainPage::SwitchClear()
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->myPokemonContainer->hide();
-    emit clearScrollAreaSignal();
+    emit clearScrollAreaSignal("both");
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
@@ -915,7 +914,7 @@ void MainPage::onOnlinePlayerClicked()
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->myPokemonContainer->hide();
-    emit clearScrollAreaSignal();
+    emit clearScrollAreaSignal("both");
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->myStorageContainer->hide();
     this->ui->storageButton->setGeometry(622, 410, 48, 48);
@@ -1009,7 +1008,7 @@ void MainPage::onPlayerThumbClicked(int i)
 
 void MainPage::onMyInfoClicked()
 {
-    emit clearScrollAreaSignal();
+    emit clearScrollAreaSignal("both");
     this->ui->readmeWidget->hide();
     this->ui->myinfoText->clear();
     this->ui->rankWidget->hide();
@@ -1046,7 +1045,7 @@ void MainPage::onRankClicked()
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
     this->ui->myPokemonContainer->hide();
-    emit clearScrollAreaSignal();
+    emit clearScrollAreaSignal("both");
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->myStorageContainer->hide();
     this->ui->storageButton->setGeometry(622, 410, 48, 48);
@@ -1112,7 +1111,7 @@ void MainPage::onRankThumbClicked(int i)
 
 void MainPage::onPackageClicked()
 {
-    emit clearScrollAreaSignal();
+    emit clearScrollAreaSignal("package");
     packPokemon.clear();
     this->ui->readmeWidget->hide();
     this->ui->myinfoWidget->hide();
@@ -1123,8 +1122,10 @@ void MainPage::onPackageClicked()
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
     this->ui->myStorageContainer->hide();
     this->ui->storageButton->setGeometry(622, 410, 48, 48);
-    if (this->ui->myPokemonContainer->isHidden())
+    if (this->ui->myPokemonContainer->isHidden() || exClicked)
     {
+        if (exClicked)
+            exClicked = false;
         json j;
         j["symbol"] = "package";
         j["name"] = socketClient->getPlayerName();
@@ -1167,7 +1168,7 @@ void MainPage::onUpDownClicked()
 
 void MainPage::onStorageClicked()
 {
-    emit clearScrollAreaSignal();
+    emit clearScrollAreaSignal("storage");
     stoPokemon.clear();
     this->ui->readmeWidget->hide();
     this->ui->myinfoWidget->hide();
@@ -1179,8 +1180,10 @@ void MainPage::onStorageClicked()
     this->ui->rankWidget->hide();
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
 
-    if (this->ui->myStorageContainer->isHidden())
+    if (this->ui->myStorageContainer->isHidden() || exClicked)
     {
+        if (exClicked)
+            exClicked = false;
         json j;
         j["symbol"] = "storage";
         j["name"] = socketClient->getPlayerName();

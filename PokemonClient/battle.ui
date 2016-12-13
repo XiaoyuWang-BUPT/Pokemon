@@ -45,28 +45,54 @@
   <widget class="QWidget" name="myPoke" native="true">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>240</y>
+     <x>30</x>
+     <y>160</y>
      <width>200</width>
      <height>200</height>
     </rect>
    </property>
+   <widget class="QLabel" name="myPokeLabel">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>200</width>
+      <height>200</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QWidget" name="enemyPoke" native="true">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>90</y>
+     <x>560</x>
+     <y>160</y>
      <width>200</width>
      <height>200</height>
     </rect>
    </property>
+   <widget class="QLabel" name="enemyLabel">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>200</width>
+      <height>200</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QWidget" name="myPokeHead" native="true">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>179</y>
+     <x>30</x>
+     <y>99</y>
      <width>200</width>
      <height>50</height>
     </rect>
@@ -93,13 +119,32 @@
       <height>25</height>
      </rect>
     </property>
+    <widget class="QProgressBar" name="myHPBar">
+     <property name="geometry">
+      <rect>
+       <x>-3</x>
+       <y>0</y>
+       <width>201</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+     <property name="textVisible">
+      <bool>false</bool>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QWidget" name="enemyPokeHead" native="true">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>30</y>
+     <x>560</x>
+     <y>100</y>
      <width>200</width>
      <height>50</height>
     </rect>
@@ -126,6 +171,22 @@
       <height>25</height>
      </rect>
     </property>
+    <widget class="QProgressBar" name="enemyHPBar">
+     <property name="geometry">
+      <rect>
+       <x>-3</x>
+       <y>0</y>
+       <width>201</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+     <property name="textVisible">
+      <bool>false</bool>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
