@@ -62,6 +62,8 @@ const int UpGradeAttrIncNormal = 7;
 const int UpGradeAttrIncWeak = 4;
 const int UpGradeCriticalInc = 5;
 
+const int InitiativeBar = 100;
+
 class Helper
 {
 private:

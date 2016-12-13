@@ -42,32 +42,6 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="attackButton">
-   <property name="geometry">
-    <rect>
-     <x>640</x>
-     <y>430</y>
-     <width>96</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Attack</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="specialAttackButton">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>430</y>
-     <width>96</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Special Attack</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="myPoke" native="true">
    <property name="geometry">
     <rect>

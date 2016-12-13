@@ -1,6 +1,8 @@
 ﻿#ifndef SESSION_H
 #define SESSION_H
 
+//#define _CRT_RAND_S
+//#include <stdlib.h>
 #include "lib/helper.h"
 #include "socketServer.h"
 #include <thread>
@@ -12,16 +14,28 @@
 #include <sstream>
 #include <QDateTime>
 #include <QString>
+#include <stdlib.h>
+
+//unsigned int Random(int max) {
+//    errno_t err;
+//        unsigned int number;
+//        err = rand_s(&number);
+//        if(err != 0)
+//        {
+//          return 0;
+//        }
+//        return (unsigned int)((double)number / ((double)UINT_MAX + 1) * double(max)) + 1;
+//}
+
+//int GiftAttFunc(int MIN, int MAX) {
+//    return MIN + Random(MAX - MIN);
+//}
 
 using json = nlohmann::json;
 
 using namespace Poor_ORM;
 
-namespace battlePokemon
-{
-std::vector<Pokemon*> myPokemon;
-std::vector<Pokemon*> enemyPokemon;
-}
+enum GameOver{ LOSE = -1, CONTINUE = 0, WIN = 1};
 
 bool SortByRank(const struct PlayerInfo& p1, const struct PlayerInfo& p2)
 {
@@ -177,7 +191,7 @@ std::string GetSendStr(int pid, Helper* helper)
         std::string kindStr = recvJ["kind"];
         std::string name = recvJ["name"];
         std::string owner = recvJ["owner"];
-        int level = 1;
+        int level = 3;
         Kind kind;
         for (int i = 0; i < (sizeof(kindOfString)/sizeof(kindOfString[0])); i++)
         {
@@ -454,7 +468,7 @@ std::string GetSendStr(int pid, Helper* helper)
         sendJ["symbol"] = "thumb";
         sendJ["end"] = "end";
     }
-    if (symbol == "battlepre")
+    if (symbol == "battle")
     {
         std::string owner = recvJ["name"];
         Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
@@ -464,6 +478,7 @@ std::string GetSendStr(int pid, Helper* helper)
         std::vector<Pokemon*> myPokemon;
         std::vector<Pokemon*> enemyPokemon;
         PokemonFactory* pokemonFactory = new PokemonFactory();
+        //get my pokemon
         for (auto& q : query)
         {
             if (q.owner == owner)
@@ -475,6 +490,7 @@ std::string GetSendStr(int pid, Helper* helper)
         int pokeNum = myPokemon.size();
         std::string nature = recvJ["nature"];
         std::string standard = recvJ["standard"];
+        //get enemy pokemon
         if (nature == "fire")
         {
             if (standard == "gold")
@@ -619,29 +635,202 @@ std::string GetSendStr(int pid, Helper* helper)
                 }
             }
          }
-// print the information of pokemon in battle
-//        for (int i = 0; i < pokeNum; i++)
-//        {
-//            std::cout << myPokemon[i]->getName() << " ";
-//            std::cout << enemyPokemon[i]->getName() << " ";
-//        }
-        battlePokemon::myPokemon = myPokemon;
-        battlePokemon::enemyPokemon = enemyPokemon;
-        symbol == "battling";
-    }
-    if (symbol == "battling")
-    {
-        //TODO
-        //sendJ["symbol"] = "battling"
-        //battlepre -> battling
-        //Then server and client pass "battling" message until game over
-        //server send symbol = "battled" as well as all message to client
-    }
-    if (symbol == "battled")
-    {
-        //When player exit during a battle
-        //client would send symbol = "battled" message to server
-        //server then judge win/defeat as well as record rank and rate
+        std::cout << "myattack:";
+        sendJ["symbol"] = "battle";
+        sendJ["end"] = "end";
+        int myBar = 0;
+        int enemyBar = 0;
+        Pokemon* myFightingPokemon;
+        Pokemon* enemyFightingPokemon;
+        bool myPokeAllDead = false;
+        bool enemyPokeAllDead = false;
+        int myPokeIndex = 0;
+        int enemyPokeIndex = 0;
+        myFightingPokemon = myPokemon[0];
+        enemyFightingPokemon = enemyPokemon[0];
+        int roundCnt = 0;
+        std::stringstream stream;
+        std::string roundStr;
+        std::string keyStr;
+        while (!(myPokeAllDead || enemyPokeAllDead))
+        {
+            stream.clear();
+            stream << roundCnt;
+            stream >> roundStr;
+            while ((myBar < InitiativeBar) &&
+                   (enemyBar < InitiativeBar))
+            {
+                myBar += myFightingPokemon->getIntervalIncrease();
+                enemyBar += enemyFightingPokemon->getIntervalIncrease();
+            }
+            if (myBar >= InitiativeBar)
+            {
+                myBar -= InitiativeBar;
+                keyStr = "round" + roundStr + "attack";
+                sendJ[keyStr] = "mypokemon";
+                //pokemon get hurt before attacking if in unhealthy state
+                int myBeforeHP = myFightingPokemon->getCurrentHP();
+                myFightingPokemon->Hurt();
+                int myAfterHP = myFightingPokemon->getCurrentHP();
+                if (myAfterHP == myBeforeHP)
+                {
+                    keyStr = "round" + roundStr + "myhurt";
+                    sendJ[keyStr] = false;
+                }
+                else
+                {
+                    keyStr = "round" + roundStr + "myhurt";
+                    sendJ[keyStr] = true;
+                    //currentHP after get hurt
+                    keyStr = "round" + roundStr + "myhurthp";
+                    sendJ[keyStr] = myAfterHP;
+                }
+                myFightingPokemon->DeadJudge();
+                if (myFightingPokemon->getAlive())
+                {
+                    myFightingPokemon->Attack(enemyFightingPokemon);
+                    //enemy pokemon current HP after attacked
+                    keyStr = "round" + roundStr + "enemypokemonHP";
+                    sendJ[keyStr] = enemyFightingPokemon->getCurrentHP();
+                    std::cout << "enemyFightingPokemon:" << enemyFightingPokemon->getCurrentHP() << std::endl;
+                    enemyFightingPokemon->DeadJudge();
+                    if (!(enemyFightingPokemon->getAlive()))
+                    {
+                        if ((enemyPokeIndex + 1) < enemyPokemon.size())
+                        {
+                            enemyPokeIndex++;
+                            enemyFightingPokemon = enemyPokemon[enemyPokeIndex];
+                        }
+                        else
+                        {
+                            enemyPokeAllDead = true;
+                        }
+                    }
+                    //else enemy pokemon survived
+                }
+                else //change my fighting pokemon
+                {
+                    if ((myPokeIndex + 1) < myPokemon.size())
+                    {
+                        myPokeIndex++;
+                        myFightingPokemon = myPokemon[myPokeIndex];
+                    }
+                    else
+                    {
+                        myPokeAllDead = true;
+                    }
+                }
+            }
+            if (enemyBar >= InitiativeBar)
+            {
+                enemyBar -= InitiativeBar;
+                keyStr = "round" + roundStr + "attack";
+                sendJ[keyStr] = "enemyPokemon";
+                //pokemon get hurt before attacking
+                int enemyBeforeHP = enemyFightingPokemon->getCurrentHP();
+                enemyFightingPokemon->Hurt();
+                int enemyAfterHP = enemyFightingPokemon->getCurrentHP();
+                if (enemyAfterHP == enemyBeforeHP)
+                {
+                    keyStr = "round" + roundStr + "enemyhurt";
+                    sendJ[keyStr] = false;
+                }
+                else
+                {
+                    keyStr = "round" + roundStr + "enemyhurt";
+                    sendJ[keyStr] = true;
+                    //currentHP after attacked
+                    keyStr = "round" + roundStr + "enemyhurthp";
+                    sendJ[keyStr] = enemyAfterHP;
+                }
+                enemyFightingPokemon->DeadJudge();
+                if (enemyFightingPokemon->getAlive())
+                {
+                    enemyFightingPokemon->Attack(myFightingPokemon);
+                    //my pokemon current hp after attacked
+                    keyStr = "round" + roundStr + "mypokemonhp";
+                    sendJ[keyStr] = myFightingPokemon->getCurrentHP();
+                    myFightingPokemon->DeadJudge();
+                    if (!(myFightingPokemon->getAlive()))
+                    {
+                        if ((myPokeIndex + 1) < myPokemon.size())
+                        {
+                            myPokeIndex++;
+                            myFightingPokemon = myPokemon[myPokeIndex];
+                        }
+                        else
+                        {
+                            myPokeAllDead = true;
+                        }
+                    }
+                    //else my fighting pokemon survived
+                }
+                else
+                {
+                    if ((enemyPokeIndex + 1) < enemyPokemon.size())
+                    {
+                        enemyPokeIndex++;
+                        enemyFightingPokemon = enemyPokemon[enemyPokeIndex];
+                    }
+                    else
+                    {
+                        enemyPokeAllDead = true;
+                    }
+                }
+            }
+            roundCnt++;
+        }
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        PlayerInfo pHelper;
+        PlayerInfo player;
+        auto pquery = playerMapper.Query(pHelper)
+                .ToVector();
+        for (auto q : pquery)
+        {
+            if (q.name == owner)
+            {
+                player = q;
+                break;
+            }
+        }
+        if (myPokeAllDead)
+        {
+            sendJ["win"] = false;
+            for (Pokemon* mp : myPokemon)
+            {
+                mp->setExperiencePoint(mp->getExperiencePoint() + (ExpGrade[enemyPokemon[0]->getLevel()] / 10));
+                mp->Upgrade();
+                mp->setAlive(true);
+                mp->setCurrentHP(mp->getTotalHP());
+                mp->setSickCounter(0);
+                mp->setSickPoint(0);
+                mp->setState(HEALTHY);
+                PokemonInfo pi = mp->ToPokeStruInfo();
+                pokePackMapper.Update(pi);
+            }
+            player.rate = (player.rate * player.games) / (player.games + 1);
+            playerMapper.Update(player);
+        }
+        else
+        {
+            sendJ["win"] = true;
+            for (Pokemon* mp : myPokemon)
+            {
+                mp->setExperiencePoint(mp->getExperiencePoint() + (ExpGrade[enemyPokemon[0]->getLevel()] / 5));
+                mp->Upgrade();
+                mp->setAlive(true);
+                mp->setCurrentHP(mp->getTotalHP());
+                mp->setSickCounter(0);
+                mp->setSickPoint(0);
+                mp->setState(HEALTHY);
+                PokemonInfo pi = mp->ToPokeStruInfo();
+                pokePackMapper.Update(pi);
+            }
+            player.rate = (player.rate * player.games + 1) / (player.games + 1);
+            player.rank += enemyPokemon[0]->getLevel() / myPokemon[0]->getLevel();
+            playerMapper.Update(player);
+        }
+
     }
     helper->setSendStrHelper(sendJ.dump());
     std::string strSend = helper->getSendStrHelper();

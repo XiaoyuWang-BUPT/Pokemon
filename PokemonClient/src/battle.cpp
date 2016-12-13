@@ -38,7 +38,7 @@ void Battle::SendAndRecvFunc(json j)
 void Battle::receiveSwitch(QString nature, QString standard)
 {
     json j;
-    j["symbol"] = "battlepre";
+    j["symbol"] = "battle";
     j["nature"] = nature.toStdString();
     j["standard"] = standard.toStdString();
     j["name"] = socketClient->getPlayerName();
