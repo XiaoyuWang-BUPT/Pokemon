@@ -20,7 +20,7 @@ struct PlayerInfo
     string beginDateTime; //201611171230 2016-11-17 12:30
     string gameTime; //12003 120hours 3minutes
     ORMAP(PlayerInfo, name, password,
-          pokemonNumber, packageCapacity, rate, rank, thumb, beginDateTime,
+          pokemonNumber, packageCapacity, rate, games, rank, thumb, beginDateTime,
           gameTime)
 };
 
