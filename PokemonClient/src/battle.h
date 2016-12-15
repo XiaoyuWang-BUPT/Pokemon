@@ -10,6 +10,7 @@
 #include <QPropertyAnimation>
 #include <QRect>
 #include <QSize>
+#include <QSizeF>
 #include "lib/json.hpp"
 
 using json = nlohmann::json;
@@ -40,8 +41,11 @@ private:
     std::vector<int> enemyPokemonTHP;
     int myPokeIndex = 0;
     int enemyPokeIndex = 0;
+    int myPokeCurrentHP = 0;
+    int enemyPokeCurrentHP = 0;
     std::string natureStd = "";
     std::string standardStd = "";
+    std::string myNature = "";
 
 signals:
     void switchToMainPage();
@@ -55,6 +59,7 @@ signals:
     void MyPokeHurtSignal(int myhurthp, QString enemyNature);
     void EnemyPokeHurtSignal(int enemyhurthp, QString myNature);
     void ClearHurtSignal();
+    void ClearSpecialAttSignal();
     void MyPokeChangeSignal(int mypokeindex);
     void EnemyPokeChangeSignal(int enemypokeindex);
 
@@ -71,6 +76,7 @@ private slots:
     void onMyPokeHurt(int myhurthp, QString enemyNature);
     void onEnemyPokeHurt(int enemyhurthp, QString myNature);
     void ClearHurt();
+    void ClearSpecialAtt();
     void onMyPokeChange(int mypokeindex);
     void onEnemyPokeChange(int enemypokeindex);
 

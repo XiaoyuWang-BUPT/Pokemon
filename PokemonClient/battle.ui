@@ -77,35 +77,6 @@
        <height>25</height>
       </rect>
      </property>
-     <widget class="QProgressBar" name="myPokeHPBar">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>0</y>
-        <width>170</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QProgressBar {
-	border : 1px solid white;
-	border-radius : 2px;
-	background-color : rgba(255, 255, 255, 175);
-}
-QProgressBar::chunk {
-	background-color : rgba(0, 175, 0, 150);
-}</string>
-      </property>
-      <property name="value">
-       <number>100</number>
-      </property>
-      <property name="textVisible">
-       <bool>false</bool>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
      <widget class="QLabel" name="myHPLabel">
       <property name="geometry">
        <rect>
@@ -128,6 +99,33 @@ QProgressBar::chunk {
       </property>
       <property name="text">
        <string>HP:</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="myPokeHPBarWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>0</y>
+        <width>170</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color : rgba(0, 175, 0, 150);</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="myBarDecorationWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>0</y>
+        <width>170</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: 1px solid white;
+border-radius : 3px;</string>
       </property>
      </widget>
     </widget>
@@ -174,28 +172,15 @@ QProgressBar::chunk {
    <widget class="QWidget" name="myPoke" native="true">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>50</x>
       <y>220</y>
       <width>200</width>
       <height>200</height>
      </rect>
     </property>
-    <widget class="QLabel" name="myPokeLabel">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>200</width>
-       <height>200</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <widget class="QLabel" name="myHurtLabel">
      <property name="geometry">
       <rect>
@@ -209,6 +194,21 @@ QProgressBar::chunk {
       <string/>
      </property>
     </widget>
+    <widget class="QLabel" name="myPokeLabel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>200</width>
+       <height>200</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <zorder>myPokeLabel</zorder>
+    <zorder>myHurtLabel</zorder>
    </widget>
    <widget class="QWidget" name="enemyPokeHead" native="true">
     <property name="geometry">
@@ -255,32 +255,6 @@ QProgressBar::chunk {
        <height>25</height>
       </rect>
      </property>
-     <widget class="QProgressBar" name="enemyPokeHPBar">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>0</y>
-        <width>170</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QProgressBar {
-	border : 1px solid white;
-	border-radius : 2px;
-	background-color : rgba(255, 255, 255, 175);
-}
-QProgressBar::chunk {
-	background-color : rgba(0, 175, 0, 150);
-}</string>
-      </property>
-      <property name="value">
-       <number>100</number>
-      </property>
-      <property name="textVisible">
-       <bool>false</bool>
-      </property>
-     </widget>
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
@@ -305,6 +279,33 @@ QProgressBar::chunk {
        <string>HP:</string>
       </property>
      </widget>
+     <widget class="QWidget" name="enemyPokeHPBarWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>0</y>
+        <width>170</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color : rgba(0, 175, 0, 150);</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="enemyBarDecorationWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>0</y>
+        <width>170</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border : 1px solid white;
+border-radius : 3px;</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="endWidget" native="true">
@@ -319,7 +320,7 @@ QProgressBar::chunk {
     <widget class="QPushButton" name="confirmButton">
      <property name="geometry">
       <rect>
-       <x>40</x>
+       <x>50</x>
        <y>110</y>
        <width>75</width>
        <height>23</height>
@@ -335,17 +336,54 @@ QProgressBar::chunk {
     <widget class="QLabel" name="winorloseLabel">
      <property name="geometry">
       <rect>
-       <x>50</x>
+       <x>13</x>
        <y>50</y>
-       <width>54</width>
-       <height>12</height>
+       <width>141</width>
+       <height>41</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 255);
+font: 75 24pt &quot;Consolas&quot;;</string>
      </property>
      <property name="text">
       <string/>
      </property>
     </widget>
    </widget>
+   <widget class="QLabel" name="mySpecialAttLabel">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>250</y>
+      <width>60</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="enemySpecialAttLabel">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>250</y>
+      <width>60</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>myPokeHead</zorder>
+   <zorder>enemyPoke</zorder>
+   <zorder>enemyPokeHead</zorder>
+   <zorder>endWidget</zorder>
+   <zorder>myPoke</zorder>
+   <zorder>mySpecialAttLabel</zorder>
+   <zorder>enemySpecialAttLabel</zorder>
   </widget>
  </widget>
  <resources/>

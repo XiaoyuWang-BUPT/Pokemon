@@ -22,6 +22,7 @@ Battle::Battle(QWidget *parent) :
     QObject::connect(this, SIGNAL(MyPokeChangeSignal(int)), this, SLOT(onMyPokeChange(int)));
     QObject::connect(this, SIGNAL(EnemyPokeChangeSignal(int)), this, SLOT(onEnemyPokeChange(int)));
     QObject::connect(this, SIGNAL(ClearHurtSignal()), this, SLOT(ClearHurt()));
+    QObject::connect(this, SIGNAL(ClearSpecialAttSignal()), this, SLOT(ClearSpecialAtt()));
 }
 
 Battle::Battle(SocketClient *sc, QWidget *parent) :
@@ -44,6 +45,8 @@ void Battle::receiveSwitch(QString nature, QString standard)
 {
     this->ui->confirmButton->hide();
     this->ui->winorloseLabel->hide();
+    this->ui->myPokeHPBarWidget->resize(170, 20);
+    this->ui->enemyPokeHPBarWidget->resize(170, 20);
     myPokemonName.clear();
     myPokemonKind.clear();
     myPokemonTHP.clear();
@@ -70,7 +73,7 @@ void Battle::getRecvStr(QString recvStr)
     {
         int pokeNum = recvJ["amount"];
         int round = recvJ["round"];
-        std::string myNature = recvJ["mynature"];
+        myNature = recvJ["mynature"];
         int roundCnt = 0;
         std::stringstream stream;
         std::string iStr;
@@ -100,7 +103,7 @@ void Battle::getRecvStr(QString recvStr)
         int enemyFightingIndex = 0;
         emit MyPokeChangeSignal(myFightingIndex);
         emit EnemyPokeChangeSignal(enemyFightingIndex);
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::microseconds(1250000));
         for (; roundCnt < round; roundCnt++)
         {
             stream.clear();
@@ -117,7 +120,7 @@ void Battle::getRecvStr(QString recvStr)
                     keyStr = "round" + roundStr + "myhurthp";
                     int myhurthp = recvJ[keyStr];
                     emit MyPokeHurtSignal(myhurthp, QString::fromStdString(natureStd));
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                     emit ClearHurtSignal();
                     //my fighting pokemon is hurt to dead change another pokemon
                     if (myhurthp == 0)
@@ -126,7 +129,7 @@ void Battle::getRecvStr(QString recvStr)
                         if (myFightingIndex < pokeNum)
                         {
                             emit MyPokeChangeSignal(myFightingIndex);
-                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                            std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         }
                         else
                         {
@@ -141,16 +144,18 @@ void Battle::getRecvStr(QString recvStr)
                         keyStr = "round" + roundStr + "enemypokemonhp";
                         int enemypokehp = recvJ[keyStr];
                         emit MyPokeAttackSignal(QString::fromStdString(attway));
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         emit EnemyPokeBeAttacked(enemypokehp);
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+                        if (attway == "specialatt")
+                            emit ClearSpecialAttSignal();
                         if (enemypokehp == 0)
                         {
                             enemyFightingIndex++;
                             if (enemyFightingIndex < pokeNum)
                             {
                                 emit EnemyPokeChangeSignal(enemyFightingIndex);
-                                std::this_thread::sleep_for(std::chrono::seconds(1));
+                                std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                             }
                             else
                             {
@@ -167,16 +172,18 @@ void Battle::getRecvStr(QString recvStr)
                     keyStr = "round" + roundStr + "enemypokemonhp";
                     int enemypokehp = recvJ[keyStr];
                     emit MyPokeAttackSignal(QString::fromStdString(attway));
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                     emit EnemyPokeBeAttacked(enemypokehp);
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+                    if (attway == "specialatt")
+                        emit ClearSpecialAttSignal();
                     if (enemypokehp == 0)
                     {
                         enemyFightingIndex++;
                         if (enemyFightingIndex < pokeNum)
                         {
                             emit EnemyPokeChangeSignal(enemyFightingIndex);
-                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                            std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         }
                         else
                         {
@@ -195,7 +202,7 @@ void Battle::getRecvStr(QString recvStr)
                     keyStr = "round" + roundStr + "enemyhurthp";
                     int enemyhurthp = recvJ[keyStr];
                     emit EnemyPokeHurtSignal(enemyhurthp, QString::fromStdString(myNature));
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                     emit ClearHurtSignal();
                     if (enemyhurthp == 0)
                     {
@@ -203,7 +210,7 @@ void Battle::getRecvStr(QString recvStr)
                         if (enemyFightingIndex < pokeNum)
                         {
                             emit EnemyPokeChangeSignal(enemyFightingIndex);
-                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                            std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         }
                         else
                         {
@@ -218,16 +225,18 @@ void Battle::getRecvStr(QString recvStr)
                         keyStr = "round" + roundStr + "mypokemonhp";
                         int mypokehp = recvJ[keyStr];
                         emit EnemyPokeAttackSignal(QString::fromStdString(attway));
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         emit MyPokeBeAttacked(mypokehp);
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+                        if (attway == "specialatt")
+                            emit ClearSpecialAttSignal();
                         if (mypokehp == 0)
                         {
                             myFightingIndex++;
                             if (myFightingIndex < pokeNum)
                             {
                                 emit MyPokeChangeSignal(myFightingIndex);
-                                std::this_thread::sleep_for(std::chrono::seconds(1));
+                                std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                             }
                             else
                             {
@@ -244,16 +253,18 @@ void Battle::getRecvStr(QString recvStr)
                     keyStr = "round" + roundStr + "mypokemonhp";
                     int mypokehp = recvJ[keyStr];
                     emit EnemyPokeAttackSignal(QString::fromStdString(attway));
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                     emit MyPokeBeAttacked(mypokehp);
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+                    if (attway == "specialatt")
+                        emit ClearSpecialAttSignal();
                     if (mypokehp == 0)
                     {
                         myFightingIndex++;
                         if (myFightingIndex < pokeNum)
                         {
                             emit MyPokeChangeSignal(myFightingIndex);
-                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                            std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         }
                         else
                         {
@@ -311,40 +322,86 @@ void Battle::winOrLose(bool win)
 
 void Battle::onMyPokeAttack(QString attway)
 {
-    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->myPoke, "geometry");
-    animation->setStartValue(QRect(30, 160, 200, 200));
-    animation->setKeyValueAt(0.5, QRect(560, 160, 200, 200));
-    animation->setEndValue(QRect(30, 160, 200, 200));
-    animation->setDuration(2000);
-    animation->start(QPropertyAnimation::DeleteWhenStopped);
+    if (attway == "att")
+    {
+        QPropertyAnimation* animation = new QPropertyAnimation(this->ui->myPoke, "geometry");
+        animation->setStartValue(QRect(30, 160, 200, 200));
+        animation->setKeyValueAt(0.5, QRect(560, 160, 200, 200));
+        animation->setEndValue(QRect(30, 160, 200, 200));
+        animation->setDuration(2000);
+        animation->start(QPropertyAnimation::DeleteWhenStopped);
+    }
+    if (attway == "specialatt")
+    {
+        if (QString::fromStdString(myNature).toLower() == "fire")
+            this->ui->mySpecialAttLabel->setPixmap(QPixmap(":/myfireatt"));
+        if (QString::fromStdString(myNature).toLower() == "water")
+            this->ui->mySpecialAttLabel->setPixmap(QPixmap(":/mywateratt"));
+        if (QString::fromStdString(myNature).toLower() == "bush")
+            this->ui->mySpecialAttLabel->setPixmap(QPixmap(":/mybushatt"));
+        if (QString::fromStdString(myNature).toLower() == "electricity")
+            this->ui->mySpecialAttLabel->setPixmap(QPixmap(":/myelectricityatt"));
+        this->ui->mySpecialAttLabel->show();
+        QPropertyAnimation* animation = new QPropertyAnimation(this->ui->mySpecialAttLabel, "geometry");
+        animation->setStartValue(QRect(190, 250, 60, 30));
+        animation->setEndValue(QRect(540, 250, 60, 30));
+        animation->setDuration(2000);
+        animation->start(QPropertyAnimation::DeleteWhenStopped);
+    }
 }
 
 void Battle::onEnemyPokeAttack(QString attway)
 {
-    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPoke, "geometry");
-    animation->setStartValue(QRect(560, 160, 200, 200));
-    animation->setKeyValueAt(0.5, QRect(30, 160, 200, 200));
-    animation->setEndValue(QRect(560, 160, 200, 200));
-    animation->setDuration(2000);
-    animation->start(QPropertyAnimation::DeleteWhenStopped);
+    if (attway == "att")
+    {
+        QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPoke, "geometry");
+        animation->setStartValue(QRect(560, 160, 200, 200));
+        animation->setKeyValueAt(0.5, QRect(30, 160, 200, 200));
+        animation->setEndValue(QRect(560, 160, 200, 200));
+        animation->setDuration(2000);
+        animation->start(QPropertyAnimation::DeleteWhenStopped);
+    }
+    if (attway == "specialatt")
+    {
+        if (QString::fromStdString(natureStd).toLower() == "fire")
+            this->ui->enemySpecialAttLabel->setPixmap(QPixmap(":/enemyfireatt"));
+        if (QString::fromStdString(natureStd).toLower() == "water")
+            this->ui->enemySpecialAttLabel->setPixmap(QPixmap(":/enemywateratt"));
+        if (QString::fromStdString(natureStd).toLower() == "bush")
+            this->ui->enemySpecialAttLabel->setPixmap(QPixmap(":/enemybushatt"));
+        if (QString::fromStdString(natureStd).toLower() == "electricity")
+            this->ui->enemySpecialAttLabel->setPixmap(QPixmap(":/enemyelectricityatt"));
+        this->ui->enemySpecialAttLabel->show();
+        QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemySpecialAttLabel, "geometry");
+        animation->setStartValue(QRect(540, 250, 60, 30));
+        animation->setEndValue(QRect(190, 250, 60, 30));
+        animation->setDuration(2000);
+        animation->start(QPropertyAnimation::DeleteWhenStopped);
+    }
 }
 
 void Battle::onMyPokeBeAttacked(int mypokehp)
 {
-    int startHP = this->ui->myPokeHPBar->value();
-    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->myPokeHPBar, "value");
-    animation->setStartValue(startHP);
-    animation->setEndValue(mypokehp);
+    double width = this->ui->myPokeHPBarWidget->width();
+    double startWidth = width * myPokeCurrentHP / myPokemonTHP[myPokeIndex];
+    double endWidth = width * mypokehp / myPokemonTHP[myPokeIndex];
+    myPokeCurrentHP = mypokehp;
+    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->myPokeHPBarWidget, "size");
+    animation->setStartValue(QSizeF(startWidth, 20));
+    animation->setEndValue(QSizeF(endWidth, 20));
     animation->setDuration(1000);
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void Battle::onEnemyPokeBeAttacked(int enemypokehp)
 {
-    int startHP = this->ui->enemyPokeHPBar->value();
-    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPokeHPBar, "value");
-    animation->setStartValue(startHP);
-    animation->setEndValue(enemypokehp);
+    double width = this->ui->enemyPokeHPBarWidget->width();
+    double startWidth = width * enemyPokeCurrentHP / enemyPokemonTHP[enemyPokeIndex];
+    double endWidth = width * enemypokehp / enemyPokemonTHP[enemyPokeIndex];
+    enemyPokeCurrentHP = enemypokehp;
+    QPropertyAnimation *animation = new QPropertyAnimation(this->ui->enemyPokeHPBarWidget, "size");
+    animation->setStartValue(QSizeF(startWidth, 20));
+    animation->setEndValue(QSizeF(endWidth, 20));
     animation->setDuration(1000);
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
@@ -363,19 +420,13 @@ void Battle::onMyPokeHurt(int myhurthp, QString enemyNature)
     if (enemyNature == "water")
         pixmap = QPixmap(":/drowned");
     this->ui->myHurtLabel->setPixmap(pixmap);
-    int startHP = this->ui->myPokeHPBar->value();
-    QPropertyAnimation* barAnimation = new QPropertyAnimation(this->ui->myPokeHPBar, "value");
-    barAnimation->setStartValue(startHP);
-    barAnimation->setEndValue(myhurthp);
+    double width = this->ui->myPokeHPBarWidget->width();
+    double startWidth = width * myPokeCurrentHP / myPokemonTHP[myPokeIndex];
+    double endWidth = width * myhurthp / myPokemonTHP[myPokeIndex];
+    QPropertyAnimation* barAnimation = new QPropertyAnimation(this->ui->myPokeHPBarWidget, "size");
+    barAnimation->setStartValue(QSizeF(startWidth, 20));
+    barAnimation->setEndValue(QSizeF(endWidth, 20));
     barAnimation->setDuration(1000);
-//    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->myPoke, "geometry");
-//    animation->setStartValue(QRect(30, 160, 200, 200));
-//    animation->setKeyValueAt(0.25, QRect(80, 210, 100, 100));
-//    animation->setKeyValueAt(0.5, QRect(30, 160, 200, 200));
-//    animation->setKeyValueAt(0.75, QRect(80, 210, 0, 0));
-//    animation->setEndValue(QRect(30, 160, 200, 200));
-//    animation->setDuration(1000);
-//    animation->start(QAbstractAnimation::DeleteWhenStopped);
     barAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
@@ -392,19 +443,13 @@ void Battle::onEnemyPokeHurt(int enemyhurthp, QString myNature)
     if (myNature == "water")
         pixmap = QPixmap(":/drowned");
     this->ui->enemyHurtLabel->setPixmap(pixmap);
-    int startHP = this->ui->enemyPokeHPBar->value();
-    QPropertyAnimation* barAnimation = new QPropertyAnimation(this->ui->enemyPokeHPBar, "value");
-    barAnimation->setStartValue(startHP);
-    barAnimation->setEndValue(enemyhurthp);
+    double width = this->ui->enemyPokeHPBarWidget->width();
+    double startWidth = width * enemyPokeCurrentHP / enemyPokemonTHP[enemyPokeIndex];
+    double endWidth = width * enemyhurthp / enemyPokemonTHP[enemyPokeIndex];
+    QPropertyAnimation* barAnimation = new QPropertyAnimation(this->ui->enemyPokeHPBarWidget, "size");
+    barAnimation->setStartValue(QSizeF(startWidth, 20));
+    barAnimation->setEndValue(QSizeF(endWidth, 20));
     barAnimation->setDuration(1000);
-//    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPoke, "geometry");
-//    animation->setStartValue(QRect(560, 160, 200, 200));
-//    animation->setKeyValueAt(0.25, QRect(610, 210, 100, 100));
-//    animation->setKeyValueAt(0.5, QRect(560, 160, 200, 200));
-//    animation->setKeyValueAt(0.75, QRect(610, 210, 100, 100));
-//    animation->setEndValue(QRect(560, 160, 200, 200));
-//    animation->setDuration(1000);
-//    animation->start(QAbstractAnimation::DeleteWhenStopped);
     barAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
@@ -414,14 +459,17 @@ void Battle::ClearHurt()
     this->ui->enemyHurtLabel->hide();
 }
 
+void Battle::ClearSpecialAtt()
+{
+    this->ui->mySpecialAttLabel->clear();
+    this->ui->mySpecialAttLabel->hide();
+    this->ui->enemySpecialAttLabel->clear();
+    this->ui->enemySpecialAttLabel->hide();
+}
+
 void Battle::onMyPokeChange(int mypokeindex)
 {
-    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->myPoke, "geometry");
-    animation->setStartValue(QRect(30, 160, 200, 200));
-    animation->setKeyValueAt(0.5, QRect(30, 160, 0, 200));
-    animation->setEndValue(QRect(30, 160, 200, 200));
-    animation->setDuration(1000);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
+    this->ui->myPokeHPBarWidget->resize(170, 20);
     myPokeIndex = mypokeindex;
     std::string kind = myPokemonKind[mypokeindex];
     std::string name = myPokemonName[mypokeindex];
@@ -429,19 +477,18 @@ void Battle::onMyPokeChange(int mypokeindex)
     QString styleStr = "#myPokeLabel{image : url(:/squirtle)}";
     this->ui->myPokeLabel->setStyleSheet(styleStr);
     this->ui->myPokeInfoLabel->setText(QString::fromStdString(name));
-    int thp = myPokemonTHP[mypokeindex];
-    this->ui->myPokeHPBar->setRange(0, thp);
-    this->ui->myPokeHPBar->setValue(thp);
+    myPokeCurrentHP = myPokemonTHP[mypokeindex];
+    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->myPoke, "geometry");
+    animation->setStartValue(QRect(30, 160, 200, 200));
+    animation->setKeyValueAt(0.5, QRect(30, 160, 0, 200));
+    animation->setEndValue(QRect(30, 160, 200, 200));
+    animation->setDuration(1000);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void Battle::onEnemyPokeChange(int enemypokeindex)
 {
-    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPoke, "geometry");
-    animation->setStartValue(QRect(560, 160, 200, 200));
-    animation->setKeyValueAt(0.5, QRect(560, 160, 0, 200));
-    animation->setEndValue(QRect(560, 160, 200, 200));
-    animation->setDuration(1000);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
+    this->ui->enemyPokeHPBarWidget->resize(170, 20);
     enemyPokeIndex = enemypokeindex;
     std::string kind = enemyPokemonKind[enemypokeindex];
     std::string name = enemyPokemonName[enemypokeindex];
@@ -449,9 +496,13 @@ void Battle::onEnemyPokeChange(int enemypokeindex)
     QString styleStr = "#enemyPokeLabel{image : url(:/charmander);}";
     this->ui->enemyPokeLabel->setStyleSheet(styleStr);
     this->ui->enemyPokeInfoLabel->setText(QString::fromStdString(name));
-    int thp = enemyPokemonTHP[enemypokeindex];
-    this->ui->enemyPokeHPBar->setRange(0, thp);
-    this->ui->enemyPokeHPBar->setValue(thp);
+    enemyPokeCurrentHP = enemyPokemonTHP[enemypokeindex];
+    QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPoke, "geometry");
+    animation->setStartValue(QRect(560, 160, 200, 200));
+    animation->setKeyValueAt(0.5, QRect(560, 160, 0, 200));
+    animation->setEndValue(QRect(560, 160, 200, 200));
+    animation->setDuration(1000);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 DWORD WINAPI RecvThreadFuncBattle(SocketClient* socketClient, Battle* battle)

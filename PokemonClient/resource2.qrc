@@ -28,5 +28,13 @@
         <file alias="drowned">resource/drowned.png</file>
         <file alias="poisoned">resource/poisoned.png</file>
         <file alias="shock">resource/shock.png</file>
+        <file alias="enemybushatt">resource/enemybushatt.png</file>
+        <file alias="enemyelectricityatt">resource/enemyelectricityatt.png</file>
+        <file alias="enemyfireatt">resource/enemyfireatt.png</file>
+        <file alias="enemywateratt">resource/enemywateratt.png</file>
+        <file alias="mybushatt">resource/mybushatt.png</file>
+        <file alias="myelectricityatt">resource/myelectricityatt.png</file>
+        <file alias="myfireatt">resource/myfireatt.png</file>
+        <file alias="mywateratt">resource/mywateratt.png</file>
     </qresource>
 </RCC>

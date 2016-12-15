@@ -677,6 +677,14 @@ std::string GetSendStr(int pid, Helper* helper)
                     myBar += myFightingPokemon->getIntervalIncrease();
                     enemyBar += enemyFightingPokemon->getIntervalIncrease();
                 }
+                if (myBar >= InitiativeBar && enemyBar >= InitiativeBar)
+                {
+                    int ranNum = AttGenFunc(0, 99);
+                    if (ranNum % 2 == 0)
+                        myBar = InitiativeBar - 1;
+                    else
+                        enemyBar = InitiativeBar - 1;
+                }
                 if (myBar >= InitiativeBar)
                 {
                     myBar -= InitiativeBar;
@@ -706,8 +714,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     {
                         if ((AttGenFunc(0, 99) % 2) == 0)
                         {
-                            myFightingPokemon->SpecialAttack(enemyFightingPokemon);
-                            //myFightingPokemon->Attack(enemyFightingPokemon);
+                            myFightingPokemon->Attack(enemyFightingPokemon);
                             keyStr = "round" + roundStr + "attway";
                             sendJ[keyStr] = "att";
                         }
@@ -777,8 +784,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     {
                         if ((AttGenFunc(0, 99) % 2) == 0)
                         {
-                            enemyFightingPokemon->SpecialAttack(myFightingPokemon);
-                            //enemyFightingPokemon->Attack(myFightingPokemon);
+                            enemyFightingPokemon->Attack(myFightingPokemon);
                             keyStr = "round" + roundStr + "attway";
                             sendJ[keyStr] = "att";
                         }
