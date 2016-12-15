@@ -631,6 +631,7 @@ std::string GetSendStr(int pid, Helper* helper)
             sendJ["symbol"] = "battle";
             sendJ["end"] = "end";
             sendJ["amount"] = pokeNum;
+            sendJ["mynature"] = natureOfString[(int)myPokemon[0]->getNature()];
             std::stringstream s;
             std::string iStr;
             for (int i = 0; i < pokeNum; i++)
@@ -705,7 +706,8 @@ std::string GetSendStr(int pid, Helper* helper)
                     {
                         if ((AttGenFunc(0, 99) % 2) == 0)
                         {
-                            myFightingPokemon->Attack(enemyFightingPokemon);
+                            myFightingPokemon->SpecialAttack(enemyFightingPokemon);
+                            //myFightingPokemon->Attack(enemyFightingPokemon);
                             keyStr = "round" + roundStr + "attway";
                             sendJ[keyStr] = "att";
                         }
@@ -775,7 +777,8 @@ std::string GetSendStr(int pid, Helper* helper)
                     {
                         if ((AttGenFunc(0, 99) % 2) == 0)
                         {
-                            enemyFightingPokemon->Attack(myFightingPokemon);
+                            enemyFightingPokemon->SpecialAttack(myFightingPokemon);
+                            //enemyFightingPokemon->Attack(myFightingPokemon);
                             keyStr = "round" + roundStr + "attway";
                             sendJ[keyStr] = "att";
                         }

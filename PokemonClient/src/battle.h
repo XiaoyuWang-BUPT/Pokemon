@@ -48,10 +48,13 @@ signals:
 
     void battleNotQualified();
     void WinOrLoseSignal(bool win);
-    void MyPokeAttackSignal(QString attway, int enemypokehp);
-    void EnemyPokeAttackSignal(QString attway, int mypokehp);
-    void MyPokeHurtSignal(int myhurthp);
-    void EnemyPokeHurtSignal(int enemyhurthp);
+    void MyPokeAttackSignal(QString attway);
+    void EnemyPokeAttackSignal(QString attway);
+    void MyPokeBeAttacked(int mypokehp);
+    void EnemyPokeBeAttacked(int enemypokehp);
+    void MyPokeHurtSignal(int myhurthp, QString enemyNature);
+    void EnemyPokeHurtSignal(int enemyhurthp, QString myNature);
+    void ClearHurtSignal();
     void MyPokeChangeSignal(int mypokeindex);
     void EnemyPokeChangeSignal(int enemypokeindex);
 
@@ -60,12 +63,14 @@ private slots:
     void getRecvStr(QString recvStr);
 
     void onBattleNotQualified();
-    void onBackClicked();
     void winOrLose(bool win);
-    void onMyPokeAttack(QString attway, int enemypokehp);
-    void onEnemyPokeAttack(QString attway, int mypokehp);
-    void onMyPokeHurt(int myhurthp);
-    void onEnemyPokeHurt(int enemyhurthp);
+    void onMyPokeAttack(QString attway);
+    void onEnemyPokeAttack(QString attway);
+    void onMyPokeBeAttacked(int mypokehp);
+    void onEnemyPokeBeAttacked(int enemypokehp);
+    void onMyPokeHurt(int myhurthp, QString enemyNature);
+    void onEnemyPokeHurt(int enemyhurthp, QString myNature);
+    void ClearHurt();
     void onMyPokeChange(int mypokeindex);
     void onEnemyPokeChange(int enemypokeindex);
 

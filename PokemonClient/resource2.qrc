@@ -24,5 +24,9 @@
         <file>resource/waterSilver.png</file>
         <file alias="down">resource/down.png</file>
         <file alias="up">resource/up.png</file>
+        <file alias="burned">resource/burned.png</file>
+        <file alias="drowned">resource/drowned.png</file>
+        <file alias="poisoned">resource/poisoned.png</file>
+        <file alias="shock">resource/shock.png</file>
     </qresource>
 </RCC>

@@ -157,6 +157,19 @@ QProgressBar::chunk {
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
+    <widget class="QLabel" name="enemyHurtLabel">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>80</y>
+       <width>100</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="myPoke" native="true">
     <property name="geometry">
@@ -181,6 +194,19 @@ QProgressBar::chunk {
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="myHurtLabel">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>80</y>
+       <width>100</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </widget>
@@ -281,27 +307,44 @@ QProgressBar::chunk {
      </widget>
     </widget>
    </widget>
-   <widget class="QPushButton" name="backButton">
+   <widget class="QWidget" name="endWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>32</width>
-      <height>32</height>
+      <x>310</x>
+      <y>200</y>
+      <width>161</width>
+      <height>131</height>
      </rect>
     </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border-image: url(:/back);</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
+    <widget class="QPushButton" name="confirmButton">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>110</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>confirm</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="winorloseLabel">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>50</y>
+       <width>54</width>
+       <height>12</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
