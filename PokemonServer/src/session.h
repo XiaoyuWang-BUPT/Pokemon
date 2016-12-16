@@ -21,8 +21,6 @@ using json = nlohmann::json;
 
 using namespace Poor_ORM;
 
-enum GameOver{ LOSE = -1, CONTINUE = 0, WIN = 1};
-
 bool SortByRank(const struct PlayerInfo& p1, const struct PlayerInfo& p2)
 {
     return p1.rank < p2.rank;
@@ -852,9 +850,17 @@ std::string GetSendStr(int pid, Helper* helper)
             if (myPokeAllDead)
             {
                 sendJ["win"] = false;
+                int expGot;
+                int pokeCnt = 0;
+                std::stringstream pokeStream;
+                std::string pokeCntStr;
                 for (Pokemon* mp : myPokemon)
                 {
-                    mp->setExperiencePoint(mp->getExperiencePoint() + (ExpGrade[enemyPokemon[0]->getLevel()] / 10));
+                    pokeStream.clear();
+                    pokeStream << pokeCnt;
+                    pokeStream >> pokeCntStr;
+                    expGot = ExpGrade[enemyPokemon[0]->getLevel()] / 10;
+                    mp->setExperiencePoint(mp->getExperiencePoint() + expGot);
                     while ((mp->getExperiencePoint() >= ExpGrade[mp->getLevel() + 1]) && (mp->getLevel() < 15))
                         mp->Upgrade();
                     mp->setAlive(true);
@@ -862,9 +868,13 @@ std::string GetSendStr(int pid, Helper* helper)
                     mp->setSickCounter(0);
                     mp->setSickPoint(0);
                     mp->setState(HEALTHY);
+                    keyStr = "myevokind" + pokeCntStr;
+                    sendJ[keyStr] = kindOfString[(int)mp->getKind()];
+                    pokeCnt++;
                     PokemonInfo pi = mp->ToPokeStruInfo();
                     pokePackMapper.Update(pi);
                 }
+                sendJ["expGot"] = expGot;
                 double winGames = (double)(player.rate * player.games);
                 player.rate = (winGames) / (player.games + 1);
                 player.games += 1;
@@ -873,9 +883,17 @@ std::string GetSendStr(int pid, Helper* helper)
             else
             {
                 sendJ["win"] = true;
+                int expGot;
+                int pokeCnt = 0;
+                std::stringstream pokeStream;
+                std::string pokeCntStr;
                 for (Pokemon* mp : myPokemon)
                 {
-                    mp->setExperiencePoint(mp->getExperiencePoint() + (ExpGrade[enemyPokemon[0]->getLevel()] / 5));
+                    pokeStream.clear();
+                    pokeStream << pokeCnt;
+                    pokeStream >> pokeCntStr;
+                    expGot = ExpGrade[enemyPokemon[0]->getLevel()] / 5;
+                    mp->setExperiencePoint(mp->getExperiencePoint() + expGot);
                     while ((mp->getExperiencePoint() >= ExpGrade[mp->getLevel() + 1]) && (mp->getLevel() < 15))
                     {
                         mp->Upgrade();
@@ -885,9 +903,13 @@ std::string GetSendStr(int pid, Helper* helper)
                     mp->setSickCounter(0);
                     mp->setSickPoint(0);
                     mp->setState(HEALTHY);
+                    keyStr = "myevokind" + pokeCntStr;
+                    sendJ[keyStr] = kindOfString[(int)mp->getKind()];
+                    pokeCnt++;
                     PokemonInfo pi = mp->ToPokeStruInfo();
                     pokePackMapper.Update(pi);
                 }
+                sendJ["expGot"] = expGot;
                 double winGames = (double)(player.rate * player.games) + 1;
                 player.rate = (winGames) / (player.games + 1);
                 player.rank += enemyPokemon[0]->getLevel() / myPokemon[0]->getLevel();

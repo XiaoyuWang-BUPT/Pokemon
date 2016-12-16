@@ -549,11 +549,18 @@ border-radius: 15px;}</string>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(255, 255, 255, 100);
-color: rgb(93, 93, 93);</string>
+     <string notr="true">#OPListWidget 
+	{background-color: rgba(255, 255, 255, 100);
+	color: rgb(93, 93, 93);
+}
+
+</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAsNeeded</enum>
     </property>
     <property name="tabKeyNavigation">
      <bool>true</bool>
@@ -919,12 +926,20 @@ background-color: rgba(255, 255, 255, 85);</string>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(255, 255, 255, 100);
-color: rgb(93, 93, 93);
-border-bottom-left-radius : 10px;</string>
+     <string notr="true">#rankList
+{
+	background-color: rgba(255, 255, 255, 100);
+	color: rgb(93, 93, 93);
+	border-bottom-left-radius : 10px;
+}
+
+</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAsNeeded</enum>
     </property>
     <property name="tabKeyNavigation">
      <bool>true</bool>

@@ -11,9 +11,12 @@
 #include <QRect>
 #include <QSize>
 #include <QSizeF>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include "lib/json.hpp"
 
 using json = nlohmann::json;
+const int CAPACITY = 3;
 
 namespace Ui {
 class Battle;
@@ -33,8 +36,13 @@ public:
 
 private:
     Ui::Battle *ui;
+    QHBoxLayout* endHLayout = new QHBoxLayout();
+    QVBoxLayout* endVLayout[CAPACITY];
+    QLabel* endPokeLabel[CAPACITY];
+    QLabel* endInfoLabel[CAPACITY];
     std::vector<std::string> myPokemonName;
     std::vector<std::string> myPokemonKind;
+    std::vector<std::string> myEvoKind;
     std::vector<int> myPokemonTHP;
     std::vector<std::string> enemyPokemonName;
     std::vector<std::string> enemyPokemonKind;
@@ -50,7 +58,7 @@ signals:
     void switchToMainPage();
 
     void battleNotQualified();
-    void WinOrLoseSignal(bool win);
+    void WinOrLoseSignal(bool win, int expGot);
     void MyPokeAttackSignal(QString attway, QString myNature);
     void EnemyPokeAttackSignal(QString attway, QString enemyNature);
     void MyPokeBeAttacked(int mypokehp);
@@ -58,6 +66,7 @@ signals:
     void MyPokeHurtSignal(int myhurthp, QString enemyNature);
     void EnemyPokeHurtSignal(int enemyhurthp, QString myNature);
     void ClearHurtSignal();
+    void ClearHPDecSignal();
     void ClearSpecialAttSignal();
     void MyPokeChangeSignal(int mypokeindex);
     void EnemyPokeChangeSignal(int enemypokeindex);
@@ -67,7 +76,7 @@ private slots:
     void getRecvStr(QString recvStr);
 
     void onBattleNotQualified();
-    void winOrLose(bool win);
+    void winOrLose(bool win, int expGot);
     void onMyPokeAttack(QString attway, QString myNature);
     void onEnemyPokeAttack(QString attway, QString enemyNature);
     void onMyPokeBeAttacked(int mypokehp);
@@ -75,11 +84,11 @@ private slots:
     void onMyPokeHurt(int myhurthp, QString enemyNature);
     void onEnemyPokeHurt(int enemyhurthp, QString myNature);
     void ClearHurt();
+    void ClearHPDec();
     void ClearSpecialAtt();
     void onMyPokeChange(int mypokeindex);
     void onEnemyPokeChange(int enemypokeindex);
-
-    bool eventFilter(QObject *watched, QEvent *event);
+    void clearBattle();
 };
 
 #endif // BATTLE_H

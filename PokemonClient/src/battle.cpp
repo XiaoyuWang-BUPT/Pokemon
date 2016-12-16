@@ -8,11 +8,9 @@ Battle::Battle(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowFlags(Qt::FramelessWindowHint);
-    this->ui->confirmButton->installEventFilter(this);
     this->ui->container->setStyleSheet("#container{border-image : url(:/forest3);}");
-
     QObject::connect(this, SIGNAL(battleNotQualified()), this, SLOT(onBattleNotQualified()));
-    QObject::connect(this, SIGNAL(WinOrLoseSignal(bool)), this, SLOT(winOrLose(bool)));
+    QObject::connect(this, SIGNAL(WinOrLoseSignal(bool, int)), this, SLOT(winOrLose(bool, int)));
     QObject::connect(this, SIGNAL(MyPokeAttackSignal(QString, QString)), this, SLOT(onMyPokeAttack(QString, QString)));
     QObject::connect(this, SIGNAL(EnemyPokeAttackSignal(QString, QString)), this, SLOT(onEnemyPokeAttack(QString, QString)));
     QObject::connect(this, SIGNAL(MyPokeBeAttacked(int)), this, SLOT(onMyPokeBeAttacked(int)));
@@ -23,6 +21,8 @@ Battle::Battle(QWidget *parent) :
     QObject::connect(this, SIGNAL(EnemyPokeChangeSignal(int)), this, SLOT(onEnemyPokeChange(int)));
     QObject::connect(this, SIGNAL(ClearHurtSignal()), this, SLOT(ClearHurt()));
     QObject::connect(this, SIGNAL(ClearSpecialAttSignal()), this, SLOT(ClearSpecialAtt()));
+    QObject::connect(this->ui->confirmButton, SIGNAL(clicked(bool)), this, SLOT(clearBattle()));
+    QObject::connect(this, SIGNAL(ClearHPDecSignal()), this, SLOT(ClearHPDec()));
 }
 
 Battle::Battle(SocketClient *sc, QWidget *parent) :
@@ -43,6 +43,14 @@ DWORD WINAPI RecvThreadFuncBattle(SocketClient* socketClient, Battle* battle);
 
 void Battle::receiveSwitch(QString nature, QString standard)
 {
+    for (int i = 0; i < CAPACITY; i++)
+    {
+        endPokeLabel[i] = new QLabel();
+        endInfoLabel[i] = new QLabel();
+        endVLayout[i] = new QVBoxLayout();
+    }
+    this->ui->myHPDecLabel->hide();
+    this->ui->enemyHPDecLabel->hide();
     this->ui->confirmButton->hide();
     this->ui->winorloseLabel->hide();
     this->ui->myPokeHPBarWidget->resize(170, 20);
@@ -64,6 +72,22 @@ void Battle::receiveSwitch(QString nature, QString standard)
     sendAndRecvThread->detach();
 }
 
+void Battle::clearBattle()
+{
+    for (int i = 0; i < CAPACITY; i++)
+    {
+        endVLayout[i]->removeWidget(endPokeLabel[i]);
+        endVLayout[i]->removeWidget(endInfoLabel[i]);
+        endHLayout->removeItem(endVLayout[i]);
+        delete endPokeLabel[i];
+        delete endInfoLabel[i];
+        delete endVLayout[i];
+    }
+    this->ui->endLayoutContainer->hide();
+    this->hide();
+    emit switchToMainPage();
+}
+
 void Battle::getRecvStr(QString recvStr)
 {
     std::string string = recvStr.toStdString();
@@ -74,6 +98,7 @@ void Battle::getRecvStr(QString recvStr)
         int pokeNum = recvJ["amount"];
         int round = recvJ["round"];
         int roundCnt = 0;
+        int expGot = recvJ["expGot"];
         std::stringstream stream;
         std::string iStr;
         std::string pKey;
@@ -88,6 +113,8 @@ void Battle::getRecvStr(QString recvStr)
             myPokemonKind.push_back(recvJ[pKey]);
             pKey = "mypokehp" + iStr;
             myPokemonTHP.push_back(recvJ[pKey]);
+            pKey = "myevokind" + iStr;
+            myEvoKind.push_back(recvJ[pKey]);
             pKey = "enemypokename" + iStr;
             enemyPokemonName.push_back(recvJ[pKey]);
             pKey = "enemypokekind" + iStr;
@@ -123,6 +150,7 @@ void Battle::getRecvStr(QString recvStr)
                     emit MyPokeHurtSignal(myhurthp, QString::fromStdString(hurtNature));
                     std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                     emit ClearHurtSignal();
+                    emit ClearHPDecSignal();
                     //my fighting pokemon is hurt to dead change another pokemon
                     if (myhurthp == 0)
                     {
@@ -135,7 +163,7 @@ void Battle::getRecvStr(QString recvStr)
                         else
                         {
                             //TODO lose
-                            emit WinOrLoseSignal(false);
+                            emit WinOrLoseSignal(false, expGot);
                         }
                     }
                     else
@@ -150,6 +178,7 @@ void Battle::getRecvStr(QString recvStr)
                         std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         emit EnemyPokeBeAttacked(enemypokehp);
                         std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+                        emit ClearHPDecSignal();
                         if (attway == "specialatt")
                             emit ClearSpecialAttSignal();
                         if (enemypokehp == 0)
@@ -163,7 +192,7 @@ void Battle::getRecvStr(QString recvStr)
                             else
                             {
                                 //TODO win
-                                emit WinOrLoseSignal(true);
+                                emit WinOrLoseSignal(true, expGot);
                             }
                         }
                     }
@@ -180,6 +209,7 @@ void Battle::getRecvStr(QString recvStr)
                     std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                     emit EnemyPokeBeAttacked(enemypokehp);
                     std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+                    emit ClearHPDecSignal();
                     if (attway == "specialatt")
                         emit ClearSpecialAttSignal();
                     if (enemypokehp == 0)
@@ -193,7 +223,7 @@ void Battle::getRecvStr(QString recvStr)
                         else
                         {
                             //TODO win
-                            emit WinOrLoseSignal(true);
+                            emit WinOrLoseSignal(true, expGot);
                         }
                     }
                 }
@@ -211,6 +241,7 @@ void Battle::getRecvStr(QString recvStr)
                     emit EnemyPokeHurtSignal(enemyhurthp, QString::fromStdString(hurtNature));
                     std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                     emit ClearHurtSignal();
+                    emit ClearHPDecSignal();
                     if (enemyhurthp == 0)
                     {
                         enemyFightingIndex++;
@@ -222,7 +253,7 @@ void Battle::getRecvStr(QString recvStr)
                         else
                         {
                             //TODO win
-                            emit WinOrLoseSignal(true);
+                            emit WinOrLoseSignal(true, expGot);
                         }
                     }
                     else
@@ -237,6 +268,7 @@ void Battle::getRecvStr(QString recvStr)
                         std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         emit MyPokeBeAttacked(mypokehp);
                         std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+                        emit ClearHPDecSignal();
                         if (attway == "specialatt")
                             emit ClearSpecialAttSignal();
                         if (mypokehp == 0)
@@ -250,7 +282,7 @@ void Battle::getRecvStr(QString recvStr)
                             else
                             {
                                 //TODO lose
-                                emit WinOrLoseSignal(false);
+                                emit WinOrLoseSignal(false, expGot);
                             }
                         }
                     }
@@ -267,6 +299,7 @@ void Battle::getRecvStr(QString recvStr)
                     std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                     emit MyPokeBeAttacked(mypokehp);
                     std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+                    emit ClearHPDecSignal();
                     if (attway == "specialatt")
                         emit ClearSpecialAttSignal();
                     if (mypokehp == 0)
@@ -280,7 +313,7 @@ void Battle::getRecvStr(QString recvStr)
                         else
                         {
                             //TODO lose
-                            emit WinOrLoseSignal(false);
+                            emit WinOrLoseSignal(false, expGot);
                         }
                     }
                 }
@@ -293,42 +326,66 @@ void Battle::getRecvStr(QString recvStr)
     }
 }
 
-bool Battle::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched == this->ui->confirmButton)
-        if (event->type() == QEvent::MouseButtonPress)
-        {
-            this->hide();
-            emit switchToMainPage();
-        }
-    return QWidget::eventFilter(watched, event);
-}
-
 void Battle::onBattleNotQualified()
 {
     QMessageBox::information(this, "info", "package empty, put pokemon into package first");
+    delete[] endPokeLabel;
+    delete[] endVLayout;
     this->hide();
     emit switchToMainPage();
 }
 
-void Battle::winOrLose(bool win)
+void Battle::winOrLose(bool win, int expGot)
 {
+    std::stringstream stream;
+    std::string expGotStr;
+    stream << expGot;
+    stream >> expGotStr;
+    QString expGotQStr = QString::fromStdString(expGotStr);
     this->ui->myPokeInfoLabel->clear();
     this->ui->myPokeLabel->clear();
     this->ui->enemyPokeInfoLabel->clear();
     this->ui->enemyPokeLabel->clear();
     this->ui->confirmButton->show();
     this->ui->winorloseLabel->show();
+    int pokeNum = myPokemonName.size();
+    for (int i = 0; i < pokeNum; i++)
+    {
+        QString tooltip = "Gokemon gained " + expGotQStr + " experience";
+        if (QString::fromStdString(myPokemonKind[i]).toLower()
+                == QString::fromStdString(myEvoKind[i]).toLower())
+        {
+            tooltip.append("\nPokemon did not evolute");
+        }
+        else
+        {
+            tooltip.append("\nPokemon evoluted to " +
+                           QString::fromStdString(myEvoKind[i]).toUpper());
+        }
+        //QString pixmapStr = ":/" + QString::fromStdString(myEvoKind[i]).toLower();
+        QString pixmapStr = ":/squirtle";
+        QPixmap pixmap = QPixmap(pixmapStr);
+        endPokeLabel[i]->setPixmap(pixmap);
+        endInfoLabel[i]->setText(tooltip);
+        endInfoLabel[i]->setWordWrap(true);
+        endPokeLabel[i]->setAlignment(Qt::AlignCenter);
+        endInfoLabel[i]->setAlignment(Qt::AlignCenter);
+        endPokeLabel[i]->setStyleSheet("border : 2px solid white; border-radius : 5px; background-color : rgba(255, 255, 255, 200)");
+        endInfoLabel[i]->setStyleSheet("border : 2px solid white; border-radius : 5px; background-color : rgba(255, 255, 255, 150); font: 75 11pt Consolas; color : rgb(255, 255, 255)");
+        endVLayout[i]->addWidget(endPokeLabel[i]);
+        endVLayout[i]->addWidget(endInfoLabel[i]);
+        endHLayout->addLayout(endVLayout[i]);
+    }
+    this->ui->endLayoutContainer->setLayout(endHLayout);
     if (win)
     {        
         this->ui->winorloseLabel->setText("VICTORY");
-        //QMessageBox::information(this, "info", "win");
     }
     else
     {        
         this->ui->winorloseLabel->setText("DEFEAT");
-        //QMessageBox::information(this, "info", "lose");
     }
+    this->ui->endLayoutContainer->show();
 }
 
 void Battle::onMyPokeAttack(QString attway, QString myNature)
@@ -393,6 +450,19 @@ void Battle::onEnemyPokeAttack(QString attway, QString enemyNature)
 
 void Battle::onMyPokeBeAttacked(int mypokehp)
 {
+    this->ui->myHPDecLabel->show();
+    int HPDec = myPokeCurrentHP - mypokehp;
+    myPokeCurrentHP = mypokehp;
+    std::stringstream stream;
+    std::string hp;
+    stream << HPDec;
+    stream >> hp;
+    this->ui->myHPDecLabel->setText("-" + QString::fromStdString(hp));
+    QPropertyAnimation* hpAnimation = new QPropertyAnimation(this->ui->myHPDecLabel, "geometry");
+    hpAnimation->setStartValue(QRect(110, 190, 80, 30));
+    hpAnimation->setEndValue(QRect(100, 140, 100, 50));
+    hpAnimation->setDuration(1000);
+    hpAnimation->start(QAbstractAnimation::DeleteWhenStopped);
     double width = this->ui->myPokeHPBarWidget->width();
     double startWidth = width * myPokeCurrentHP / myPokemonTHP[myPokeIndex];
     double endWidth = width * mypokehp / myPokemonTHP[myPokeIndex];
@@ -406,6 +476,19 @@ void Battle::onMyPokeBeAttacked(int mypokehp)
 
 void Battle::onEnemyPokeBeAttacked(int enemypokehp)
 {
+    this->ui->enemyHPDecLabel->show();
+    int HPDec = enemyPokeCurrentHP - enemypokehp;
+    enemyPokeCurrentHP = enemypokehp;
+    std::stringstream stream;
+    std::string hp;
+    stream << HPDec;
+    stream >> hp;
+    this->ui->enemyHPDecLabel->setText("-" + QString::fromStdString(hp));
+    QPropertyAnimation* hpAnimation = new QPropertyAnimation(this->ui->enemyHPDecLabel, "geometry");
+    hpAnimation->setStartValue(QRect(620, 190, 80, 30));
+    hpAnimation->setEndValue(QRect(610, 140, 100, 50));
+    hpAnimation->setDuration(1000);
+    hpAnimation->start(QAbstractAnimation::DeleteWhenStopped);
     double width = this->ui->enemyPokeHPBarWidget->width();
     double startWidth = width * enemyPokeCurrentHP / enemyPokemonTHP[enemyPokeIndex];
     double endWidth = width * enemypokehp / enemyPokemonTHP[enemyPokeIndex];
@@ -419,6 +502,19 @@ void Battle::onEnemyPokeBeAttacked(int enemypokehp)
 
 void Battle::onMyPokeHurt(int myhurthp, QString enemyNature)
 {
+    this->ui->myHPDecLabel->show();
+    int HPDec = myPokeCurrentHP - myhurthp;
+    myPokeCurrentHP = myhurthp;
+    std::stringstream stream;
+    std::string hp;
+    stream << HPDec;
+    stream >> hp;
+    this->ui->myHPDecLabel->setText("-" + QString::fromStdString(hp));
+    QPropertyAnimation* hpAnimation = new QPropertyAnimation(this->ui->myHPDecLabel, "geometry");
+    hpAnimation->setStartValue(QRect(110, 190, 80, 30));
+    hpAnimation->setEndValue(QRect(100, 140, 100, 50));
+    hpAnimation->setDuration(1000);
+    hpAnimation->start(QAbstractAnimation::DeleteWhenStopped);
     this->ui->myHurtLabel->show();
     QPixmap pixmap;
     if (enemyNature == "Poisoned")
@@ -442,6 +538,19 @@ void Battle::onMyPokeHurt(int myhurthp, QString enemyNature)
 
 void Battle::onEnemyPokeHurt(int enemyhurthp, QString myNature)
 {
+    this->ui->enemyHPDecLabel->show();
+    int HPDec = enemyPokeCurrentHP - enemyhurthp;
+    enemyPokeCurrentHP = enemyhurthp;
+    std::stringstream stream;
+    std::string hp;
+    stream << HPDec;
+    stream >> hp;
+    this->ui->enemyHPDecLabel->setText("-" + QString::fromStdString(hp));
+    QPropertyAnimation* hpAnimation = new QPropertyAnimation(this->ui->enemyHPDecLabel, "geometry");
+    hpAnimation->setStartValue(QRect(620, 190, 80, 30));
+    hpAnimation->setEndValue(QRect(610, 140, 100, 50));
+    hpAnimation->setDuration(1000);
+    hpAnimation->start(QAbstractAnimation::DeleteWhenStopped);
     this->ui->enemyHurtLabel->show();
     QPixmap pixmap;
     if (myNature == "Poisoned")
@@ -475,6 +584,14 @@ void Battle::ClearSpecialAtt()
     this->ui->mySpecialAttLabel->hide();
     this->ui->enemySpecialAttLabel->clear();
     this->ui->enemySpecialAttLabel->hide();
+}
+
+void Battle::ClearHPDec()
+{
+    this->ui->myHPDecLabel->hide();
+    this->ui->enemyHPDecLabel->hide();
+    this->ui->myHPDecLabel->setGeometry(110, 190, 80, 30);
+    this->ui->enemyHPDecLabel->setGeometry(620, 190, 80, 30);
 }
 
 void Battle::onMyPokeChange(int mypokeindex)

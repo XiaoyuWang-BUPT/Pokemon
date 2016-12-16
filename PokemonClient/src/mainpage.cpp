@@ -423,7 +423,7 @@ void MainPage::LoadOnlinePlayer(json &recvJ)
     {
         std::stringstream stream;
         std::string indexStr;
-        stream << (i + 1);
+        stream << i;
         stream >> indexStr;
         std::string nameKey = "name" + indexStr;
         std::string rankKey = "rank" + indexStr;
@@ -434,16 +434,19 @@ void MainPage::LoadOnlinePlayer(json &recvJ)
         stream << recvJ[rankKey];
         stream >> rank;
         stream.clear();
-        stream << recvJ[rateKey];
+        double r = recvJ[rateKey];
+        r *= 100;
+        stream << std::setprecision(3) << r;
         stream >> rate;
         QString str = QString::fromStdString(recvJ[nameKey]);
         playerNames[i] = recvJ[nameKey];
         int nameLen = str.length();
         int rankLen = rank.length();
-        for (int j = 0; j < ((14 - nameLen - rankLen)/2); j++)
+        int rateLen = rate.length();
+        for (int j = 0; j < ((18 - nameLen - rankLen - rateLen)/2); j++)
             str.append(" ");
         str.append(QString::fromStdString(rate + "%"));
-        for (int j = 0; j < ((14 - nameLen - rankLen)/2); j++)
+        for (int j = 0; j < ((15 - nameLen - rankLen - rateLen)/2); j++)
             str.append(" ");
         str.append(QString::fromStdString(rank));
         item = new QListWidgetItem(str, this->ui->OPListWidget);
@@ -715,7 +718,7 @@ bool MainPage::getRecvStr(QString str)
         stream << thumb;
         stream >> thumbStr;
         stream.clear();
-        stream << rate;
+        stream << std::setprecision(3) << rate;
         stream >> rateStr;
         rateStr.append("%");
         std::string textString = "          " + name + "\n"
@@ -792,7 +795,9 @@ bool MainPage::getRecvStr(QString str)
             stream << recvJ[rankKey];
             stream >> rank;
             stream.clear();
-            stream << recvJ[rateKey];
+            double r = recvJ[rateKey];
+            r *= 100;
+            stream << std::setprecision(3) << r;
             stream >> rate;
             QString str = "   ";
             str.append(QString::fromStdString(recvJ[nameKey]));
@@ -803,7 +808,7 @@ bool MainPage::getRecvStr(QString str)
             for (int j = 0; j < ((13 - nameLen - rankLen)/2); j++)
                 str.append(" ");
             str.append(QString::fromStdString(rate + "%"));
-            for (int j = 0; j < ((13 - nameLen - rankLen)/2); j++)
+            for (int j = 0; j < ((12 - nameLen - rankLen)/2); j++)
                 str.append(" ");
             str.append(QString::fromStdString(rank));
             item = new QListWidgetItem(str, this->ui->rankList);
