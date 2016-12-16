@@ -681,6 +681,8 @@ bool MainPage::getRecvStr(QString str)
         int rank = recvJ["rank"];
         int thumb = recvJ["thumb"];
         double rate = recvJ["rate"];
+        rate *= 100;
+        std::setprecision(3);
         std::string begintime = recvJ["begintime"];
         std::string beginYear = begintime.substr(0, 4);
         std::string beginMonth = begintime.substr(4, 2);

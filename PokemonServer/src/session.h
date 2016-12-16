@@ -705,6 +705,9 @@ std::string GetSendStr(int pid, Helper* helper)
                     {
                         keyStr = "round" + roundStr + "myhurt";
                         sendJ[keyStr] = true;
+                        keyStr = "round" + roundStr + "hurtnature";
+                        std::string hurtNature = stateOfString[(int)myFightingPokemon->getState()];
+                        sendJ[keyStr] = hurtNature;
                         //currentHP after get hurt
                         keyStr = "round" + roundStr + "myhurthp";
                         sendJ[keyStr] = myAfterHP;
@@ -712,6 +715,8 @@ std::string GetSendStr(int pid, Helper* helper)
                     myFightingPokemon->DeadJudge();
                     if (myFightingPokemon->getAlive())
                     {
+                        keyStr = "round" + roundStr + "attnature";
+                        sendJ[keyStr] = natureOfString[(int)myFightingPokemon->getNature()];
                         if ((AttGenFunc(0, 99) % 2) == 0)
                         {
                             myFightingPokemon->Attack(enemyFightingPokemon);
@@ -775,6 +780,9 @@ std::string GetSendStr(int pid, Helper* helper)
                     {
                         keyStr = "round" + roundStr + "enemyhurt";
                         sendJ[keyStr] = true;
+                        keyStr = "round" + roundStr + "hurtnature";
+                        std::string hurtNature = natureOfString[enemyFightingPokemon->getState()];
+                        sendJ[keyStr] = hurtNature;
                         //currentHP after attacked
                         keyStr = "round" + roundStr + "enemyhurthp";
                         sendJ[keyStr] = enemyAfterHP;
@@ -782,6 +790,8 @@ std::string GetSendStr(int pid, Helper* helper)
                     enemyFightingPokemon->DeadJudge();
                     if (enemyFightingPokemon->getAlive())
                     {
+                        keyStr = "round" + roundStr + "attnature";
+                        sendJ[keyStr] = natureOfString[(int)enemyFightingPokemon->getNature()];
                         if ((AttGenFunc(0, 99) % 2) == 0)
                         {
                             enemyFightingPokemon->Attack(myFightingPokemon);
@@ -857,7 +867,9 @@ std::string GetSendStr(int pid, Helper* helper)
                     PokemonInfo pi = mp->ToPokeStruInfo();
                     pokePackMapper.Update(pi);
                 }
-                player.rate = (player.rate * player.games) / (player.games + 1);
+                double winGames = (double)(player.rate * player.games);
+                player.rate = (winGames) / (player.games + 1);
+                player.games += 1;
                 playerMapper.Update(player);
             }
             else
@@ -876,8 +888,10 @@ std::string GetSendStr(int pid, Helper* helper)
                     PokemonInfo pi = mp->ToPokeStruInfo();
                     pokePackMapper.Update(pi);
                 }
-                player.rate = (player.rate * player.games + 1) / (player.games + 1);
+                double winGames = (double)(player.rate * player.games) + 1;
+                player.rate = (winGames) / (player.games + 1);
                 player.rank += enemyPokemon[0]->getLevel() / myPokemon[0]->getLevel();
+                player.games += 1;
                 playerMapper.Update(player);
             }
         }

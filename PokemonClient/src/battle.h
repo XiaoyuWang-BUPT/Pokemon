@@ -45,15 +45,14 @@ private:
     int enemyPokeCurrentHP = 0;
     std::string natureStd = "";
     std::string standardStd = "";
-    std::string myNature = "";
 
 signals:
     void switchToMainPage();
 
     void battleNotQualified();
     void WinOrLoseSignal(bool win);
-    void MyPokeAttackSignal(QString attway);
-    void EnemyPokeAttackSignal(QString attway);
+    void MyPokeAttackSignal(QString attway, QString myNature);
+    void EnemyPokeAttackSignal(QString attway, QString enemyNature);
     void MyPokeBeAttacked(int mypokehp);
     void EnemyPokeBeAttacked(int enemypokehp);
     void MyPokeHurtSignal(int myhurthp, QString enemyNature);
@@ -69,8 +68,8 @@ private slots:
 
     void onBattleNotQualified();
     void winOrLose(bool win);
-    void onMyPokeAttack(QString attway);
-    void onEnemyPokeAttack(QString attway);
+    void onMyPokeAttack(QString attway, QString myNature);
+    void onEnemyPokeAttack(QString attway, QString enemyNature);
     void onMyPokeBeAttacked(int mypokehp);
     void onEnemyPokeBeAttacked(int enemypokehp);
     void onMyPokeHurt(int myhurthp, QString enemyNature);
