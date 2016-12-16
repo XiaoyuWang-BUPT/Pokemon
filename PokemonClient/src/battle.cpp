@@ -355,7 +355,7 @@ void Battle::onMyPokeAttack(QString attway, QString myNature)
         this->ui->mySpecialAttLabel->show();
         QPropertyAnimation* animation = new QPropertyAnimation(this->ui->mySpecialAttLabel, "geometry");
         animation->setStartValue(QRect(190, 250, 60, 30));
-        animation->setEndValue(QRect(540, 250, 60, 30));
+        animation->setEndValue(QRect(590, 250, 60, 30));
         animation->setDuration(2000);
         animation->start(QPropertyAnimation::DeleteWhenStopped);
     }
@@ -385,7 +385,7 @@ void Battle::onEnemyPokeAttack(QString attway, QString enemyNature)
         this->ui->enemySpecialAttLabel->show();
         QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemySpecialAttLabel, "geometry");
         animation->setStartValue(QRect(540, 250, 60, 30));
-        animation->setEndValue(QRect(190, 250, 60, 30));
+        animation->setEndValue(QRect(100, 250, 60, 30));
         animation->setDuration(2000);
         animation->start(QPropertyAnimation::DeleteWhenStopped);
     }

@@ -124,7 +124,6 @@ void Pokemon::Upgrade()
     //等级不能超过15级 战斗模块中战斗后获得经验函数判断是否15级进入Upgrade函数后可取消以下判定
     if (this->getLevel() == 15)
         return;
-
     this->setLevel(this->getLevel()+ 1);
     //cout << "Kind: " << kindOfString[this->getKind()] << "  Level:" << this->getLevel() << "  Kind:" << kindOfString[this->getKind()] << endl;
     switch (this->getCharacter()) {

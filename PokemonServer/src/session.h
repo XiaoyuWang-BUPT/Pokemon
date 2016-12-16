@@ -90,7 +90,6 @@ std::string GetSendStr(int pid, Helper* helper)
             sendJ["useravailable"] = true;
             QDateTime qdt = QDateTime::currentDateTime();
             std::string s = qdt.toString("yyyyMMddhhmm").toStdString();
-            std::cout << "QDateTime:" << s << std::endl;
             struct PlayerInfo p = {nameRecv, pwRecv, 0, CAPACITY, 0, 0, 0, 0, s, "000"};
             sendJ["signonsuccess"] = playerMapper.Insert(p);
             onlinePlayer[pid] = p.name;
@@ -189,7 +188,6 @@ std::string GetSendStr(int pid, Helper* helper)
         PokemonFactory *pokemonFactory = new PokemonFactory();
         Pokemon* caughtPokemon = pokemonFactory->CreatePokemon(kind, level, name, owner);
         struct PokemonInfo pokemoninfo = caughtPokemon->ToPokeStruInfo();
-
         //Get player information
         std::string playerName = onlinePlayer[pid];
         struct PlayerInfo playerinfo;
@@ -491,7 +489,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(2 + i * 3);
-                        int level = 13;
+                        int level = GoldPokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -502,7 +500,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(1 + i * 3);
-                        int level = 6;
+                        int level = SilverPokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -513,7 +511,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(0 + i * 3);
-                        int level = 2;
+                        int level = BronzePokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -527,7 +525,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(11 + i * 3);
-                        int level = 13;
+                        int level = GoldPokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -538,7 +536,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(10 + i * 3);
-                        int level = 6;
+                        int level = SilverPokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -549,7 +547,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(9 + i * 3);
-                        int level = 2;
+                        int level = BronzePokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -563,7 +561,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(20 + i * 3);
-                        int level = 13;
+                        int level = GoldPokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -574,7 +572,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(19 + i * 3);
-                        int level = 6;
+                        int level = SilverPokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -585,7 +583,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(18 + i * 3);
-                        int level = 2;
+                        int level = BronzePokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -599,7 +597,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(29 + i * 3);
-                        int level = 13;
+                        int level = GoldPokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -610,7 +608,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(28 + i * 3);
-                        int level = 6;
+                        int level = SilverPokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -621,7 +619,7 @@ std::string GetSendStr(int pid, Helper* helper)
                     for (int i = 0; i < pokeNum; i++)
                     {
                         Kind kind = (Kind)(27 + i * 3);
-                        int level = 2;
+                        int level = BronzePokeLevel;
                         std::string bootname = "boot " + kindOfString[(int)kind];
                         Pokemon* ep = pokemonFactory->CreatePokemon(kind, level, bootname, "BOOT");
                         enemyPokemon.push_back(ep);
@@ -857,7 +855,7 @@ std::string GetSendStr(int pid, Helper* helper)
                 for (Pokemon* mp : myPokemon)
                 {
                     mp->setExperiencePoint(mp->getExperiencePoint() + (ExpGrade[enemyPokemon[0]->getLevel()] / 10));
-                    while (mp->getExperiencePoint() >= ExpGrade[mp->getLevel() + 1])
+                    while ((mp->getExperiencePoint() >= ExpGrade[mp->getLevel() + 1]) && (mp->getLevel() < 15))
                         mp->Upgrade();
                     mp->setAlive(true);
                     mp->setCurrentHP(mp->getTotalHP());
@@ -878,8 +876,10 @@ std::string GetSendStr(int pid, Helper* helper)
                 for (Pokemon* mp : myPokemon)
                 {
                     mp->setExperiencePoint(mp->getExperiencePoint() + (ExpGrade[enemyPokemon[0]->getLevel()] / 5));
-                    while (mp->getExperiencePoint() >= ExpGrade[mp->getLevel() + 1])
+                    while ((mp->getExperiencePoint() >= ExpGrade[mp->getLevel() + 1]) && (mp->getLevel() < 15))
+                    {
                         mp->Upgrade();
+                    }
                     mp->setAlive(true);
                     mp->setCurrentHP(mp->getTotalHP());
                     mp->setSickCounter(0);

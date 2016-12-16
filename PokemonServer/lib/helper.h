@@ -63,6 +63,9 @@ const int UpGradeAttrIncWeak = 4;
 const int UpGradeCriticalInc = 5;
 
 const int InitiativeBar = 100;
+const int GoldPokeLevel = 15;
+const int SilverPokeLevel = 9;
+const int BronzePokeLevel = 3;
 
 class Helper
 {
