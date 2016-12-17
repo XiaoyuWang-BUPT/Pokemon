@@ -40,4 +40,9 @@ FORMS    += \
     acquaintance.ui
 
 RESOURCES   += resource.qrc \
-    resource2.qrc
+    resource2.qrc \
+    bushResource.qrc \
+    elecResource.qrc \
+    fireResource.qrc \
+    waterResource.qrc \
+    gifResource.qrc

@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="blastoise">waterResource/blastoise.png</file>
+        <file alias="empoleon">waterResource/empoleon.png</file>
+        <file alias="marshtomp">waterResource/marshtomp.png</file>
+        <file alias="mudkip">waterResource/mudkip.png</file>
+        <file alias="piplup">waterResource/piplup.png</file>
+        <file alias="prinplup">waterResource/prinplup.png</file>
+        <file alias="squirtle">waterResource/squirtle.png</file>
+        <file alias="swampert">waterResource/swampert.png</file>
+        <file alias="wartortle">waterResource/wartortle.png</file>
+    </qresource>
+</RCC>

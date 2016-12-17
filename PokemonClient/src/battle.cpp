@@ -362,16 +362,18 @@ void Battle::winOrLose(bool win, int expGot)
             tooltip.append("\nPokemon evoluted to " +
                            QString::fromStdString(myEvoKind[i]).toUpper());
         }
-        //QString pixmapStr = ":/" + QString::fromStdString(myEvoKind[i]).toLower();
-        QString pixmapStr = ":/squirtle";
+        QString pixmapStr = ":/" + QString::fromStdString(myEvoKind[i]).toLower();
         QPixmap pixmap = QPixmap(pixmapStr);
+        endPokeLabel[i]->setScaledContents(true);
+        endPokeLabel[i]->setMinimumSize(150, 150);
+        endPokeLabel[i]->setMaximumSize(150, 150);
         endPokeLabel[i]->setPixmap(pixmap);
         endInfoLabel[i]->setText(tooltip);
         endInfoLabel[i]->setWordWrap(true);
         endPokeLabel[i]->setAlignment(Qt::AlignCenter);
         endInfoLabel[i]->setAlignment(Qt::AlignCenter);
-        endPokeLabel[i]->setStyleSheet("border : 2px solid white; border-radius : 5px; background-color : rgba(255, 255, 255, 200)");
-        endInfoLabel[i]->setStyleSheet("border : 2px solid white; border-radius : 5px; background-color : rgba(255, 255, 255, 150); font: 75 11pt Consolas; color : rgb(255, 255, 255)");
+        endPokeLabel[i]->setStyleSheet("border-top : 2px solid white; border-radius : 5px; background-color : rgba(255, 255, 255, 100)");
+        endInfoLabel[i]->setStyleSheet("border : 2px solid white; border-radius : 5px; background-color : rgba(200, 200, 200, 150); font: 75 11pt Consolas; color : rgb(255, 255, 255)");
         endVLayout[i]->addWidget(endPokeLabel[i]);
         endVLayout[i]->addWidget(endInfoLabel[i]);
         endHLayout->addLayout(endVLayout[i]);
@@ -600,8 +602,7 @@ void Battle::onMyPokeChange(int mypokeindex)
     myPokeIndex = mypokeindex;
     std::string kind = myPokemonKind[mypokeindex];
     std::string name = myPokemonName[mypokeindex];
-    //QString styleStr = "#myPokeLabel{border-image : url(:/" + QString::fromStdString(kind) + ")}";
-    QString styleStr = "#myPokeLabel{image : url(:/squirtle)}";
+    QString styleStr = "#myPokeLabel{image : url(:/" + QString::fromStdString(kind).toLower() + ")}";
     this->ui->myPokeLabel->setStyleSheet(styleStr);
     this->ui->myPokeInfoLabel->setText(QString::fromStdString(name));
     myPokeCurrentHP = myPokemonTHP[mypokeindex];
@@ -619,8 +620,7 @@ void Battle::onEnemyPokeChange(int enemypokeindex)
     enemyPokeIndex = enemypokeindex;
     std::string kind = enemyPokemonKind[enemypokeindex];
     std::string name = enemyPokemonName[enemypokeindex];
-    //QString styleStr = "#enemyPokeLabel{border-image : url(:/" + QString::fromStdString(kind) + ");}";
-    QString styleStr = "#enemyPokeLabel{image : url(:/charmander);}";
+    QString styleStr = "#enemyPokeLabel{image : url(:/" + QString::fromStdString(kind).toLower() + ");}";
     this->ui->enemyPokeLabel->setStyleSheet(styleStr);
     this->ui->enemyPokeInfoLabel->setText(QString::fromStdString(name));
     enemyPokeCurrentHP = enemyPokemonTHP[enemypokeindex];

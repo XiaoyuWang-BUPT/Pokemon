@@ -124,26 +124,7 @@ int GetRanIndex(int MIN, int MAX) {
 
 void Hunt::GetPokeKind()
 {
-    //return kindOfString[GetRanIndex(0, 35)];
-    int x = GetRanIndex(1, 4);
-    switch (x)
-    {
-    case 1:
-        kindStr = "Pichu";
-        break;
-    case 2:
-        kindStr = "Charmander";
-        break;
-    case 3:
-        kindStr = "Bulbasaur";
-        break;
-    case 4:
-        kindStr = "Squirtle";
-        break;
-    default:
-        break;
-    }
-    return;
+    kindStr = kindOfString[EmbryoPokemon[GetRanIndex(1, 12) - 1]];
 }
 
 int Hunt::GetZ()
@@ -164,10 +145,13 @@ void Hunt::SetPokeGif()
 {
     this->ui->wordLabel->setStyleSheet("#wordLabel{border-image: url(:/word);}");
     this->ui->pokeLabel->setGeometry(330, 130, 200, 200);
+    this->ui->pokeLabel->setAlignment(Qt::AlignCenter);
     movie = GetMovie();
-    int w = 197 * ZMin / GetZ();
-    int h = 192 * ZMin / GetZ();
-    movie->setScaledSize(QSize(w, h));
+    int rateZ = GetZ();
+    int w = 75 * ZMin / rateZ;
+    int h = 75 * ZMin / rateZ;
+    this->ui->pokeLabel->setGeometry(390, 200, w, h);
+    this->ui->pokeLabel->setScaledContents(true);
     this->ui->pokeLabel->setMovie(movie);
     movie->start();
     return;

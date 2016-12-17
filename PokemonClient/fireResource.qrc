@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="blaziken">fireResource/blaziken.png</file>
+        <file alias="charizard">fireResource/charizard.png</file>
+        <file alias="charmander">fireResource/charmander.png</file>
+        <file alias="charmeleon">fireResource/charmeleon.png</file>
+        <file alias="chimchar">fireResource/chimchar.png</file>
+        <file alias="combusken">fireResource/combusken.png</file>
+        <file alias="infernape">fireResource/infernape.png</file>
+        <file alias="monferno">fireResource/monferno.png</file>
+        <file alias="torchic">fireResource/torchic.png</file>
+    </qresource>
+</RCC>

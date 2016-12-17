@@ -36,7 +36,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>130</y>
+      <y>100</y>
       <width>200</width>
       <height>50</height>
      </rect>
@@ -133,7 +133,7 @@ border-radius : 3px;</string>
    <widget class="QWidget" name="enemyPoke" native="true">
     <property name="geometry">
      <rect>
-      <x>540</x>
+      <x>630</x>
       <y>220</y>
       <width>200</width>
       <height>200</height>
@@ -168,11 +168,13 @@ border-radius : 3px;</string>
       <string/>
      </property>
     </widget>
+    <zorder>enemyHurtLabel</zorder>
+    <zorder>enemyPokeLabel</zorder>
    </widget>
    <widget class="QWidget" name="myPoke" native="true">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>40</x>
       <y>220</y>
       <width>200</width>
       <height>200</height>
@@ -213,8 +215,8 @@ border-radius : 3px;</string>
    <widget class="QWidget" name="enemyPokeHead" native="true">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>130</y>
+      <x>620</x>
+      <y>100</y>
       <width>200</width>
       <height>50</height>
      </rect>
@@ -311,7 +313,7 @@ border-radius : 3px;</string>
    <widget class="QWidget" name="endWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>200</x>
       <y>146</y>
       <width>480</width>
       <height>250</height>
@@ -443,12 +445,12 @@ color: rgb(255, 255, 255);</string>
    <zorder>myPokeHead</zorder>
    <zorder>enemyPoke</zorder>
    <zorder>enemyPokeHead</zorder>
-   <zorder>endWidget</zorder>
    <zorder>myPoke</zorder>
    <zorder>mySpecialAttLabel</zorder>
    <zorder>enemySpecialAttLabel</zorder>
    <zorder>myHPDecLabel</zorder>
    <zorder>enemyHPDecLabel</zorder>
+   <zorder>endWidget</zorder>
   </widget>
  </widget>
  <resources/>

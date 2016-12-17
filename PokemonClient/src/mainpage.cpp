@@ -221,6 +221,7 @@ void MainPage::setRankIcons(int i)
 void MainPage::setPackageScrollArea(QString symbol, QString kind, QString name, QString tip, int index)
 {
     QString pixmap = ":/" + kind.toLower();
+    pokePicLabel[index]->setScaledContents(true);
     pokePicLabel[index]->setPixmap(QPixmap(pixmap));
     pokePicLabel[index]->setAlignment(Qt::AlignCenter);    
     pokeTextLabel[index]->setText(name);

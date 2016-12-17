@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="chimchar.gif">gifResource/chimchar.gif</file>
+        <file alias="mareep.gif">gifResource/mareep.gif</file>
+        <file alias="mudkip.gif">gifResource/mudkip.gif</file>
+        <file alias="piplup.gif">gifResource/piplup.gif</file>
+        <file alias="torchic.gif">gifResource/torchic.gif</file>
+        <file alias="treecko.gif">gifResource/treecko.gif</file>
+        <file alias="turtwig.gif">gifResource/turtwig.gif</file>
+        <file alias="pichu.gif">gifResource/pichu-3.gif</file>
+        <file alias="shinx.gif">gifResource/shinx.gif</file>
+    </qresource>
+</RCC>

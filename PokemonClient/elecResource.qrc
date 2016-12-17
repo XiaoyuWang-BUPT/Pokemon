@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="ampharos">electricityResource/ampharos.png</file>
+        <file alias="flaaffy">electricityResource/flaaffy.png</file>
+        <file alias="luxio">electricityResource/luxio.png</file>
+        <file alias="luxray">electricityResource/luxray.png</file>
+        <file alias="mareep">electricityResource/mareep.png</file>
+        <file alias="pichu">electricityResource/pichu.png</file>
+        <file alias="pikachu">electricityResource/pikachu.png</file>
+        <file alias="raichu">electricityResource/raichu.png</file>
+        <file alias="shinx">electricityResource/shinx.png</file>
+    </qresource>
+</RCC>

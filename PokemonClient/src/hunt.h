@@ -24,6 +24,7 @@
 
 using json = nlohmann::json;
 
+const int EmbryoPokemon[] = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33};
 const std::string kindOfString[] = {"Charmander", "Charmeleon", "Charizard",
                          "Torchic", "Combusken", "Blaziken",
                          "Chimchar", "Monferno", "Infernape",

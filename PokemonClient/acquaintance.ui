@@ -98,7 +98,7 @@ background-color : rgba(0, 0, 0, 75);</string>
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>150</y>
+      <y>160</y>
       <width>120</width>
       <height>20</height>
      </rect>
@@ -199,7 +199,7 @@ background-color : rgba(0, 0, 0, 75);</string>
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>150</y>
+      <y>160</y>
       <width>120</width>
       <height>20</height>
      </rect>
@@ -303,7 +303,7 @@ background-color : rgba(0, 0, 0, 75);</string>
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>150</y>
+      <y>160</y>
       <width>120</width>
       <height>20</height>
      </rect>

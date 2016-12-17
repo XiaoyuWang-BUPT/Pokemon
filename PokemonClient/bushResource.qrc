@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="bulbasaur">bushResource/bulbasaur.png</file>
+        <file alias="grotle">bushResource/grotle.png</file>
+        <file alias="grovyle">bushResource/grovyle.png</file>
+        <file alias="ivysaur">bushResource/ivysaur.png</file>
+        <file alias="sceptile">bushResource/sceptile.png</file>
+        <file alias="torterra">bushResource/torterra.png</file>
+        <file alias="treecko">bushResource/treecko.png</file>
+        <file alias="turtwig">bushResource/turtwig.png</file>
+        <file alias="venusaur">bushResource/venusaur.png</file>
+    </qresource>
+</RCC>
