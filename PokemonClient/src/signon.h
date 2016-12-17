@@ -42,7 +42,7 @@ private slots:
 
 signals:
     void switchToSignIn();
-    void switchToMainPage();
+    void switchToAcq();
 };
 
 #endif // SIGNON_H

@@ -3,6 +3,7 @@
 #include "mainpage.h"
 #include "hunt.h"
 #include "battle.h"
+#include "acquaintance.h"
 #include <QApplication>
 #include <QDebug>
 
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
 
     SignIn *signin = new SignIn(socketClient);
     SignOn *signon = new SignOn(socketClient);
+    Acquaintance *acquaintance = new Acquaintance(socketClient);
     MainPage *mainpage = new MainPage(socketClient);
     Hunt *hunt = new Hunt(socketClient);
     Battle *battle = new Battle(socketClient);
@@ -24,7 +26,8 @@ int main(int argc, char *argv[])
     QObject::connect(signin, SIGNAL(switchToSignOn()), signon, SLOT(receiveSwitch()));
     QObject::connect(signin, SIGNAL(switchToMainPage()), mainpage, SLOT(receiveSwitch()));
     QObject::connect(signon, SIGNAL(switchToSignIn()), signin, SLOT(receiveSwitch()));
-    QObject::connect(signon, SIGNAL(switchToMainPage()), mainpage, SLOT(receiveSwitch()));
+    QObject::connect(signon, SIGNAL(switchToAcq()), acquaintance, SLOT(receiveSwitch()));
+    QObject::connect(acquaintance, SIGNAL(SwitchToMainPage()), mainpage, SLOT(receiveSwitch()));
     QObject::connect(hunt, SIGNAL(switchToMainPage()), mainpage, SLOT(receiveSwitch()));
     QObject::connect(mainpage, SIGNAL(switchToHunt()), hunt, SLOT(receiveSwitch()));
     QObject::connect(mainpage, SIGNAL(SwitchToBattle(QString,QString)), battle, SLOT(receiveSwitch(QString,QString)));

@@ -143,26 +143,36 @@ void SignIn::onSignInClicked()
 
             json recvJ = json::parse(recvString);
             recvString = "";
+            bool userOnlined = recvJ["onlined"];
             bool useravailable = recvJ["useravailable"];
             bool passwordcorrect = recvJ["passwordcorrect"];
 
-            if (!useravailable)
+            if (userOnlined)
             {
-                QMessageBox::information(this, "Info", "User not logged please sign on");
-            }
-            else if (passwordcorrect)
-            {
+                QMessageBox::information(this, "Info", "Your account is already online\nPlease log out first");
                 this->ui->userLineEdit->clear();
                 this->ui->pwLineEdit->clear();
-                std::string tmp = j["username"];
-                socketClient->setPlayerName(tmp);
-                this->hide();
-                emit switchToMainPage();
             }
             else
             {
-                QMessageBox::information(this, "Info", "Wrong password");
-                this->ui->pwLineEdit->setFocus();
+                if (!useravailable)
+                {
+                    QMessageBox::information(this, "Info", "User not logged please sign on");
+                }
+                else if (passwordcorrect)
+                {
+                    this->ui->userLineEdit->clear();
+                    this->ui->pwLineEdit->clear();
+                    std::string tmp = j["username"];
+                    socketClient->setPlayerName(tmp);
+                    this->hide();
+                    emit switchToMainPage();
+                }
+                else
+                {
+                    QMessageBox::information(this, "Info", "Wrong password");
+                    this->ui->pwLineEdit->setFocus();
+                }
             }
         }
     }

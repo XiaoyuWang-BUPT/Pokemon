@@ -40,25 +40,39 @@ std::string GetSendStr(int pid, Helper* helper)
         sendJ["end"] = "end";
         std::string nameRecv = recvJ["username"];
         std::string pwRecv = recvJ["password"];
-        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
-        PlayerInfo qHelper;
-        auto query = playerMapper.Query(qHelper)
-                .ToVector();
-        for (auto q : query)
+        sendJ["onlined"] = false;
+        bool onlined = false;
+        for (int i = 0; i < MAXSIZE_POOL; i++)
         {
-            if (q.name == nameRecv)
+            if (onlinePlayer[i] == nameRecv)
             {
-                sendJ["useravailable"] = true;
-                if (q.password == pwRecv)
-                {
-                    sendJ["passwordcorrect"] = true;
-                    onlinePlayer[pid] = q.name;
-                }
-                else
-                {
-                    sendJ["passwordcorrect"] = false;
-                }
+                sendJ["onlined"] = true;
+                onlined = true;
                 break;
+            }
+        }
+        if (!onlined)
+        {
+            Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+            PlayerInfo qHelper;
+            auto query = playerMapper.Query(qHelper)
+                    .ToVector();
+            for (auto q : query)
+            {
+                if (q.name == nameRecv)
+                {
+                    sendJ["useravailable"] = true;
+                    if (q.password == pwRecv)
+                    {
+                        sendJ["passwordcorrect"] = true;
+                        onlinePlayer[pid] = q.name;
+                    }
+                    else
+                    {
+                        sendJ["passwordcorrect"] = false;
+                    }
+                    break;
+                }
             }
         }
     }
@@ -92,6 +106,44 @@ std::string GetSendStr(int pid, Helper* helper)
             sendJ["signonsuccess"] = playerMapper.Insert(p);
             onlinePlayer[pid] = p.name;
         }
+    }
+    if (symbol == "acquaintance")
+    {
+        sendJ["symbol"] = "acquaintance";
+        sendJ["end"] = "end";
+        std::string owner = recvJ["owner"];
+        std::string pokemon = recvJ["pokemon"];
+        int level = 1;
+        Kind kind;
+        for (int i = 0; i < (sizeof(kindOfString)/sizeof(kindOfString[0])); i++)
+        {
+            if (pokemon == kindOfString[i])
+            {
+                kind = (Kind)i;
+            }
+        }
+        std::string name = owner + "1stPokemon";
+        PokemonFactory *pokemonFactory = new PokemonFactory();
+        Pokemon* caughtPokemon = pokemonFactory->CreatePokemon(kind, level, name, owner);
+        struct PokemonInfo pokemoninfo = caughtPokemon->ToPokeStruInfo();
+        Poor_ORM::ORMapper<PokemonInfo> pokePackMapper ("pokePackage.db");
+        pokePackMapper.Insert(pokemoninfo);
+        struct PlayerInfo playerinfo;
+        Poor_ORM::ORMapper<PlayerInfo> playerMapper ("playerinfo.db");
+        PlayerInfo qHelper;
+        auto query = playerMapper.Query(qHelper)
+                .ToVector();
+        for (auto q : query)
+        {
+            if (q.name == owner)
+            {
+                playerinfo = q;
+                break;
+            }
+        }
+        playerinfo.pokemonNumber += 1;
+        playerinfo.packageCapacity -= 1;
+        playerMapper.Update(playerinfo);
     }
     if (symbol == "onlinePlayer")
     {

@@ -18,7 +18,8 @@ SOURCES += src/main.cpp \
     src/signon.cpp \
     src/socketclient.cpp \
     src/hunt.cpp \
-    src/battle.cpp
+    src/battle.cpp \
+    src/acquaintance.cpp
 
 HEADERS  += \
     lib/json.hpp \
@@ -27,14 +28,16 @@ HEADERS  += \
     src/signon.h \
     src/socketClient.h \
     src/hunt.h \
-    src/battle.h
+    src/battle.h \
+    src/acquaintance.h
 
 FORMS    += \
     signin.ui \
     mainpage.ui \
     signon.ui \
     hunt.ui \
-    battle.ui
+    battle.ui \
+    acquaintance.ui
 
 RESOURCES   += resource.qrc \
     resource2.qrc

@@ -187,7 +187,7 @@ void SignOn::signOnButtonClicked()
                 std::string tmp = j["username"];
                 socketClient->setPlayerName(tmp);
                 this->hide();
-                emit switchToMainPage();
+                emit switchToAcq();
             }
             else
                 QMessageBox::information(this, "Info", "Sign On failed, please Try Again");
