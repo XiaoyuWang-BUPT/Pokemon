@@ -331,7 +331,7 @@ void MainPage::setMyInfo(int pokeNum, int rank, double rate, QString info)
     }
     this->ui->rankLevelLabel->setToolTip(rankToolTip);
 
-    int rateInteger = (int)(rate * 100);
+    int rateInteger = (int)rate;
     if (rateInteger < RateLevel[0])
     {
         rateToolTip.append("Noviciate\nGet ");
@@ -364,7 +364,7 @@ void MainPage::setMyInfo(int pokeNum, int rank, double rate, QString info)
     if (rateInteger >= RateLevel[2])
     {
         rateToolTip.append("Senior\nGinius combater");
-        this->ui->rateLevelLabel->setStyleSheet("#rateLevelLabel{image: url(:/rateGold);}");
+        this->ui->rateLevelLabel->setStyleSheet("#rateLevelLabel{image: url(:/ratetGold);}");
     }
     this->ui->rateLevelLabel->setToolTip(rateToolTip);
 }

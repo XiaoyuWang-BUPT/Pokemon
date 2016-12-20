@@ -148,6 +148,9 @@ border-radius : 3px;</string>
        <height>200</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="text">
       <string/>
      </property>

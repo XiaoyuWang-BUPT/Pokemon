@@ -57,6 +57,7 @@ void Battle::receiveSwitch(QString nature, QString standard)
     this->ui->enemyPokeHPBarWidget->resize(170, 20);
     myPokemonName.clear();
     myPokemonKind.clear();
+    myEvoKind.clear();
     myPokemonTHP.clear();
     enemyPokemonName.clear();
     enemyPokemonKind.clear();
@@ -351,7 +352,7 @@ void Battle::winOrLose(bool win, int expGot)
     int pokeNum = myPokemonName.size();
     for (int i = 0; i < pokeNum; i++)
     {
-        QString tooltip = "Gokemon gained " + expGotQStr + " experience";
+        QString tooltip = "Pokemon gained " + expGotQStr + " experience";
         if (QString::fromStdString(myPokemonKind[i]).toLower()
                 == QString::fromStdString(myEvoKind[i]).toLower())
         {
@@ -359,7 +360,7 @@ void Battle::winOrLose(bool win, int expGot)
         }
         else
         {
-            tooltip.append("\nPokemon evoluted to " +
+            tooltip.append("\nPokemon evoluted to\n" +
                            QString::fromStdString(myEvoKind[i]).toUpper());
         }
         QString pixmapStr = ":/" + QString::fromStdString(myEvoKind[i]).toLower();
@@ -368,6 +369,8 @@ void Battle::winOrLose(bool win, int expGot)
         endPokeLabel[i]->setMinimumSize(150, 150);
         endPokeLabel[i]->setMaximumSize(150, 150);
         endPokeLabel[i]->setPixmap(pixmap);
+        endInfoLabel[i]->setMinimumSize(150, 100);
+        endInfoLabel[i]->setMaximumSize(150, 100);
         endInfoLabel[i]->setText(tooltip);
         endInfoLabel[i]->setWordWrap(true);
         endPokeLabel[i]->setAlignment(Qt::AlignCenter);
@@ -425,9 +428,9 @@ void Battle::onEnemyPokeAttack(QString attway, QString enemyNature)
     if (attway == "att")
     {
         QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPoke, "geometry");
-        animation->setStartValue(QRect(560, 160, 200, 200));
+        animation->setStartValue(QRect(630, 160, 200, 200));
         animation->setKeyValueAt(0.5, QRect(30, 160, 200, 200));
-        animation->setEndValue(QRect(560, 160, 200, 200));
+        animation->setEndValue(QRect(630, 160, 200, 200));
         animation->setDuration(2000);
         animation->start(QPropertyAnimation::DeleteWhenStopped);
     }
@@ -622,12 +625,13 @@ void Battle::onEnemyPokeChange(int enemypokeindex)
     std::string name = enemyPokemonName[enemypokeindex];
     QString styleStr = "#enemyPokeLabel{image : url(:/" + QString::fromStdString(kind).toLower() + ");}";
     this->ui->enemyPokeLabel->setStyleSheet(styleStr);
+    this->ui->enemyPokeLabel->setAlignment(Qt::AlignCenter);
     this->ui->enemyPokeInfoLabel->setText(QString::fromStdString(name));
     enemyPokeCurrentHP = enemyPokemonTHP[enemypokeindex];
     QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPoke, "geometry");
-    animation->setStartValue(QRect(560, 160, 200, 200));
-    animation->setKeyValueAt(0.5, QRect(560, 160, 0, 200));
-    animation->setEndValue(QRect(560, 160, 200, 200));
+    animation->setStartValue(QRect(630, 160, 200, 200));
+    animation->setKeyValueAt(0.5, QRect(630, 160, 0, 200));
+    animation->setEndValue(QRect(630, 160, 200, 200));
     animation->setDuration(1000);
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
