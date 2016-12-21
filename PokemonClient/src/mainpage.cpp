@@ -429,6 +429,7 @@ void MainPage::LoadOnlinePlayer(json &recvJ)
         std::string nameKey = "name" + indexStr;
         std::string rankKey = "rank" + indexStr;
         std::string rateKey = "rate" + indexStr;
+        std::string name = recvJ[nameKey];
         std::string rank;
         std::string rate;
         stream.clear();
@@ -439,17 +440,22 @@ void MainPage::LoadOnlinePlayer(json &recvJ)
         r *= 100;
         stream << std::setprecision(3) << r;
         stream >> rate;
-        QString str = QString::fromStdString(recvJ[nameKey]);
         playerNames[i] = recvJ[nameKey];
-        int nameLen = str.length();
-        int rankLen = rank.length();
-        int rateLen = rate.length();
-        for (int j = 0; j < ((18 - nameLen - rankLen - rateLen)/2); j++)
-            str.append(" ");
-        str.append(QString::fromStdString(rate + "%"));
-        for (int j = 0; j < ((15 - nameLen - rankLen - rateLen)/2); j++)
-            str.append(" ");
-        str.append(QString::fromStdString(rank));
+        std::string infoStr;
+        std::string tmpStr;
+        stream.clear();
+        stream << name;
+        stream >> tmpStr;
+        infoStr.append(tmpStr);
+        stream.clear();
+        stream << std::setw(7) << std::setfill('*') << (rate + "%");
+        stream >> tmpStr;
+        infoStr.append(tmpStr);
+        stream.clear();
+        stream << std::setw(7) << std::setfill('*') << rank;
+        stream >> tmpStr;
+        infoStr.append(tmpStr);
+        QString str = QString::fromStdString(infoStr);
         item = new QListWidgetItem(str, this->ui->OPListWidget);
         item->setFont(QFont("Consolas", 16, 2, false));
         item->setFlags(Qt::NoItemFlags);
@@ -790,6 +796,7 @@ bool MainPage::getRecvStr(QString str)
             std::string nameKey = "name" + indexStr;
             std::string rankKey = "rank" + indexStr;
             std::string rateKey = "rate" + indexStr;
+            std::string name = recvJ[nameKey];
             std::string rank;
             std::string rate;
             stream.clear();
@@ -800,18 +807,21 @@ bool MainPage::getRecvStr(QString str)
             r *= 100;
             stream << std::setprecision(3) << r;
             stream >> rate;
-            QString str = "   ";
-            str.append(QString::fromStdString(recvJ[nameKey]));
-            rankPlayerNames[i] = recvJ[nameKey];
-            std::string name = recvJ[nameKey];
-            int nameLen = name.length();
-            int rankLen = rank.length();
-            for (int j = 0; j < ((13 - nameLen - rankLen)/2); j++)
-                str.append(" ");
-            str.append(QString::fromStdString(rate + "%"));
-            for (int j = 0; j < ((12 - nameLen - rankLen)/2); j++)
-                str.append(" ");
-            str.append(QString::fromStdString(rank));
+            std::string infoStr;
+            std::string tmpStr;
+            stream.clear();
+            stream << std::setw(6) << std::setfill('*') << name;
+            stream >> tmpStr;
+            infoStr.append(tmpStr);
+            stream.clear();
+            stream << std::setw(7) << std::setfill('*') << (rate + "%");
+            stream >> tmpStr;
+            infoStr.append(tmpStr);
+            stream.clear();
+            stream << std::setw(7) << std::setfill('*') << rank;
+            stream >> tmpStr;
+            infoStr.append(tmpStr);
+            QString str = QString::fromStdString(infoStr);
             item = new QListWidgetItem(str, this->ui->rankList);
             item->setFont(QFont("Consolas", 16, 2, false));
             emit setRankIconSignal(i);
