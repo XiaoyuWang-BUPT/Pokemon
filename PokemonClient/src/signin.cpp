@@ -10,18 +10,29 @@ SignIn::SignIn(QWidget *parent) :
     ui(new Ui::SignIn)
 {
     ui->setupUi(this);
+    this->InitUI();
+    this->SetEventFilter();
+    this->InitConnect();
+}
+
+void SignIn::InitUI()
+{
     this->setWindowTitle("pokemon");
     QIcon LOGO (":/logo");
     this->setWindowIcon(LOGO);
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
-
     setAutoFillBackground(true);
     QPalette palette;
     QPixmap pixmap(":/background.jpg");
     palette.setBrush(QPalette::Window, QBrush(pixmap.scaled(width(), height())));
     setPalette(palette);
     palette.setBrush(QPalette::Base, QBrush(QColor::QColor(236, 221, 190)));
+    this->SetGosankeGif();
+}
+
+void SignIn::SetGosankeGif()
+{
     QMovie* movie = new QMovie(":/blastoise.gif");
     this->ui->jenLabel->setMovie(movie);
     movie->start();
@@ -31,13 +42,20 @@ SignIn::SignIn(QWidget *parent) :
     movie = new QMovie(":/bulbasaur.gif");
     this->ui->bulLabel->setMovie(movie);
     movie->start();
+}
 
-    QObject::connect(this->ui->signInButton, SIGNAL(clicked(bool)), this, SLOT(onSignInClicked()));
-    QObject::connect(this->ui->topButtonSignOn, SIGNAL(clicked(bool)), this, SLOT(onTopSignOnClicked()));
+void SignIn::SetEventFilter()
+{
     this->ui->userLineEdit->installEventFilter(this);
     this->ui->pwLineEdit->installEventFilter(this);
     this->ui->signInButton->installEventFilter(this);
     this->ui->topButtonSignOn->installEventFilter(this);
+}
+
+void SignIn::InitConnect()
+{
+    QObject::connect(this->ui->signInButton, SIGNAL(clicked(bool)), this, SLOT(onSignInClicked()));
+    QObject::connect(this->ui->topButtonSignOn, SIGNAL(clicked(bool)), this, SLOT(onTopSignOnClicked()));
 }
 
 SignIn::SignIn(SocketClient* sc, QWidget *parent) :
@@ -71,29 +89,42 @@ bool SignIn::eventFilter(QObject *watched, QEvent *event)
     QPalette focusoutPalette = QPalette();
     focusinPalette.setColor(QPalette::Base, QColor(221, 240, 237));
     focusoutPalette.setColor(QPalette::Base, Qt::white);
+
+    //watch user name line edit
     if (watched == this->ui->userLineEdit)
     {
+        //clear line eidt when it is focused
         if (event->type() == QEvent::FocusIn)
         {
             this->ui->userLineEdit->clear();
             this->ui->userLineEdit->setPalette(focusinPalette);
         }
+
+        //add palette when it is not focused
         else if (event->type() == QEvent::FocusOut)
             this->ui->userLineEdit->setPalette(focusoutPalette);
     }
+
+    //watch password line edit
     if (watched == this->ui->pwLineEdit)
     {
+        //clear line eidt and set echo mode when it is focused
         if (event->type() == QEvent::FocusIn)
         {
             this->ui->pwLineEdit->clear();
             this->ui->pwLineEdit->setEchoMode(QLineEdit::Password);
             this->ui->pwLineEdit->setPalette(focusinPalette);
         }
+
+        //add palette when it is not focused
         else if (event->type() == QEvent::FocusOut)
             this->ui->pwLineEdit->setPalette(focusoutPalette);
     }
+
+    //watch sign in button
     if (watched == this->ui->signInButton)
     {
+        //support keyboard operation
         if (event->type() == QEvent::KeyPress)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*> (event);
@@ -102,8 +133,11 @@ bool SignIn::eventFilter(QObject *watched, QEvent *event)
                 emit this->ui->signInButton->clicked();
         }
     }
+
+    //watch sign on button
     if (watched == this->ui->topButtonSignOn)
     {
+        //support keyboard operation
         if (event->type() == QEvent::KeyPress)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*> (event);
@@ -120,10 +154,12 @@ DWORD WINAPI RecvThreadFuncSignIn(LPVOID lParam, SignIn* signin);
 
 void SignIn::onSignInClicked()
 {
+    //user name can not be empty
     if (this->ui->userLineEdit->text().isEmpty())
         QMessageBox::information(this, "Error", QString::fromStdString("Username can't be empty"));
     else
     {
+        //password can not be empty
         if (this->ui->pwLineEdit->text().isEmpty())
             QMessageBox::information(this, "Error", QString::fromStdString("Password can't be empty"));
         else
@@ -135,9 +171,11 @@ void SignIn::onSignInClicked()
             j["end"] = "end";
             std::string str = j.dump();
 
+            //send username and password to server
             std::thread signinSendThread = std::thread(SendThreadFuncSignIn, socketClient, &str);
             signinSendThread.join();
 
+            //recv feedback from server
             std::thread signinRecvThread = std::thread(RecvThreadFuncSignIn, socketClient, this);
             signinRecvThread.join();
 
@@ -147,6 +185,7 @@ void SignIn::onSignInClicked()
             bool useravailable = recvJ["useravailable"];
             bool passwordcorrect = recvJ["passwordcorrect"];
 
+            //can not log in again if the account is already online
             if (userOnlined)
             {
                 QMessageBox::information(this, "Info", "Your account is already online\nPlease log out first");
@@ -155,10 +194,13 @@ void SignIn::onSignInClicked()
             }
             else
             {
+                //notice if user is not logged
                 if (!useravailable)
                 {
                     QMessageBox::information(this, "Info", "User not logged please sign on");
                 }
+
+                //turn to main page if user exist and password is right
                 else if (passwordcorrect)
                 {
                     this->ui->userLineEdit->clear();
@@ -168,6 +210,8 @@ void SignIn::onSignInClicked()
                     this->hide();
                     emit switchToMainPage();
                 }
+
+                //password is wrong
                 else
                 {
                     QMessageBox::information(this, "Info", "Wrong password");

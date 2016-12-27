@@ -18,7 +18,7 @@
 
 SOCKET cSock[MAXSIZE_POOL] = { INVALID_SOCKET };
 std::string onlinePlayer[MAXSIZE_POOL] = {""};
-const std::string nullPlayerPair = "";
+const std::string nullPlayer = "";
 const std::string Permision = "permision";
 const std::string Deny = "Thread pool is full, please wait";
 
@@ -94,8 +94,6 @@ void SocketServer::InitCheckListenSock()
 //Bind socket to IP address or port
 void SocketServer::BindSock()
 {
-	/*iResult = bind(ListenSocket, result->ai_addr,
-		(int)result->ai_addrlen);*/
 	bind(ListenSocket, result->ai_addr,
 		(int)result->ai_addrlen);
 

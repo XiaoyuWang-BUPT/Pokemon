@@ -12,6 +12,13 @@ std::thread threads[MAXSIZE_POOL];
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
 
+/**
+ * Function : PrintPokeData
+ * Description : print Pokemon* object
+ * Input : Pokemon*
+ * Return : None
+ * Other : None
+**/
 void PrintPokeData(Pokemon *pokemon) {
     cout << "Kind:" << kindOfString[pokemon->getKind()] <<  "\tName:" << pokemon->getName() << "\tAlive:" << aliveOfString[pokemon->getAlive()] <<
             "\tNature:" << natureOfString[pokemon->getNature()] << "\nCharacter:" << characterOfString[pokemon->getCharacter()] <<
@@ -30,6 +37,13 @@ void PrintPokeData(Pokemon *pokemon) {
     cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
 }
 
+/**
+ * Function : PrintPlayer
+ * Description : print Player* object
+ * Input : Player*
+ * Return : None
+ * Other : None
+**/
 void PrintPlayer(Player *player)
 {
     cout << "Name: " << player->getName() << "\tPassword: (" << player->getPassword() << ") "
@@ -82,13 +96,7 @@ int main(int argc, char *argv[])
         Poor_ORM::ORMapper<PokemonInfo> pokeStgMapper("pokeStorage.db");
         pokePackMapper.CreateTable();
         pokeStgMapper.CreateTable();
-        pokePackMapper.Insert(pokemonInfo);
-
-        pokemonInfo = {
-            "Father", "Father Pokemon",0, 1, 0, 7, 1200, 120,
-            38, 678, 467, 34, 25, 2, 0, 0, 1 };
-        pokePackMapper.Insert(pokemonInfo);
-
+        //pokePackMapper.Insert(pokemonInfo);
 
         PokemonInfo pHelper;
         auto pokemonQuery = pokePackMapper.Query(pHelper)
@@ -145,25 +153,31 @@ int main(int argc, char *argv[])
     delete charamander;
     delete pokemonFactory;
 
+    //initialize cSock array
     memset(cSock, INVALID_SOCKET, sizeof(cSock));
-    for (auto& o : onlinePlayer) o = nullPlayerPair;
+    for (auto& o : onlinePlayer) o = nullPlayer;
     SocketServer *socketServer = new SocketServer();
+    //prepare for socket connect
     socketServer->Prepare();
 
+    //waiting for client to connect
     while (true)
     {
         if (socketServer->existingClientCount < MAXSIZE_POOL)
             std::cout << "Waiting Client to connect" << std::endl;
         SOCKET tmpSock = accept(socketServer->ListenSocket, NULL, NULL);
+        //if socket pool is not full, permit client socket to connect
         if (socketServer->existingClientCount < MAXSIZE_POOL)
         {
             Helper *helper = new Helper();
             int j = send(tmpSock, Permision.c_str(), Permision.length(), NULL);
+            //find a appropriate cSock item to store client socket
             for (int i = 0; i < MAXSIZE_POOL; i++)
             {
                 if (cSock[i] == INVALID_SOCKET)
                 {
                     cSock[i] = std::move(tmpSock);
+                    //a new thread handle connection with client
                     threads[i] =
                         std::thread(ProcessClientRequests, i, &cSock[i], socketServer, helper);
                     threads[i].detach(); //A thread returns and release resources BY ITSELF
@@ -172,11 +186,13 @@ int main(int argc, char *argv[])
                 }
             }
         }
+        //if socke pool is full, deny client's request
         else
         {
             send(tmpSock, Deny.c_str(), Deny.length(), NULL);
         }
     }
+    //after progress shutdown socket and clean up resource
     socketServer->ShutDown();
     delete socketServer;
 

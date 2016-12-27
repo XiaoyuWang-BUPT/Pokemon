@@ -9,6 +9,7 @@ void SocketClient::Prepare()
 
 void SocketClient::InitWinSock()
 {
+    //start up socket
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0)
     {
@@ -17,6 +18,7 @@ void SocketClient::InitWinSock()
         return;
     }
 
+    //initialize address information
     ZeroMemory(&hints, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
@@ -76,6 +78,7 @@ void SocketClient::ConnectToServer()
 
 void SocketClient::Try()
 {
+    //try to connect to server until get permision
     do {
         ClearRecvBuf();
         Receive();

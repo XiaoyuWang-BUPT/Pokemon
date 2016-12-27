@@ -3,6 +3,7 @@
 
 #include "player.h"
 
+//enumeration of player's kind, new means new-comer, old means has logged
 enum PlayerKind{NEW, OLD};
 
 class PlayerFactory
@@ -10,7 +11,14 @@ class PlayerFactory
 public:
     PlayerFactory(){}
     ~PlayerFactory(){}
-    //Player *CreatePlayer(PlayerKind playerKind, string name, string password);
+
+    /**
+     * Function : CreatePlayer(PlayerInfo)
+     * Description : create player object with struct player info
+     * Input : struct player inffo
+     * Return : Player object
+     * Other :   None
+    **/
     Player *CreatePlayer(struct PlayerInfo playerInfo);
 };
 

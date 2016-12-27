@@ -7,29 +7,32 @@ MainPage::MainPage(QWidget *parent) :
     ui(new Ui::MainPage)
 {
     ui->setupUi(this);
+    this->InitUI();
+    this->SetEventFilter();
+    this->InitConnect();
+}
+
+void MainPage::InitUI()
+{
     setWindowFlags(Qt::FramelessWindowHint);
     this->setWindowTitle("pokemon");
     QIcon LOGO (":/logo");
     this->setWindowIcon(LOGO);
-    this->ui->textBrowser->setOpenLinks(false);
-    this->ui->pokeballButton->setStyleSheet("#pokeballButton{border-image: url(:/pokeball);}");//QToolTip{background-color:red;}");
-    this->ui->rankButton->setStyleSheet("#rankButton{border-image: url(:/rank);}");
-    this->ui->onlinePlayerBtn->setStyleSheet("#onlinePlayerBtn{border-image: url(:/onlinePlayer);}");
-    this->ui->myInfoButton->setStyleSheet("#myInfoButton{border-image: url(:/player);}");
-    this->ui->packageButton->setStyleSheet("#packageButton{border-image: url(:/package);}");
-    this->ui->storageButton->setStyleSheet("#storageButton{border-image: url(:/storage);}");
-    this->ui->updownButton->setStyleSheet("#updownButton{border-image: url(:/down);}");
-    this->ui->updownButton->setCursor(QCursor(Qt::PointingHandCursor));
-    this->ui->updownButton->setToolTip("Click to open");
+    setAutoFillBackground(true);
+    QPalette palette;
+    QPixmap pixmap(":/resource/tyranitar.jpg");
+    palette.setBrush(QPalette::Window, QBrush(pixmap.scaled(width(), height())));
+    setPalette(palette);
 
-    this->ui->myInfoButton->setCursor(QCursor(Qt::PointingHandCursor));
-    this->ui->onlinePlayerBtn->setCursor(QCursor(Qt::PointingHandCursor));
-    this->ui->packageButton->setCursor(QCursor(Qt::PointingHandCursor));
-    this->ui->pokeballButton->setCursor(QCursor(Qt::PointingHandCursor));
-    this->ui->rankButton->setCursor(QCursor(Qt::PointingHandCursor));
-    this->ui->storageButton->setCursor(QCursor(Qt::PointingHandCursor));
-    this->ui->huntPicContainer->setCursor(QCursor(Qt::PointingHandCursor));
+    this->SetCursors();
+    this->SetToolTips();
+    this->SetStyles();
+    this->InitPlayerArea();
+    this->InitPokemonArea();
+}
 
+void MainPage::SetEventFilter()
+{
     this->ui->pokeballButton->installEventFilter(this);
     this->ui->huntPicContainer->installEventFilter(this);
     this->ui->battlePicContainer->installEventFilter(this);
@@ -46,7 +49,10 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->elecGold->installEventFilter(this);
     this->ui->elecSilver->installEventFilter(this);
     this->ui->elecBronze->installEventFilter(this);
+}
 
+void MainPage::SetToolTips()
+{
     this->ui->pokeballButton->setToolTip("click to know more");
     this->ui->huntPicContainer->setToolTip("click to hunt");
     this->ui->rankButton->setToolTip("rank");
@@ -69,25 +75,54 @@ MainPage::MainPage(QWidget *parent) :
     this->ui->elecSilver->setToolTip("VS electricity gym leader");
     this->ui->elecBronze->setToolTip("VS electricity trainer");
     this->ui->closeMainWidgetButton->setToolTip("close");
-    this->ui->battleChoice->resize(274, 0);
+    this->ui->updownButton->setToolTip("Click to open");
+}
 
-    setAutoFillBackground(true);
-    QPalette palette;
-    QPixmap pixmap(":/resource/tyranitar.jpg");
-    palette.setBrush(QPalette::Window, QBrush(pixmap.scaled(width(), height())));
-    setPalette(palette);
+void MainPage::SetCursors()
+{
+    this->ui->updownButton->setCursor(QCursor(Qt::PointingHandCursor));
+    this->ui->myInfoButton->setCursor(QCursor(Qt::PointingHandCursor));
+    this->ui->onlinePlayerBtn->setCursor(QCursor(Qt::PointingHandCursor));
+    this->ui->packageButton->setCursor(QCursor(Qt::PointingHandCursor));
+    this->ui->pokeballButton->setCursor(QCursor(Qt::PointingHandCursor));
+    this->ui->rankButton->setCursor(QCursor(Qt::PointingHandCursor));
+    this->ui->storageButton->setCursor(QCursor(Qt::PointingHandCursor));
+    this->ui->huntPicContainer->setCursor(QCursor(Qt::PointingHandCursor));
 
+}
+
+void MainPage::SetStyles()
+{
+    this->ui->textBrowser->setOpenLinks(false);
+    this->ui->pokeballButton->setStyleSheet("#pokeballButton{border-image: url(:/pokeball);}");//QToolTip{background-color:red;}");
+    this->ui->rankButton->setStyleSheet("#rankButton{border-image: url(:/rank);}");
+    this->ui->onlinePlayerBtn->setStyleSheet("#onlinePlayerBtn{border-image: url(:/onlinePlayer);}");
+    this->ui->myInfoButton->setStyleSheet("#myInfoButton{border-image: url(:/player);}");
+    this->ui->packageButton->setStyleSheet("#packageButton{border-image: url(:/package);}");
+    this->ui->storageButton->setStyleSheet("#storageButton{border-image: url(:/storage);}");
+    this->ui->updownButton->setStyleSheet("#updownButton{border-image: url(:/down);}");
+     this->ui->battleChoice->resize(274, 0);
+}
+
+void MainPage::InitPlayerArea()
+{
+    //initialize online player list widget
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
     {
+        //set head label
         headLabel[i] = new QLabel(this->ui->headLabelWidget);
         headLabel[i]->setStyleSheet("border-image: url(:/online); background-color : rgba(255, 255, 255, 100);");
         headLabel[i]->hide();
+
+        //set 'look through player's pokemon' button
         playerPokeButton[i] = new QPushButton(this->ui->playerPokeButtonWidget);
         playerPokeButton[i]->hide();
         playerPokeButton[i]->setStyleSheet("border-image: url(:/pokehauk);");
         playerPokeButton[i]->setFlat(true);
         playerPokeButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
         playerPokeButton[i]->installEventFilter(this);
+
+        //set 'give player a thumb' button
         thumbButton[i] = new QPushButton(this->ui->thumbButtonWidget);
         thumbButton[i]->hide();
         thumbButton[i]->setStyleSheet("border-image: url(:/thumb);");
@@ -95,12 +130,15 @@ MainPage::MainPage(QWidget *parent) :
         thumbButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
         thumbButton[i]->installEventFilter(this);
 
+        //set 'look through player's pokemon' button
         rankPokeButton[i] = new QPushButton(this->ui->rankPokeWidget);
         rankPokeButton[i]->hide();
         rankPokeButton[i]->setStyleSheet("border-image: url(:/pokehauk);");
         rankPokeButton[i]->setFlat(true);
         rankPokeButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
         rankPokeButton[i]->installEventFilter(this);
+
+        //set 'give player thumb' button
         rankThumbButton[i] = new QPushButton(this->ui->rankThumbWidget);
         rankThumbButton[i]->hide();
         rankThumbButton[i]->setStyleSheet("border-image: url(:/thumb);");
@@ -108,7 +146,11 @@ MainPage::MainPage(QWidget *parent) :
         rankThumbButton[i]->setCursor(QCursor(Qt::PointingHandCursor));
         rankThumbButton[i]->installEventFilter(this);
     }
+}
 
+void MainPage::InitPokemonArea()
+{
+    //initialize player's pokemon table widget
     scrollVLayout = new QVBoxLayout();
     for (int i = 0; i < MAXSIZE_POKEMON; i++)
     {
@@ -119,24 +161,27 @@ MainPage::MainPage(QWidget *parent) :
         exButton[i]->setFlat(true);
         exButton[i]->installEventFilter(this);
     }
+}
 
+void MainPage::InitConnect()
+{
     QObject::connect(this->ui->closeMainWidgetButton, SIGNAL(clicked(bool)), this, SLOT(close()));
     QObject::connect(this->ui->onlinePlayerBtn, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerClicked()));
     QObject::connect(this->ui->OPReloadButton, SIGNAL(clicked(bool)), this, SLOT(onOnlinePlayerReloadClicked()));
     QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->listWidgetContainer, SLOT(hide()));
     QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->OPListWidget, SLOT(clear()));
-    QObject::connect(this, SIGNAL(playerPokeClicked(int)), this, SLOT(onPlayerPokeClicked(int)));
-    QObject::connect(this, SIGNAL(playerThumbClicked(int)), this, SLOT(onPlayerThumbClicked(int)));
-    QObject::connect(this, SIGNAL(setOnlinePlayerIconSignal(int)), this, SLOT(setOnlinePlayerIcon(int)));    
+    QObject::connect(this, SIGNAL(PlayerPokeClicked(int)), this, SLOT(onPlayerPokeClicked(int)));
+    QObject::connect(this, SIGNAL(PlayerThumbClicked(int)), this, SLOT(onPlayerThumbClicked(int)));
+    QObject::connect(this, SIGNAL(SetOnlinePlayerIconSignal(int)), this, SLOT(SetOnlinePlayerIcon(int)));
     QObject::connect(this->ui->myInfoButton, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
     QObject::connect(this->ui->myinfoCloseBtn, SIGNAL(clicked(bool)), this, SLOT(onMyInfoClicked()));
-    QObject::connect(this, SIGNAL(setMyInfoSignal(int, int, double, QString)), this, SLOT(setMyInfo(int, int, double, QString)));
+    QObject::connect(this, SIGNAL(SetMyInfoSignal(int, int, double, QString)), this, SLOT(SetMyInfo(int, int, double, QString)));
     QObject::connect(this->ui->rankButton, SIGNAL(clicked(bool)), this, SLOT(onRankClicked()));
     QObject::connect(this->ui->closeRankButton, SIGNAL(clicked(bool)), this, SLOT(onRankClicked()));
     QObject::connect(this->ui->closeRankButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
-    QObject::connect(this, SIGNAL(setRankIconSignal(int)), this, SLOT(setRankIcons(int)));
-    QObject::connect(this, SIGNAL(rankPokeClicked(int)), this, SLOT(onRankPokeClicked(int)));
-    QObject::connect(this, SIGNAL(rankThumbClicked(int)), this, SLOT(onRankThumbClicked(int)));
+    QObject::connect(this, SIGNAL(SetRankIconSignal(int)), this, SLOT(SetRankIcons(int)));
+    QObject::connect(this, SIGNAL(RankPokeClicked(int)), this, SLOT(onRankPokeClicked(int)));
+    QObject::connect(this, SIGNAL(RankThumbClicked(int)), this, SLOT(onRankThumbClicked(int)));
     QObject::connect(this->ui->pokeCloseButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
     QObject::connect(this->ui->closeOPButton, SIGNAL(clicked(bool)), this->ui->pokeTableContainer, SLOT(hide()));
     QObject::connect(this->ui->pokeballButton, SIGNAL(clicked(bool)), this->ui->readmeWidget, SLOT(show()));
@@ -148,12 +193,12 @@ MainPage::MainPage(QWidget *parent) :
     QObject::connect(this->ui->textBrowser, SIGNAL(anchorClicked(QUrl)), this, SLOT(OpenInChrome(QUrl)));
     QObject::connect(this->ui->packageButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
     QObject::connect(this->ui->myPokemonCloseButton, SIGNAL(clicked(bool)), this, SLOT(onPackageClicked()));
-    QObject::connect(this, SIGNAL(setPackegeScrollAreaSignal(QString, QString, QString, QString, int)), this, SLOT(setPackageScrollArea(QString, QString, QString, QString, int)));
-    QObject::connect(this, SIGNAL(clearScrollAreaSignal(QString)), this, SLOT(clearScrollArea(QString)));
+    QObject::connect(this, SIGNAL(SetPackegeScrollAreaSignal(QString, QString, QString, QString, int)), this, SLOT(SetPackageScrollArea(QString, QString, QString, QString, int)));
+    QObject::connect(this, SIGNAL(ClearScrollAreaSignal(QString)), this, SLOT(ClearScrollArea(QString)));
     QObject::connect(this->ui->storageButton, SIGNAL(clicked(bool)), this, SLOT(onStorageClicked()));
     QObject::connect(this->ui->myStorageCloseButton, SIGNAL(clicked(bool)), this, SLOT(onStorageClicked()));
-    QObject::connect(this, SIGNAL(exButtonClicked(QObject*,int)), this, SLOT(onExButtonClicked(QObject*,int)));
-    QObject::connect(this, SIGNAL(clearScrollLayoutSignal(QString, bool)), this, SLOT(clearScrollLayout(QString, bool)));
+    QObject::connect(this, SIGNAL(ExButtonClicked(QObject*,int)), this, SLOT(onExButtonClicked(QObject*,int)));
+    QObject::connect(this, SIGNAL(ExchangePokeSignal(QString, bool)), this, SLOT(ExchangePokemon(QString, bool)));
     QObject::connect(this->ui->updownButton, SIGNAL(clicked(bool)), this, SLOT(onUpDownClicked()));
 }
 
@@ -198,8 +243,9 @@ void MainPage::receiveSwitch()
     return;
 }
 
-void MainPage::setOnlinePlayerIcon(int i)
+void MainPage::SetOnlinePlayerIcon(int i)
 {
+    //set online player ui items in correct position
     headLabel[i]->setGeometry(2, 24*i, 24, 24);
     playerPokeButton[i]->setGeometry(2, 24*i, 24, 24);
     thumbButton[i]->setGeometry(10, 24*i, 24, 24);    
@@ -209,8 +255,9 @@ void MainPage::setOnlinePlayerIcon(int i)
     return;
 }
 
-void MainPage::setRankIcons(int i)
+void MainPage::SetRankIcons(int i)
 {
+    //set rank ui items in right position
     rankPokeButton[i]->setGeometry(2, 24*i, 24, 24);
     rankPokeButton[i]->show();
     rankThumbButton[i]->setGeometry(10, 24*i, 24, 24);
@@ -218,15 +265,20 @@ void MainPage::setRankIcons(int i)
     return;
 }
 
-void MainPage::setPackageScrollArea(QString symbol, QString kind, QString name, QString tip, int index)
+void MainPage::SetPackageScrollArea(QString symbol, QString kind, QString name, QString tip, int index)
 {
+    //get pokemon's gif resource according to its kind
     QString pixmap = ":/" + kind.toLower();
     pokePicLabel[index]->setScaledContents(true);
     pokePicLabel[index]->setPixmap(QPixmap(pixmap));
-    pokePicLabel[index]->setAlignment(Qt::AlignCenter);    
+    pokePicLabel[index]->setAlignment(Qt::AlignCenter);
+
+    //display pokemon's detailed information
     pokeTextLabel[index]->setText(name);
     pokeTextLabel[index]->setToolTip(tip);
-    pokeTextLabel[index]->setStyleSheet("font: 75 16pt Consolas;");   
+    pokeTextLabel[index]->setStyleSheet("font: 75 16pt Consolas;");
+
+    //set exchange button stylesheet
     exButton[index]->setStyleSheet("QPushButton{border-image : url(:/exchange);}");
     exButton[index]->setCursor(QCursor(Qt::PointingHandCursor));
     exButton[index]->setToolTip("Put in storage");
@@ -238,20 +290,29 @@ void MainPage::setPackageScrollArea(QString symbol, QString kind, QString name, 
     pokePicLabel[index]->show();
     pokeTextLabel[index]->show();
     exButton[index]->show();
+
+    //add pokemon's items in layout
     scrollHLayout[index]->addWidget(pokePicLabel[index]);
     scrollHLayout[index]->addWidget(pokeTextLabel[index]);
     scrollHLayout[index]->addWidget(exButton[index]);
+
+    //add pokemon's layout to super layout
     scrollVLayout->addLayout(scrollHLayout[index]);
+
+    //set package scroll widget if player chose package to look through
     if (symbol == "package")
     {
         this->ui->scrollWidget->setLayout(scrollVLayout);
     }
+
+    //set storage scroll widget if player chose storage to look through
     if (symbol == "storage")
         this->ui->storageScrollWidget->setLayout(scrollVLayout);
 }
 
-void MainPage::setMyInfo(int pokeNum, int rank, double rate, QString info)
+void MainPage::SetMyInfo(int pokeNum, int rank, double rate, QString info)
 {
+    //display player's detailed information
     this->ui->myinfoText->appendPlainText(info);
     QString trainerToolTip = "";
     QString rankToolTip = "";
@@ -259,6 +320,7 @@ void MainPage::setMyInfo(int pokeNum, int rank, double rate, QString info)
     std::stringstream stream;
     std::string numStr;
 
+    //displayer player's pokemon number badge
     if (pokeNum < PokeNumLevel[0])
     {
         trainerToolTip.append("Noviciate\nGet ");
@@ -295,6 +357,7 @@ void MainPage::setMyInfo(int pokeNum, int rank, double rate, QString info)
     }
     this->ui->trainerLevelLabel->setToolTip(trainerToolTip);
 
+    //display player's rank badge
     if (rank < RankLevel[0])
     {
         rankToolTip.append("Noviciate\nGet ");
@@ -331,6 +394,7 @@ void MainPage::setMyInfo(int pokeNum, int rank, double rate, QString info)
     }
     this->ui->rankLevelLabel->setToolTip(rankToolTip);
 
+    //displayer player's rate badge
     int rateInteger = (int)rate;
     if (rateInteger < RateLevel[0])
     {
@@ -369,8 +433,9 @@ void MainPage::setMyInfo(int pokeNum, int rank, double rate, QString info)
     this->ui->rateLevelLabel->setToolTip(rateToolTip);
 }
 
-void MainPage::clearScrollArea(QString packorsto)
+void MainPage::ClearScrollArea(QString packorsto)
 {
+    //hide all ui items when leave this page
     for (int i = 0; i < MAXSIZE_POKEMON; i++)
     {
         scrollHLayout[i]->removeWidget(pokePicLabel[i]);
@@ -383,6 +448,8 @@ void MainPage::clearScrollArea(QString packorsto)
         pokePicLabel[i]->clear();
         pokeTextLabel[i]->clear();
     }
+
+    //clear variable when leave this page
     if (packorsto == "package")
         packPokemon.clear();
     if (packorsto == "storage")
@@ -394,20 +461,26 @@ void MainPage::clearScrollArea(QString packorsto)
     }
 }
 
-void MainPage::clearScrollLayout(QString symbol, bool success)
+void MainPage::ExchangePokemon(QString symbol, bool success)
 {
+    //player wanna take pokemon from package to storage
     if (symbol == "packout")
     {
         exClicked = true;
         emit this->ui->packageButton->clicked();
     }
+
+    //player wanna take pokemon from storage to package
     if (symbol == "stoout")
     {
+        //package is not full
         if (success)
         {
             exClicked = true;
             emit this->ui->storageButton->clicked();
         }
+
+        //pakcage is full
         else
         {
             QMessageBox::information(this, "info", "Package Full");
@@ -420,6 +493,8 @@ void MainPage::LoadOnlinePlayer(json &recvJ)
 {
     QListWidgetItem* item;
     int amount = recvJ["amount"];
+
+    //add player's items to layout according to online player's number
     for (int i = 0; i < amount; i++)
     {
         std::stringstream stream;
@@ -459,13 +534,14 @@ void MainPage::LoadOnlinePlayer(json &recvJ)
         item = new QListWidgetItem(str, this->ui->OPListWidget);
         item->setFont(QFont("Consolas", 16, 2, false));
         item->setFlags(Qt::NoItemFlags);
-        emit setOnlinePlayerIconSignal(i);
+        emit SetOnlinePlayerIconSignal(i);
     }
     return;
 }
 
 void MainPage::SwitchClear()
 {
+    //re-initialize when leave this page
     this->hide();
     this->ui->readmeWidget->hide();
     this->ui->OPListWidget->clear();
@@ -474,7 +550,7 @@ void MainPage::SwitchClear()
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->myPokemonContainer->hide();
-    emit clearScrollAreaSignal("both");
+    emit ClearScrollAreaSignal("both");
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
@@ -486,14 +562,18 @@ void MainPage::SwitchClear()
 
 bool MainPage::eventFilter(QObject *watched, QEvent *event)
 {
+    //watch hunt contaienr
     if (watched == this->ui->huntPicContainer)
     {
+        //switch to hunt page when clicked
         if (event->type() == QEvent::MouseButtonPress)
         {
             SwitchClear();
-            emit switchToHunt();
+            emit SwitchToHunt();
         }
     }
+
+    //watch battle choices buttons and switch to battle page
     if (watched == this->ui->fireGold)
     {
         if (event->type() == QEvent::MouseButtonPress)
@@ -590,8 +670,11 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
             emit SwitchToBattle("electricity", "bronze");
         }
     }
+
+    //watch pokeball
     if (watched == this->ui->pokeballButton)
     {
+        //start animation when pokeball is clicked
         if (event->type() == QEvent::MouseButtonPress)
         {
             this->ui->pokeballButton->setGeometry(350, 150, 120, 120);
@@ -608,6 +691,7 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
             animation->start(QPropertyAnimation::DeleteWhenStopped);
         }
 
+        //start animation when pokeball is hovered
         if (event->type() == QEvent::HoverEnter)
         {
             this->ui->pokeballButton->setGeometry(350, 150, 120, 120);
@@ -618,6 +702,7 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
             animation->start(QPropertyAnimation::DeleteWhenStopped);
         }
 
+        //start animation when hover leaves
         if (event->type() == QEvent::HoverLeave)
         {
             this->ui->pokeballButton->setGeometry(350, 150, 122, 122);
@@ -628,8 +713,11 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
             animation->start(QPropertyAnimation::DeleteWhenStopped);
         }
     }
+
+    //watch online player close page button
     if (watched == this->ui->closeOPButton)
     {
+        //enable other button
         if (event->type() == QEvent::MouseButtonPress)
         {
             this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
@@ -637,36 +725,40 @@ bool MainPage::eventFilter(QObject *watched, QEvent *event)
             this->ui->huntPicContainer->setEnabled(true);
         }
     }
+
+    //watch online players' and rank players' pokemon buttons and thumb buttons
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
     {
         if (watched == this->playerPokeButton[i])
         {
             if (event->type() == QEvent::MouseButtonPress)
-                emit playerPokeClicked(i);
+                emit PlayerPokeClicked(i);
         }
         if (watched == this->thumbButton[i])
         {
             if (event->type() == QEvent::MouseButtonPress)
-                emit playerThumbClicked(i);
+                emit PlayerThumbClicked(i);
         }
         if (watched == this->rankPokeButton[i])
         {
             if (event->type() == QEvent::MouseButtonPress)
-                emit rankPokeClicked(i);
+                emit RankPokeClicked(i);
         }
         if (watched == this->rankThumbButton[i])
         {
             if (event->type() == QEvent::MouseButtonPress)
-                emit rankThumbClicked(i);
+                emit RankThumbClicked(i);
         }
     }
+
+    //watch exchange pokemon buttons
     for (int i = 0; i < MAXSIZE_POKEMON; i++)
     {
         if (watched == this->exButton[i])
         {
             if (event->type() == QEvent::MouseButtonPress)
             {
-               emit exButtonClicked(watched->parent(), i);
+               emit ExButtonClicked(watched->parent(), i);
             }
         }
     }
@@ -684,8 +776,10 @@ bool MainPage::getRecvStr(QString str)
     {
         LoadOnlinePlayer(recvJ);
     }
+
+    //get player's information form server and display
     if (symbol == "myinfo")
-      {
+    {
         std::string name = recvJ["name"];
         int pokeNum = recvJ["pokemonNumber"];
         int rank = recvJ["rank"];
@@ -734,12 +828,10 @@ bool MainPage::getRecvStr(QString str)
                 + "Thumb Number:" + thumbStr + "\n"
                 + "Game  Time:" + gametime + "\n"
                 + "Begin From:\n" + "   " + begintime;
-        emit setMyInfoSignal(pokeNum, rank, rate, QString::fromStdString(textString));
+        emit SetMyInfoSignal(pokeNum, rank, rate, QString::fromStdString(textString));
     }
-    if (symbol == "hunt")
-    {
 
-    }
+    //get player's pokemon information and display
     if (symbol == "playerPoke")
     {
         int amount = recvJ["amount"];
@@ -779,10 +871,8 @@ bool MainPage::getRecvStr(QString str)
             }
         }
     }
-    if (symbol == "thumb")
-    {
 
-    }
+    //get rank information and display
     if (symbol == "rank")
     {
         int amount = recvJ["amount"];
@@ -797,6 +887,7 @@ bool MainPage::getRecvStr(QString str)
             std::string rankKey = "rank" + indexStr;
             std::string rateKey = "rate" + indexStr;
             std::string name = recvJ[nameKey];
+            rankPlayerNames[i] = name;
             std::string rank;
             std::string rate;
             stream.clear();
@@ -824,9 +915,11 @@ bool MainPage::getRecvStr(QString str)
             QString str = QString::fromStdString(infoStr);
             item = new QListWidgetItem(str, this->ui->rankList);
             item->setFont(QFont("Consolas", 16, 2, false));
-            emit setRankIconSignal(i);
+            emit SetRankIconSignal(i);
         }
     }
+
+    //get package or storage information and display
     if (symbol == "package" || symbol == "storage")
     {
         std::stringstream stream;
@@ -893,31 +986,39 @@ bool MainPage::getRecvStr(QString str)
             stream << recvJ[keyStr];
             stream >> valueStr;
             tooltipStd.append("     critical:" + valueStr + "%");
-            emit setPackegeScrollAreaSignal(QString::fromStdString(symbol),
+            emit SetPackegeScrollAreaSignal(QString::fromStdString(symbol),
                                             QString::fromStdString(kind),
                                             QString::fromStdString(name),
                                             QString::fromStdString(tooltipStd),
                                             i);
         }
     }
+
+    //get take out pokemon form package information and display
     if (symbol == "packout")
     {
-        emit clearScrollLayoutSignal("packout", true);
+        emit ExchangePokeSignal("packout", true);
     }
+
+    //get take out pokemon from storage information and display
     if (symbol == "stoout")
     {
         bool success = recvJ["success"];
-        emit clearScrollLayoutSignal("stoout", success);
+        emit ExchangePokeSignal("stoout", success);
     }
     return true;
 }
 
 void MainPage::RecvAndSendOnlinePlayer(json j)
 {
+    //transfer information from json to std::string
     std::string str = j.dump();
+
+    //send to server
     std::thread mainpageSendThread = std::thread(SendThreadFuncMainpage, socketClient, &str);
     mainpageSendThread.join();
 
+    //recv from server
     std::thread mainpageRecvThread = std::thread(RecvThreadFuncMainpage, socketClient, this);
     mainpageRecvThread.join();
     return;
@@ -925,6 +1026,7 @@ void MainPage::RecvAndSendOnlinePlayer(json j)
 
 void MainPage::onOnlinePlayerClicked()
 {
+    //close all other items when player looking through online player
     this->ui->readmeWidget->hide();
     this->ui->OPListWidget->clear();
     this->ui->rankWidget->hide();
@@ -932,10 +1034,12 @@ void MainPage::onOnlinePlayerClicked()
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->myPokemonContainer->hide();
-    emit clearScrollAreaSignal("both");
+    emit ClearScrollAreaSignal("both");
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->myStorageContainer->hide();
     this->ui->storageButton->setGeometry(622, 410, 48, 48);
+
+    //open online player widget and notice server when it is closed
     if (this->ui->listWidgetContainer->isHidden())
     {
         for (auto& s : playerNames)
@@ -956,6 +1060,8 @@ void MainPage::onOnlinePlayerClicked()
         this->ui->onlinePlayerBtn->setGeometry(258, 398, 72, 72);
         this->ui->listWidgetContainer->show();
     }
+
+    //hide online player widget when it is already open
     else
     {
         for (int i = 0; i < MAXSIZE_PLAYER; i++)
@@ -976,6 +1082,7 @@ void MainPage::onOnlinePlayerClicked()
 
 void MainPage::onOnlinePlayerReloadClicked()
 {
+    //clear online player widget, notice server and reload the whole widget
     this->ui->OPListWidget->clear();
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
     {
@@ -995,6 +1102,7 @@ void MainPage::onOnlinePlayerReloadClicked()
 
 void MainPage::onPlayerPokeClicked(int i)
 {
+    //show rank player's pokemon when the corresponding widget is closed
     if (this->ui->pokeTableContainer->isHidden())
     {
         json j;
@@ -1007,6 +1115,8 @@ void MainPage::onPlayerPokeClicked(int i)
         this->ui->pokeOwnerLabel->setText(QString::fromStdString(playerNames[i]));
         this->ui->pokeTableContainer->show();
     }
+
+    //hide widget if it is already open
     else
     {
         this->ui->pokeTableContainer->hide();
@@ -1016,6 +1126,7 @@ void MainPage::onPlayerPokeClicked(int i)
 
 void MainPage::onPlayerThumbClicked(int i)
 {
+    //notice server which player is given a thumb
     json j;
     j["symbol"] = "thumb";
     j["name"] = playerNames[i];
@@ -1026,7 +1137,8 @@ void MainPage::onPlayerThumbClicked(int i)
 
 void MainPage::onMyInfoClicked()
 {
-    emit clearScrollAreaSignal("both");
+    //hide all other items when player's information is chosen to look through
+    emit ClearScrollAreaSignal("both");
     this->ui->readmeWidget->hide();
     this->ui->myinfoText->clear();
     this->ui->rankWidget->hide();
@@ -1037,6 +1149,8 @@ void MainPage::onMyInfoClicked()
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->myStorageContainer->hide();
     this->ui->storageButton->setGeometry(622, 410, 48, 48);
+
+    //show player's information widget when it is closed
     if (this->ui->myinfoWidget->isHidden())
     {
         json j;
@@ -1047,6 +1161,8 @@ void MainPage::onMyInfoClicked()
         this->ui->myInfoButton->setGeometry(368, 398, 72, 72);
         this->ui->myinfoWidget->show();
     }
+
+    //hide when widget is already open
     else
     {
         this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
@@ -1057,17 +1173,19 @@ void MainPage::onMyInfoClicked()
 
 void MainPage::onRankClicked()
 {
+    //hide all other items when player looking through rank information
     this->ui->readmeWidget->hide();
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
     this->ui->listWidgetContainer->hide();
     this->ui->onlinePlayerBtn->setGeometry(270, 410, 48, 48);
     this->ui->myPokemonContainer->hide();
-    emit clearScrollAreaSignal("both");
+    emit ClearScrollAreaSignal("both");
     this->ui->packageButton->setGeometry(490, 410, 48, 48);
     this->ui->myStorageContainer->hide();
     this->ui->storageButton->setGeometry(622, 410, 48, 48);
 
+    //initialize rank widget before displaying
     for (int i = 0; i < MAXSIZE_PLAYER; i++)
     {
         headLabel[i]->hide();
@@ -1075,6 +1193,7 @@ void MainPage::onRankClicked()
         thumbButton[i]->hide();
     }
 
+    //show rank widget when it is closed
     if (this->ui->rankWidget->isHidden())
     {
         this->ui->rankList->clear();
@@ -1086,6 +1205,8 @@ void MainPage::onRankClicked()
         this->ui->rankWidget->show();
         this->ui->rankButton->setGeometry(158, 398, 72, 72);
     }
+
+    //hide when widget is already open
     else
     {
         this->ui->rankList->clear();
@@ -1098,6 +1219,7 @@ void MainPage::onRankClicked()
 
 void MainPage::onRankPokeClicked(int i)
 {
+    //show rank player pokemon widget when it is closed
     if (this->ui->pokeTableContainer->isHidden())
     {
         json j;
@@ -1110,6 +1232,8 @@ void MainPage::onRankPokeClicked(int i)
         this->ui->pokeTableContainer->setGeometry(370, 190, 320, 200);
         this->ui->pokeTableContainer->show();
     }
+
+    //hide when widget is already open
     else
     {
         this->ui->pokeTableContainer->hide();
@@ -1119,6 +1243,7 @@ void MainPage::onRankPokeClicked(int i)
 
 void MainPage::onRankThumbClicked(int i)
 {
+    //notice server which player is given a thumb
     json j;
     j["symbol"] = "thumb";
     j["name"] = rankPlayerNames[i];
@@ -1129,8 +1254,11 @@ void MainPage::onRankThumbClicked(int i)
 
 void MainPage::onPackageClicked()
 {
-    emit clearScrollAreaSignal("package");
+    //clear package widget before displaying and initialzie variable
+    emit ClearScrollAreaSignal("package");
     packPokemon.clear();
+
+    //hide all other items when player looking through package
     this->ui->readmeWidget->hide();
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
@@ -1140,6 +1268,8 @@ void MainPage::onPackageClicked()
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
     this->ui->myStorageContainer->hide();
     this->ui->storageButton->setGeometry(622, 410, 48, 48);
+
+    //show package widget when it is closed or exchang button is clicked
     if (this->ui->myPokemonContainer->isHidden() || exClicked)
     {
         if (exClicked)
@@ -1152,6 +1282,8 @@ void MainPage::onPackageClicked()
         this->ui->myPokemonContainer->show();
         this->ui->packageButton->setGeometry(478, 398, 72, 72);
     }
+
+    //hide when widget is already open and exchange button is not clicked
     else
     {
         this->ui->myPokemonContainer->hide();
@@ -1162,6 +1294,7 @@ void MainPage::onPackageClicked()
 
 void MainPage::onUpDownClicked()
 {
+    //if battle choice widget is hiden, show it
     if (this->ui->battleChoice->height() == 0)
     {
         this->ui->updownButton->setStyleSheet("#updownButton{border-image: url(:/up)}");
@@ -1172,6 +1305,8 @@ void MainPage::onUpDownClicked()
         animation->setDuration(250);
         animation->start(QPropertyAnimation::DeleteWhenStopped);
     }
+
+    //if battle choice widget is showed, hide it
     if (this->ui->battleChoice->height() == 204)
     {
         this->ui->updownButton->setStyleSheet("#updownButton{border-image: url(:/down)}");
@@ -1186,8 +1321,11 @@ void MainPage::onUpDownClicked()
 
 void MainPage::onStorageClicked()
 {
-    emit clearScrollAreaSignal("storage");
+    //clear storage widget and variable before display
+    emit ClearScrollAreaSignal("storage");
     stoPokemon.clear();
+
+    //hide all other items before displaying
     this->ui->readmeWidget->hide();
     this->ui->myinfoWidget->hide();
     this->ui->myInfoButton->setGeometry(380, 410, 48, 48);
@@ -1198,6 +1336,7 @@ void MainPage::onStorageClicked()
     this->ui->rankWidget->hide();
     this->ui->rankButton->setGeometry(170, 410, 48, 48);
 
+    //show if widget is hiden or exchange button is clicked
     if (this->ui->myStorageContainer->isHidden() || exClicked)
     {
         if (exClicked)
@@ -1210,6 +1349,8 @@ void MainPage::onStorageClicked()
         this->ui->myStorageContainer->show();
         this->ui->storageButton->setGeometry(598, 386, 72, 72);
     }
+
+    //hide if widget is already open and exchange button is not clicked
     else
     {
         this->ui->myStorageContainer->hide();
@@ -1219,10 +1360,13 @@ void MainPage::onStorageClicked()
 
 void MainPage::onExButtonClicked(QObject *obj, int i)
 {
+    //get the index of pokemon in container
     delHLayIndex = i;
     json j;
     j["end"] = "end";
     j["owner"] = socketClient->getPlayerName();
+
+    //ensure which pokemon is chosen
     if (obj == this->ui->scrollWidget)
     {
         j["symbol"] = "packout";
@@ -1261,6 +1405,7 @@ DWORD WINAPI RecvThreadFuncMainpage(SocketClient* socketClient, MainPage* mainpa
     }
     return 0;
 }
+
 DWORD WINAPI SendThreadFuncMainpage(LPVOID lParam, LPVOID sParam)
 {
     std::string *sendStr = (std::string*)sParam;

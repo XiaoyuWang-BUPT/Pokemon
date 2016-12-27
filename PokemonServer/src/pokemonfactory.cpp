@@ -3,6 +3,7 @@
 
 Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name, string owner) {
     Pokemon *pokemonCreated;
+    //cerate fire pokemon
     if (kind >= CHARMANDER && kind <= INFERNAPE) {
         if (Helper::isKindMeetLevel(kind, level))
         {
@@ -11,6 +12,8 @@ Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name, string
         else
             cout << "Kind does NOT meet level" << endl;
     }
+
+    //create water pokemon
     else if (kind >= SQUIRTLE && kind <= EMPOLEON) {
         if (Helper::isKindMeetLevel(kind, level))
         {
@@ -19,6 +22,8 @@ Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name, string
         else
             cout << "Kind does NOT meet level" << endl;
     }
+
+    //create bush pokemon
     else if (kind >= BULBASAUR && kind <= TORTERRA) {
         if (Helper::isKindMeetLevel(kind, level))
         {
@@ -27,6 +32,8 @@ Pokemon *PokemonFactory::CreatePokemon(Kind kind, int level, string name, string
         else
             cout << "Kind does NOT meet level" << endl;
     }
+
+    //create electricity pokemon
     else if (kind >= PICHU && kind <= AMPHAROS) {
         if (Helper::isKindMeetLevel(kind, level))
         {
@@ -46,7 +53,8 @@ Pokemon *PokemonFactory::CreatePokemon(PokemonInfo pokemonInfo)
     Pokemon *pokemonCreated;
     Kind kind = (Kind)pokemonInfo.kind;
     int level = pokemonInfo.level;
-     if (kind >= CHARMANDER && kind <= INFERNAPE) {
+    //create fire pokemon
+    if (kind >= CHARMANDER && kind <= INFERNAPE) {
         if (Helper::isKindMeetLevel(kind, level))
         {
             pokemonCreated = new Fire(pokemonInfo);
@@ -54,6 +62,7 @@ Pokemon *PokemonFactory::CreatePokemon(PokemonInfo pokemonInfo)
         else
             cout << "Kind does NOT meet level" << endl;
     }
+    //create water pokemon
     else if (kind >= SQUIRTLE && kind <= EMPOLEON) {
         if (Helper::isKindMeetLevel(kind, level))
         {
@@ -62,6 +71,7 @@ Pokemon *PokemonFactory::CreatePokemon(PokemonInfo pokemonInfo)
         else
             cout << "Kind does NOT meet level" << endl;
     }
+    //create bush pokemon
     else if (kind >= BULBASAUR && kind <= TORTERRA) {
         if (Helper::isKindMeetLevel(kind, level))
         {
@@ -70,6 +80,7 @@ Pokemon *PokemonFactory::CreatePokemon(PokemonInfo pokemonInfo)
         else
             cout << "Kind does NOT meet level" << endl;
     }
+    //create electricity pokemon
     else if (kind >= PICHU && kind <= AMPHAROS) {
         if (Helper::isKindMeetLevel(kind, level))
         {

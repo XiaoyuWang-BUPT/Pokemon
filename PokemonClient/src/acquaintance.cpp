@@ -6,10 +6,25 @@ Acquaintance::Acquaintance(QWidget *parent) :
     ui(new Ui::Acquaintance)
 {
     ui->setupUi(this);
+    this->InitUI();
+    this->SetEventFilter();
+    this->InitConnect();
+}
+
+void Acquaintance::InitUI()
+{
     this->setWindowTitle("Acquaintance");
+}
+
+void Acquaintance::SetEventFilter()
+{
     this->ui->charmanderButton->installEventFilter(this);
     this->ui->squirtleButton->installEventFilter(this);
     this->ui->bulbasaurButton->installEventFilter(this);
+}
+
+void Acquaintance::InitConnect()
+{
     QObject::connect(this, SIGNAL(choseSignal(QObject*)), this, SLOT(onChose(QObject*)));
 }
 
@@ -26,6 +41,7 @@ Acquaintance::~Acquaintance()
 
 bool Acquaintance::eventFilter(QObject *watched, QEvent *event)
 {
+    //if player has chosen pokemon, choseSignal is emitted immediately
     if (watched == this->ui->charmanderButton
             || watched == this->ui->squirtleButton
             || watched == this->ui->bulbasaurButton)
@@ -47,6 +63,7 @@ DWORD WINAPI SendThreadFuncAcq(LPVOID lParam, LPVOID sParam);
 
 void Acquaintance::onChose(QObject *obj)
 {
+    //json is intialized according to pokemon has been chosed
     json j;
     j["symbol"] = "acquaintance";
     j["end"] = "end";
@@ -65,24 +82,44 @@ void Acquaintance::onChose(QObject *obj)
     std::string owner = socketClient->getPlayerName();
     j["owner"] = owner;
     std::string sendStr = j.dump();
+
+    //send information about gosanke
     std::thread sendThread = std::thread(SendThreadFuncAcq, socketClient, &sendStr);
     sendThread.join();
+
+    //receive feedback from server
     socketClient->Receive();
     socketClient->ClearRecvBuf();
+
+    //after chosen gosanke, player would get into main page
     this->hide();
     emit SwitchToMainPage();
 }
 
+/**
+    Function : SendThreadFuncAcq
+    Description : send message to server in a new thread
+    Input : lParam is socketClient, sParam is sendStr
+    Return : 0
+    Others : None
+**/
 DWORD WINAPI SendThreadFuncAcq(LPVOID lParam, LPVOID sParam)
 {
+    //message of std::string
     std::string *sendStr = (std::string*)sParam;
+
+    //client socket linked to server
     SocketClient *socketClient = (SocketClient*)lParam;
     int iResult;
+
+    //connect socket of client socket which is connected to server
     SOCKET ConnectSocket = socketClient->getConnectSocket();
     size_t len = (*sendStr).length();
     char *sendbuf = new char[len];
     strcpy(sendbuf, (*sendStr).data());
     iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
+
+    //cleaup if send failed
     if (iResult == SOCKET_ERROR)
     {
         std::cout << "Send failed with error " << WSAGetLastError() << std::endl;

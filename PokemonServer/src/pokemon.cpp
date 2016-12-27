@@ -31,6 +31,7 @@ struct PokemonInfo Pokemon::ToPokeStruInfo()
  * 暴击双倍伤害 依小概率造成烧伤，冻伤，中毒和麻痹效果 火属性不能对火属性造成烧伤 其他属性类比*/
 void Pokemon::Attack(Pokemon *dePokemon) {
     int attackDamage = 0;
+    //ciritical strike : double attack point
     if (this->CriticalStrike()) {
         attackDamage = (2* this->getAttackPoint())- dePokemon->getDefencePoint();
     }
@@ -40,26 +41,28 @@ void Pokemon::Attack(Pokemon *dePokemon) {
     if (attackDamage < 0) {
         attackDamage = 0;
     }
-    //cout << "dePokemon HP before attack:" << dePokemon->getCurrentHP();
     dePokemon->setCurrentHP(dePokemon->getCurrentHP()- attackDamage);
-    //cout << "  attackDamage:" << attackDamage << "  dePokemon CurrentHP" << dePokemon->getCurrentHP() << endl;
-}
+   }
 
 void Pokemon::SpecialAttackDamage(Pokemon *dePokemon) {
     int specialDamage = this->getAttackPoint() - dePokemon->getDefencePoint();
     bool counter = false;
+    //find whether pokemon being attacked is countered by
     for (auto c : this->getCounterVec())
         if (c == dePokemon->getNature())
             counter = true;
 
+    //find whether this pokemon is be countered by another pokemon
     bool beCounter = false;
     for (auto c : dePokemon->getCounterVec())
         if (c == this->getNature())
             beCounter = true;
 
+    //cause double damage if counter
     if (counter) {
         specialDamage *= (int)2* specialDamage;
     }
+    //cause half damage if being countered
     else if (beCounter){
         specialDamage = (int)0.5* specialDamage;
     }
@@ -68,12 +71,14 @@ void Pokemon::SpecialAttackDamage(Pokemon *dePokemon) {
     dePokemon->setCurrentHP(dePokemon->getCurrentHP() - specialDamage);
 }
 
+//possibility generator
 int randFunction() {
     const int MIN = 0;
     const int MAX = 99;
     return MIN + Random(MAX - MIN);
 }
 
+//ensick possibility is constant 20%
 bool Pokemon::EnSickPossible() {
     int randNum = randFunction();
     if (randNum <= 19) {
@@ -86,6 +91,7 @@ bool Pokemon::EnSickPossible() {
     return false;
 }
 
+//critical possibility depends on pokemon's attribute
 bool Pokemon::CriticalStrike() {
     int randNum = randFunction();
     if (randNum <= this->getCriticalPoint()) {
@@ -163,16 +169,16 @@ void Pokemon::Upgrade()
     }
 }
 
-//换图标 换Kind
 void Pokemon::Evolution(int evoLevel) {
-    //cout << kindOfString[this->getKind()];
     this->setKind((Kind)(this->getKind()+ 1));
     switch (evoLevel) {
+        //evolute from stage 1 to stage 2, attributes improve a little
         case EL1:
             this->setAttackPoint((int) this->getAttackPoint()* 1.2);
             this->setDefencePoint((int) this->getDefencePoint()* 1.2);
             this->setTotalHP((int) this->getTotalHP()* 1.5);
             break;
+        //evolute from stage 2 to stage 3, attributes improve a lot
         case EL2:
             this->setAttackPoint((int) this->getAttackPoint()* 1.5);
             this->setDefencePoint((int) this->getDefencePoint()* 1.5);
@@ -182,16 +188,13 @@ void Pokemon::Evolution(int evoLevel) {
             cout << "Errro In Evolution Function: illegal evolution level" << endl;
             break;
     };
-    //cout<< " is evoluting to " << kindOfString[this->getKind()] << endl;
 }
 
-
+//attribute gift generator
 int GiftGenFunc(int MIN, int MAX) {
     return MIN + Random(MAX - MIN);
 }
 
-//御三家构造时经验值为零 模拟对战 或者 野外抓捕时为随机经验值 在相应的类函数解决
-//For pokemon construct first time after caught
 Fire::Fire(Kind kind, int level, string name, string owner) {
     this->setOwner(owner);
     this->setNature(FIRE);
@@ -214,15 +217,12 @@ Fire::Fire(Kind kind, int level, string name, string owner) {
     this->setSickCounter(0);
     this->setAlive(ALIVE);
     while (this->getLevel() < level) {
-        //cout << "Kind: " << kindOfString[this->getKind()] << "  Level:" << this->getLevel() << endl;
         this->Upgrade();
     }
     this->setExperiencePoint(ExpGrade[this->getLevel()]);
     this->setCurrentHP(this->getTotalHP());
-    //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Defence Point:" << this->getDefencePoint() << "  TotalHP:" << this->getTotalHP() << endl;
 }
 
-//For pokemon construct from db
 Fire::Fire(PokemonInfo pokemonInfo)
 {
     this->setOwner(pokemonInfo.owner);
@@ -256,7 +256,9 @@ void Fire::SpecialAttack(Pokemon *dePokemon) {
 
 void Fire::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setState(BURNED);
+    //sick damage is constantly quarter
     sickPokemon->setSickPoint((int)(0.25* this->getAttackPoint()));
+    //the number of round that pokemon is sick is 3
     sickPokemon->setSickCounter(3);
 }
 
@@ -321,7 +323,9 @@ void Water::SpecialAttack(Pokemon *dePokemon) {
 
 void Water::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setState(DROWNED);
+    //sick damage is constantly quarter
     sickPokemon->setSickPoint((int) 0.2* this->getAttackPoint());
+    //the number of round that pokemon is sick is 3
     sickPokemon->setSickCounter(3);
 }
 
@@ -388,7 +392,9 @@ void Bush::SpecialAttack(Pokemon *dePokemon) {
 
 void Bush::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setState(POISONED);
+    //sick damage is constantly quarter
     sickPokemon->setSickPoint((int) 0.2* this->getAttackPoint());
+    //the number of round that pokemon is sick is 3
     sickPokemon->setSickCounter(3);
 }
 
@@ -414,12 +420,10 @@ Electricity::Electricity(Kind kind, int level, string name, string owner) {
     this->setSickCounter(0);
     this->setAlive(ALIVE);
     while (this->getLevel() < level) {
-        //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Attack Point:" << this->getAttackPoint() << endl;
         this->Upgrade();
     }
     this->setExperiencePoint(ExpGrade[this->getLevel()]);
     this->setCurrentHP(this->getTotalHP());
-    //cout << "Kind" << kindOfString[this->getKind()] << "Level:" << this->getLevel() << "  Attack Point:" << this->getAttackPoint() << endl;
 }
 
 Electricity::Electricity(PokemonInfo pokemonInfo)
@@ -455,7 +459,9 @@ void Electricity::SpecialAttack(Pokemon *dePokemon) {
 
 void Electricity::EnSick(Pokemon *sickPokemon) {
     sickPokemon->setState(FROZEN);
+    //sick damage is constantly quarter
     sickPokemon->setSickPoint((int) 0.2* this->getAttackPoint());
+    //the number of round that pokemon is sick is 3
     sickPokemon->setSickCounter(3);
 }
 

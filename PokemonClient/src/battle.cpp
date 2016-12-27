@@ -7,10 +7,20 @@ Battle::Battle(QWidget *parent) :
     ui(new Ui::Battle)
 {
     ui->setupUi(this);
+    this->InitUI();
+    this->InitConnect();
+}
+
+void Battle::InitUI()
+{
     this->setWindowFlags(Qt::FramelessWindowHint);
     this->ui->container->setStyleSheet("#container{border-image : url(:/forest3);}");
+}
+
+void Battle::InitConnect()
+{
     QObject::connect(this, SIGNAL(battleNotQualified()), this, SLOT(onBattleNotQualified()));
-    QObject::connect(this, SIGNAL(WinOrLoseSignal(bool, int)), this, SLOT(winOrLose(bool, int)));
+    QObject::connect(this, SIGNAL(WinOrLoseSignal(bool, int)), this, SLOT(WinOrLose(bool, int)));
     QObject::connect(this, SIGNAL(MyPokeAttackSignal(QString, QString)), this, SLOT(onMyPokeAttack(QString, QString)));
     QObject::connect(this, SIGNAL(EnemyPokeAttackSignal(QString, QString)), this, SLOT(onEnemyPokeAttack(QString, QString)));
     QObject::connect(this, SIGNAL(MyPokeBeAttacked(int)), this, SLOT(onMyPokeBeAttacked(int)));
@@ -21,7 +31,7 @@ Battle::Battle(QWidget *parent) :
     QObject::connect(this, SIGNAL(EnemyPokeChangeSignal(int)), this, SLOT(onEnemyPokeChange(int)));
     QObject::connect(this, SIGNAL(ClearHurtSignal()), this, SLOT(ClearHurt()));
     QObject::connect(this, SIGNAL(ClearSpecialAttSignal()), this, SLOT(ClearSpecialAtt()));
-    QObject::connect(this->ui->confirmButton, SIGNAL(clicked(bool)), this, SLOT(clearBattle()));
+    QObject::connect(this->ui->confirmButton, SIGNAL(clicked(bool)), this, SLOT(ClearBattle()));
     QObject::connect(this, SIGNAL(ClearHPDecSignal()), this, SLOT(ClearHPDec()));
 }
 
@@ -43,18 +53,23 @@ DWORD WINAPI RecvThreadFuncBattle(SocketClient* socketClient, Battle* battle);
 
 void Battle::receiveSwitch(QString nature, QString standard)
 {
+    //initialize result widget when receive switch signal
     for (int i = 0; i < CAPACITY; i++)
     {
         endPokeLabel[i] = new QLabel();
         endInfoLabel[i] = new QLabel();
         endVLayout[i] = new QVBoxLayout();
     }
+
+    //hide all ui items taking over animation when this page is loaded
     this->ui->myHPDecLabel->hide();
     this->ui->enemyHPDecLabel->hide();
     this->ui->confirmButton->hide();
     this->ui->winorloseLabel->hide();
     this->ui->myPokeHPBarWidget->resize(170, 20);
     this->ui->enemyPokeHPBarWidget->resize(170, 20);
+
+    //initialize all variables when this page is loaded
     myPokemonName.clear();
     myPokemonKind.clear();
     myEvoKind.clear();
@@ -66,15 +81,25 @@ void Battle::receiveSwitch(QString nature, QString standard)
     enemyPokeIndex = 0;
     natureStd = "";
     standardStd = "";
+
+    //display after ui items and variables are intialized
     this->show();
+
+    //get boot's nature player chosen
     natureStd = nature.toStdString();
+
+    //get boot's standard player chosen
     standardStd = standard.toStdString();
+
+    //send battle request in a new thread
     std::thread* sendAndRecvThread = new std::thread(SendAndRecvThreadFuncBattle, this);
     sendAndRecvThread->detach();
 }
 
-void Battle::clearBattle()
+void Battle::ClearBattle()
 {
+    //the number of ui items in result widget is at most 3
+    //result widget items are cleared
     for (int i = 0; i < CAPACITY; i++)
     {
         endVLayout[i]->removeWidget(endPokeLabel[i]);
@@ -84,6 +109,7 @@ void Battle::clearBattle()
         delete endInfoLabel[i];
         delete endVLayout[i];
     }
+    //hide result widget
     this->ui->endLayoutContainer->hide();
     this->hide();
     emit switchToMainPage();
@@ -91,15 +117,22 @@ void Battle::clearBattle()
 
 void Battle::getRecvStr(QString recvStr)
 {
+    //transfer from QString to std::string
     std::string string = recvStr.toStdString();
+
+    //treansfer fomr std::string to json
     json recvJ = json::parse(string);
     std::string symbol = recvJ["symbol"];
+
+    //player's package is not empty, qualified to battle
     if (symbol == "battle")
     {
         int pokeNum = recvJ["amount"];
         int round = recvJ["round"];
         int roundCnt = 0;
         int expGot = recvJ["expGot"];
+
+        //get player's pokemon crew and boot crew, including their name, kind and HP
         std::stringstream stream;
         std::string iStr;
         std::string pKey;
@@ -126,11 +159,17 @@ void Battle::getRecvStr(QString recvStr)
         std::string roundStr;
         std::string keyStr;
         std::string attackPokemon;
+
+        //first pokemon on both side show on
         int myFightingIndex = 0;
         int enemyFightingIndex = 0;
         emit MyPokeChangeSignal(myFightingIndex);
         emit EnemyPokeChangeSignal(enemyFightingIndex);
+
+        //this thread wait for some time for animation completion
         std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+
+        //get information of each round and emit corresponding signal to animate
         for (; roundCnt < round; roundCnt++)
         {
             stream.clear();
@@ -138,66 +177,96 @@ void Battle::getRecvStr(QString recvStr)
             stream >> roundStr;
             keyStr = "round" + roundStr + "attack";
             attackPokemon = recvJ[keyStr];
+
+            //current round is player's turn
             if (attackPokemon == "mypokemon")
             {
+                //judge whether player's pokemon is unhealthy and so hurt
                 keyStr = "round" + roundStr + "myhurt";
                 bool myhurt = recvJ[keyStr];
+
+                //if player's pokemon is hurt, then judge whether it's dead or not
                 if (myhurt)
                 {
+                    //get HP after get hurt and get boot's nature for variant pics
                     keyStr = "round" + roundStr + "myhurthp";
                     int myhurthp = recvJ[keyStr];
                     keyStr = "round" + roundStr + "hurtnature";
                     std::string hurtNature = recvJ[keyStr];
+
+                    //this thread wait some time for unhealthy state animation completion
                     emit MyPokeHurtSignal(myhurthp, QString::fromStdString(hurtNature));
                     std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+
+                    //after animation completion, clear all pics
                     emit ClearHurtSignal();
                     emit ClearHPDecSignal();
-                    //my fighting pokemon is hurt to dead change another pokemon
+                    //my fighting pokemon is hurt to dead, change another pokemon
                     if (myhurthp == 0)
-                    {
+                    {              
                         myFightingIndex++;
+                        //change player's pokemon if they are not all dead
                         if (myFightingIndex < pokeNum)
                         {
+                            //load change pokemon animation and this thread wait some time for animation completion
                             emit MyPokeChangeSignal(myFightingIndex);
                             std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         }
+
+                        //turn to result, which is defeat
                         else
                         {
-                            //TODO lose
                             emit WinOrLoseSignal(false, expGot);
                         }
                     }
+
+                    //player's pokemon attack if it's not dead
                     else
                     {
+                        //get attack way-normal or special, boot pokemon's HP after attacked and nature of player's pokemon
                         keyStr = "round" + roundStr + "attway";
                         std::string attway = recvJ[keyStr];
                         keyStr = "round" + roundStr + "enemypokemonhp";
                         int enemypokehp = recvJ[keyStr];
                         keyStr = "round" + roundStr + "attnature";
                         std::string attNature = recvJ[keyStr];
+
+                        //load player's pokemon attack animation and this thread wait for animation completion
                         emit MyPokeAttackSignal(QString::fromStdString(attway), QString::fromStdString(attNature));
                         std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+
+                        //load boot pokemon be attacked animation and this thread wait for animation completion
                         emit EnemyPokeBeAttacked(enemypokehp);
                         std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+
+                        //after animation completion, clear items
                         emit ClearHPDecSignal();
                         if (attway == "specialatt")
                             emit ClearSpecialAttSignal();
+
+                        //judge whether boot pokemon is attacked to dead
                         if (enemypokehp == 0)
                         {
                             enemyFightingIndex++;
+
+                            //change boot pokemon if they are not all dead
                             if (enemyFightingIndex < pokeNum)
                             {
+                                //load change boot pokemon animation and this thread wait some time for animation completion
                                 emit EnemyPokeChangeSignal(enemyFightingIndex);
                                 std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                             }
+
+                            //turn to result-win, if boot pokemon all dead
                             else
                             {
-                                //TODO win
                                 emit WinOrLoseSignal(true, expGot);
                             }
                         }
                     }
                 }
+
+                //player's pokemon is healthy
                 else
                 {
                     keyStr = "round" + roundStr + "attway";
@@ -229,65 +298,97 @@ void Battle::getRecvStr(QString recvStr)
                     }
                 }
             }
+
+            //current round is boot's turn
             if (attackPokemon == "enemypokemon")
             {
+                //judge whether boot pokemon is unhealthy
                 keyStr = "round" + roundStr + "enemyhurt";
                 bool enemyhurt = recvJ[keyStr];
+
+                //boot pokemon is unhealthy
                 if (enemyhurt)
                 {
+                    //get boot pokemon HP after hurt and nature of player's pokemon
                     keyStr = "round" + roundStr + "enemyhurthp";
                     int enemyhurthp = recvJ[keyStr];
                     keyStr = "round" + roundStr + "hurtnature";
                     std::string hurtNature = recvJ[keyStr];
+
+                    //load hurt animation and this thread wait some time for animation completion
                     emit EnemyPokeHurtSignal(enemyhurthp, QString::fromStdString(hurtNature));
                     std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+
+                    //clear animation items after animation completion
                     emit ClearHurtSignal();
                     emit ClearHPDecSignal();
+
+                    //boot pokemon is hurt to dead
                     if (enemyhurthp == 0)
                     {
                         enemyFightingIndex++;
                         if (enemyFightingIndex < pokeNum)
                         {
+                            //load change boot pokemon animation and this thread wait some time for animation completion
                             emit EnemyPokeChangeSignal(enemyFightingIndex);
                             std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                         }
+
+                        //boot pokemon are all dead
                         else
                         {
-                            //TODO win
+                            //turn to result-win
                             emit WinOrLoseSignal(true, expGot);
                         }
                     }
+
+                    //boot pokemon is not hurt to dead
                     else
                     {
+                        //boot pokemon attack, get attack way, player's pokemon HP after be attacked and nature of boot pokemon
                         keyStr = "round" + roundStr + "attway";
                         std::string attway = recvJ[keyStr];
                         keyStr = "round" + roundStr + "mypokemonhp";
                         int mypokehp = recvJ[keyStr];
                         keyStr = "round" + roundStr + "attnature";
                         std::string attNature = recvJ[keyStr];
+
+                        //load boot pokemon attack animation and this thread wait some time for animation completion
                         emit EnemyPokeAttackSignal(QString::fromStdString(attway), QString::fromStdString(attNature));
                         std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+
+                        //load player's pokemon being attacked animation and this thread wait some time for animation completion
                         emit MyPokeBeAttacked(mypokehp);
                         std::this_thread::sleep_for(std::chrono::microseconds(1250000));
+
+                        //clear animtion items after animation completion
                         emit ClearHPDecSignal();
                         if (attway == "specialatt")
                             emit ClearSpecialAttSignal();
+
+                        //player's pokemon is attacked to dead
                         if (mypokehp == 0)
                         {
                             myFightingIndex++;
+
+                            //player's pokemon are not all dead
                             if (myFightingIndex < pokeNum)
                             {
+                                //load change player's pokemon animation and this thread wait some time for animation completion
                                 emit MyPokeChangeSignal(myFightingIndex);
                                 std::this_thread::sleep_for(std::chrono::microseconds(1250000));
                             }
+                            //player's pokemon are all dead
                             else
                             {
-                                //TODO lose
+                                //turn to result-lose
                                 emit WinOrLoseSignal(false, expGot);
                             }
                         }
                     }
                 }
+
+                //boot pokemon is not hurt
                 else
                 {
                     keyStr = "round" + roundStr + "attway";
@@ -321,6 +422,8 @@ void Battle::getRecvStr(QString recvStr)
             }
         }
     }
+
+    //player's package is empty, not qualified to battle
     if (symbol == "nobattle")
     {
         emit battleNotQualified();
@@ -329,6 +432,7 @@ void Battle::getRecvStr(QString recvStr)
 
 void Battle::onBattleNotQualified()
 {
+    //battle not qualified, inform player and release resource
     QMessageBox::information(this, "info", "package empty, put pokemon into package first");
     delete[] endPokeLabel;
     delete[] endVLayout;
@@ -336,23 +440,31 @@ void Battle::onBattleNotQualified()
     emit switchToMainPage();
 }
 
-void Battle::winOrLose(bool win, int expGot)
+void Battle::WinOrLose(bool win, int expGot)
 {
+    //get experience pokemon got and result-win or lose
     std::stringstream stream;
     std::string expGotStr;
     stream << expGot;
     stream >> expGotStr;
     QString expGotQStr = QString::fromStdString(expGotStr);
+
+    //clear items' content before display
     this->ui->myPokeInfoLabel->clear();
     this->ui->myPokeLabel->clear();
     this->ui->enemyPokeInfoLabel->clear();
     this->ui->enemyPokeLabel->clear();
     this->ui->confirmButton->show();
     this->ui->winorloseLabel->show();
+
+    //there is a layout for each of player's pokemon
     int pokeNum = myPokemonName.size();
     for (int i = 0; i < pokeNum; i++)
     {
+        //display experience pokemon gained
         QString tooltip = "Pokemon gained " + expGotQStr + " experience";
+
+        //display whether player's pokemon evolved and evolved to what
         if (QString::fromStdString(myPokemonKind[i]).toLower()
                 == QString::fromStdString(myEvoKind[i]).toLower())
         {
@@ -365,6 +477,8 @@ void Battle::winOrLose(bool win, int expGot)
         }
         QString pixmapStr = ":/" + QString::fromStdString(myEvoKind[i]).toLower();
         QPixmap pixmap = QPixmap(pixmapStr);
+
+        //set layout
         endPokeLabel[i]->setScaledContents(true);
         endPokeLabel[i]->setMinimumSize(150, 150);
         endPokeLabel[i]->setMaximumSize(150, 150);
@@ -395,6 +509,7 @@ void Battle::winOrLose(bool win, int expGot)
 
 void Battle::onMyPokeAttack(QString attway, QString myNature)
 {
+    //display normal-attack animation
     if (attway == "att")
     {
         QPropertyAnimation* animation = new QPropertyAnimation(this->ui->myPoke, "geometry");
@@ -404,6 +519,8 @@ void Battle::onMyPokeAttack(QString attway, QString myNature)
         animation->setDuration(2000);
         animation->start(QPropertyAnimation::DeleteWhenStopped);
     }
+
+    //display special-attack animation
     if (attway == "specialatt")
     {
         if (myNature.toLower() == "fire")
@@ -425,6 +542,7 @@ void Battle::onMyPokeAttack(QString attway, QString myNature)
 
 void Battle::onEnemyPokeAttack(QString attway, QString enemyNature)
 {
+    //display normal-attack animation
     if (attway == "att")
     {
         QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPoke, "geometry");
@@ -434,6 +552,8 @@ void Battle::onEnemyPokeAttack(QString attway, QString enemyNature)
         animation->setDuration(2000);
         animation->start(QPropertyAnimation::DeleteWhenStopped);
     }
+
+    //display special-attack animation
     if (attway == "specialatt")
     {
         if (enemyNature.toLower() == "fire")
@@ -455,6 +575,7 @@ void Battle::onEnemyPokeAttack(QString attway, QString enemyNature)
 
 void Battle::onMyPokeBeAttacked(int mypokehp)
 {
+    //display HP-decreasing of player's pokemon
     this->ui->myHPDecLabel->show();
     int HPDec = myPokeCurrentHP - mypokehp;
     myPokeCurrentHP = mypokehp;
@@ -481,6 +602,7 @@ void Battle::onMyPokeBeAttacked(int mypokehp)
 
 void Battle::onEnemyPokeBeAttacked(int enemypokehp)
 {
+    //display HP-decreasing of boot pokemon
     this->ui->enemyHPDecLabel->show();
     int HPDec = enemyPokeCurrentHP - enemypokehp;
     enemyPokeCurrentHP = enemypokehp;
@@ -507,6 +629,7 @@ void Battle::onEnemyPokeBeAttacked(int enemypokehp)
 
 void Battle::onMyPokeHurt(int myhurthp, QString enemyNature)
 {
+    //display HP-decreasing of player's pokemon
     this->ui->myHPDecLabel->show();
     int HPDec = myPokeCurrentHP - myhurthp;
     myPokeCurrentHP = myhurthp;
@@ -520,6 +643,8 @@ void Battle::onMyPokeHurt(int myhurthp, QString enemyNature)
     hpAnimation->setEndValue(QRect(100, 140, 100, 50));
     hpAnimation->setDuration(1000);
     hpAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+
+    //display hurt pic
     this->ui->myHurtLabel->show();
     QPixmap pixmap;
     if (enemyNature == "Poisoned")
@@ -531,6 +656,8 @@ void Battle::onMyPokeHurt(int myhurthp, QString enemyNature)
     if (enemyNature == "Drowned")
         pixmap = QPixmap(":/drowned");
     this->ui->myHurtLabel->setPixmap(pixmap);
+
+    //display HP-Bar animation
     double width = this->ui->myPokeHPBarWidget->width();
     double startWidth = width * myPokeCurrentHP / myPokemonTHP[myPokeIndex];
     double endWidth = width * myhurthp / myPokemonTHP[myPokeIndex];
@@ -543,6 +670,7 @@ void Battle::onMyPokeHurt(int myhurthp, QString enemyNature)
 
 void Battle::onEnemyPokeHurt(int enemyhurthp, QString myNature)
 {
+    //display HP-decreasing of boot pokemon
     this->ui->enemyHPDecLabel->show();
     int HPDec = enemyPokeCurrentHP - enemyhurthp;
     enemyPokeCurrentHP = enemyhurthp;
@@ -557,6 +685,8 @@ void Battle::onEnemyPokeHurt(int enemyhurthp, QString myNature)
     hpAnimation->setDuration(1000);
     hpAnimation->start(QAbstractAnimation::DeleteWhenStopped);
     this->ui->enemyHurtLabel->show();
+
+    //display hurt pic
     QPixmap pixmap;
     if (myNature == "Poisoned")
         pixmap = QPixmap(":/poisoned");
@@ -567,6 +697,8 @@ void Battle::onEnemyPokeHurt(int enemyhurthp, QString myNature)
     if (myNature == "Drowned")
         pixmap = QPixmap(":/drowned");
     this->ui->enemyHurtLabel->setPixmap(pixmap);
+
+    //display HP-Bar animation
     double width = this->ui->enemyPokeHPBarWidget->width();
     double startWidth = width * enemyPokeCurrentHP / enemyPokemonTHP[enemyPokeIndex];
     double endWidth = width * enemyhurthp / enemyPokemonTHP[enemyPokeIndex];
@@ -601,7 +733,10 @@ void Battle::ClearHPDec()
 
 void Battle::onMyPokeChange(int mypokeindex)
 {
+    //resize pokemon HP-Bar to full again
     this->ui->myPokeHPBarWidget->resize(170, 20);
+
+    //reload pokemon pic
     myPokeIndex = mypokeindex;
     std::string kind = myPokemonKind[mypokeindex];
     std::string name = myPokemonName[mypokeindex];
@@ -609,6 +744,8 @@ void Battle::onMyPokeChange(int mypokeindex)
     this->ui->myPokeLabel->setStyleSheet(styleStr);
     this->ui->myPokeInfoLabel->setText(QString::fromStdString(name));
     myPokeCurrentHP = myPokemonTHP[mypokeindex];
+
+    //load disappear and appear animation
     QPropertyAnimation* animation = new QPropertyAnimation(this->ui->myPoke, "geometry");
     animation->setStartValue(QRect(30, 160, 200, 200));
     animation->setKeyValueAt(0.5, QRect(30, 160, 0, 200));
@@ -619,7 +756,10 @@ void Battle::onMyPokeChange(int mypokeindex)
 
 void Battle::onEnemyPokeChange(int enemypokeindex)
 {
+    //resize pokemon HP-Bar to full again
     this->ui->enemyPokeHPBarWidget->resize(170, 20);
+
+    //reload pokemon pic
     enemyPokeIndex = enemypokeindex;
     std::string kind = enemyPokemonKind[enemypokeindex];
     std::string name = enemyPokemonName[enemypokeindex];
@@ -628,6 +768,8 @@ void Battle::onEnemyPokeChange(int enemypokeindex)
     this->ui->enemyPokeLabel->setAlignment(Qt::AlignCenter);
     this->ui->enemyPokeInfoLabel->setText(QString::fromStdString(name));
     enemyPokeCurrentHP = enemyPokemonTHP[enemypokeindex];
+
+    //load disappear and appear animation
     QPropertyAnimation* animation = new QPropertyAnimation(this->ui->enemyPoke, "geometry");
     animation->setStartValue(QRect(630, 160, 200, 200));
     animation->setKeyValueAt(0.5, QRect(630, 160, 0, 200));
@@ -636,11 +778,17 @@ void Battle::onEnemyPokeChange(int enemypokeindex)
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
+//recv form server in a new thraed
 DWORD WINAPI RecvThreadFuncBattle(SocketClient* socketClient, Battle* battle)
 {
+    //connect socket of socket client
     SOCKET ConnectSocket = socketClient->getConnectSocket();
+
+    //clear recvbuf to receive
     socketClient->ClearRecvBuf();
     socketClient->iResult = recv(ConnectSocket, socketClient->recvbuf, socketClient->recvbuflen, 0);
+
+    //call getRecvStr function if recv succeed
     if (socketClient->iResult > 0)
     {
         QMetaObject::invokeMethod(battle, "getRecvStr", Qt::DirectConnection, Q_ARG(QString, QString::fromStdString(socketClient->GetRecvStr())));
@@ -655,6 +803,8 @@ DWORD WINAPI RecvThreadFuncBattle(SocketClient* socketClient, Battle* battle)
     }
     return 0;
 }
+
+//send to server in a new thraed
 DWORD WINAPI SendThreadFuncBattle(SocketClient* socketClient, LPVOID sParam)
 {
     std::string *sendStr = (std::string*)sParam;
@@ -673,6 +823,7 @@ DWORD WINAPI SendThreadFuncBattle(SocketClient* socketClient, LPVOID sParam)
     }
     return 0;
 }
+
 DWORD WINAPI SendAndRecvThreadFuncBattle(Battle* battle)
 {
     std::string nature = battle->getNatureStd();
