@@ -32,7 +32,7 @@
 
 ### 框架设计
 
-![无标题](docs\frame.png)
+![无标题](https://github.com/RainING1947/Pokemon/blob/master/docs/frame.png)
 
 ### 协议设计
 
@@ -1037,49 +1037,49 @@ private:
 
 #### *Sign in*
 
-![signin](docs\signin.png)
+![signin](https://github.com/RainING1947/Pokemon/blob/master/docs/signin.png)
 
 #### *Sign On*
 
-![signon](docs\signon.png)
+![signon](https://github.com/RainING1947/Pokemon/blob/master/docs/signon.png)
 
 #### *Acquaintance*
 
-![acquaintance](docs\acquaintance.png)
+![acquaintance](https://github.com/RainING1947/Pokemon/blob/master/docs/acquaintance.png)
 
 #### *MainPage*
 
-![mainpage](docs\mainpage.png)
+![mainpage](https://github.com/RainING1947/Pokemon/blob/master/docs/mainpage.png)
 
 #### *Rank*
 
-![rank](docs\rank.png)
+![rank](https://github.com/RainING1947/Pokemon/blob/master/docs/rank.png)
 
 #### *Online Player*
 
-![onlineplayer](docs\onlineplayer.png)
+![onlineplayer](https://github.com/RainING1947/Pokemon/blob/master/docs/onlineplayer.png)
 
 #### *My Info*
 
-![myinfo](docs\myinfo.png)
+![myinfo](https://github.com/RainING1947/Pokemon/blob/master/docs/myinfo.png)
 
 #### *Package*
 
-![package](docs\package.png)
+![package](https://github.com/RainING1947/Pokemon/blob/master/docs/package.png)
 
 #### *Storage*
 
-![storage](docs\storage.png)
+![storage](https://github.com/RainING1947/Pokemon/blob/master/docs/storage.png)
 
 #### *Hunt*
 
-![hunt](docs\hunt.png)
+![hunt](https://github.com/RainING1947/Pokemon/blob/master/docs/hunt.png)
 
 #### *Battle Choice*
 
-![battlechoice](docs\battlechoice.png)
+![battlechoice](https://github.com/RainING1947/Pokemon/blob/master/docs/battlechoice.png)
 
 #### *Battle*
 
-![battle](docs\battle.png)
+![battle](https://github.com/RainING1947/Pokemon/blob/master/docs/battle.png)
 
